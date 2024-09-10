@@ -1,0 +1,77 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": "container",
+  "height": "container",
+  "data": {
+    "url": "https://pdnd-prod-dl-1-public-data.s3.eu-central-1.amazonaws.com/dashboard/pagopa/dashboard-io.json",
+    "format": { "property": "downloads" }
+  },
+  "params": [
+    { "name": "is_cumulative", "value": true },
+    { "name": "year", "value": null }
+  ],
+  "transform": [
+    { "filter": "year === null || year(datum.date) === year" },
+    {
+      "window": [
+        { "op": "sum", "field": "$ae_first_open", "as": "cumulative" }
+      ],
+      "sort": [{ "field": "date" }]
+    },
+
+    {
+      "calculate": "is_cumulative ? datum.cumulative : datum.$ae_first_open",
+      "as": "metric_value"
+    }
+  ],
+  "mark": {
+    "type": "area",
+    "line": {
+      "color": "#0B3EE3"
+    },
+    "color": {
+      "x1": 1,
+      "y1": 1,
+      "x2": 1,
+      "y2": 0,
+      "stops": [
+        {
+          "offset": 0,
+          "color": "white"
+        },
+        {
+          "offset": 1,
+          "color": "#0B3EE3"
+        }
+      ],
+      "gradient": "linear"
+    }
+  },
+  "encoding": {
+    "y": {
+      "field": "metric_value",
+      "type": "quantitative",
+      "axis": { "format": "~s" }
+    },
+    "x": {
+      "field": "date",
+      "type": "temporal",
+      "timeUnit": "yearmonthdate",
+      "axis": { "format": "%b %Y", "gridDash": [6, 6] }
+    },
+    "tooltip": [
+      {
+        "field": "date",
+        "type": "temporal",
+        "title": "Giorno",
+        "format": "%d/%m/%Y"
+      },
+      { "field": "cumulative", "title": "Downloads IO", "format": "," },
+      {
+        "field": "$ae_first_open",
+        "title": "Downloads giornalieri",
+        "format": ","
+      }
+    ]
+  }
+}

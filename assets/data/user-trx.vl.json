@@ -1,0 +1,38 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": "container",
+  "height": "container",
+  "params": [
+    {"name": "threshold", "value": 50},
+    {"name": "property", "value": "user_by_trx_bin_june"}
+  ],
+  "data": {
+    "url": "https://pdnd-prod-dl-1-public-data.s3.eu-central-1.amazonaws.com/dashboard/pagopa/dashboard-io-archive.json",
+    "format": {"property": {"signal": "property"}}
+  },
+  "transform": [
+    {"window": [{"op": "last_value", "field": "bin", "as": "bin_next"}], "frame": [0, 1]},
+    {"calculate": "datum.bin !== datum.bin_next ? join([datum.bin || 1, datum.bin_next - 1], '-') : datum.bin + '+'", "as": "bin_label"},
+
+    {"joinaggregate": [{"op": "sum", "field": "count", "as": "total"}]},
+    {"calculate": "datum.count / datum.total", "as": "perc"}
+  ],
+  "layer": [
+    {
+      "mark": {"type": "bar", "width": {"band": 0.9}},
+      "encoding": {
+        "y": {"field": "count", "type": "quantitative", "axis": {"format": "~s"}},
+        "color": {"field": "bin", "type": "quantitative", "scale": {"type": "threshold", "domain": [{"expr": "threshold"}], "range": ["#15c5f8", "rgb(0, 115, 230)"]}, "legend": null}
+      }
+    },
+    {"mark": {"type": "bar", "tooltip": true, "color": "transparent", "width": {"band": 1}}}
+  ],
+  "encoding": {
+    "x": {"field": "bin_label", "type": "ordinal", "sort": null, "scale": {"padding": 0}, "axis": {"labelAngle": 0}},
+    "tooltip": [
+      {"field": "bin_label", "title": "Intervallo n° transazioni"},
+      {"field": "count", "title": "Numero utenti", "format": ","},
+      {"field": "perc", "title": "su totale", "format": ".3p"}
+    ]
+  }
+}

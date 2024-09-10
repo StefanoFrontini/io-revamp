@@ -1,0 +1,37 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": "container",
+  "height": "container",
+  "data": {
+    "url": "https://pdnd-prod-dl-1-public-data.s3.eu-central-1.amazonaws.com/dashboard/pagopa/dashboard-io.json",
+    "format": {"property": "messages"}
+  },
+  "params": [{"name": "is_cumulative", "value": false}],
+  "transform": [
+    {"window": [{"op": "sum", "field": "total", "as": "cumulative"}]},
+    {"calculate": "is_cumulative ? datum.cumulative : datum.total", "as": "metric_value"}
+  ],
+  "layer": [
+    {
+      "mark": {"type": "area", "line": true},
+      "encoding": {
+        "y": {"field": "metric_value", "type": "quantitative", "aggregate": "sum", "axis": {"format": "~s"}}
+      }
+    },
+    {
+      "mark": {"type": "area", "color": "transparent", "height": {"expr": "height"}, "binSpacing": 0},
+      "encoding": {
+        "y": {"value": 0},
+        "y2": {"value": "height"}
+      }
+    }
+  ],
+  "encoding": {
+    "x": {"field": "month", "type": "temporal", "timeUnit": "yearmonth"},
+    "tooltip": [
+      {"field": "month", "type": "temporal", "title": "Mese", "format": "%B %Y"},
+      {"field": "total", "title": "Messaggi mensili", "format": ","},
+      {"field": "cumulative", "title": "Cumulato messaggi", "format": ","}
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "params": [
+    {"name": "period", "value": 2},
+    {"name": "properties", "value": [null, "", "_june"]}
+  ],
+  "data": {"url": "https://pdnd-prod-dl-1-public-data.s3.eu-central-1.amazonaws.com/dashboard/pagopa/dashboard-io-archive.json"},
+  "transform": [
+    {"calculate": "datum['trx_1' + properties[period]] + datum['trx_10' + properties[period]]", "as": "user_period"}
+  ],
+  "mark": "text",
+  "encoding": {"text": {"field": "user_period", "format": ","}}
+}

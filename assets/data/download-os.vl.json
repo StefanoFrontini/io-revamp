@@ -1,0 +1,44 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": "container",
+  "height": "container",
+  "data": {
+    "url": "https://pdnd-prod-dl-1-public-data.s3.eu-central-1.amazonaws.com/dashboard/pagopa/dashboard-io.json",
+    "format": { "property": "downloadsByOs" }
+  },
+  "transform": [
+    { "fold": ["Android", "iOS"] },
+    {
+      "aggregate": [{ "field": "value", "op": "sum", "as": "sum" }],
+      "groupby": ["key"]
+    },
+
+    { "joinaggregate": [{ "op": "sum", "field": "sum", "as": "total" }] },
+    { "calculate": "datum.sum / datum.total", "as": "perc" }
+  ],
+  "mark": {
+    "type": "arc",
+    "line": true,
+    "tooltip": true,
+    "stroke": "white",
+    "strokeWidth": 2
+  },
+  "encoding": {
+    "theta": { "field": "sum", "type": "quantitative", "title": null },
+    "color": {
+      "field": "key",
+      "legend": null,
+      "sort": { "field": "sum", "order": "descending" },
+      "scale": {
+        "domain": ["Android", "iOS"],
+        "range": ["#0B3EE3", "#BBC2D6"]
+      }
+    },
+    "order": { "field": "sum", "sort": "descending" },
+    "tooltip": [
+      { "field": "key", "title": "Sistema operativo" },
+      { "field": "sum", "format": ",", "title": "Downloads" },
+      { "field": "perc", "title": "su totale", "format": ".3p" }
+    ]
+  }
+}

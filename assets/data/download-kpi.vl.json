@@ -1,0 +1,10 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "data": {
+    "url": "https://pdnd-prod-dl-1-public-data.s3.eu-central-1.amazonaws.com/dashboard/pagopa/dashboard-io.json",
+    "format": {"property": "downloads"}
+  },
+  "transform": [{"aggregate": [{"field": "$ae_first_open", "op": "sum", "as": "total"}]}],
+  "mark": "text",
+  "encoding": {"text": {"field": "total", "format": ","}}
+}

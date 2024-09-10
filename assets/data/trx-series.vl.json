@@ -1,0 +1,34 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": "container",
+  "height": "container",
+  "params": [{ "name": "property", "value": "trx_per_day_june" }],
+  "data": {
+    "url": "https://pdnd-prod-dl-1-public-data.s3.eu-central-1.amazonaws.com/dashboard/pagopa/dashboard-io-archive.json",
+    "format": { "property": { "signal": "property" } }
+  },
+  "layer": [
+    {
+      "mark": { "type": "area", "line": true },
+      "encoding": {
+        "y": {
+          "field": "count",
+          "type": "quantitative",
+          "axis": { "format": "~s" }
+        }
+      }
+    }
+  ],
+  "encoding": {
+    "x": { "field": "day", "type": "temporal", "timeUnit": "yearmonthdate" },
+    "tooltip": [
+      {
+        "field": "day",
+        "type": "temporal",
+        "title": "Giorno",
+        "format": "%d/%m/%Y"
+      },
+      { "field": "count", "title": "Numero transazioni", "format": "," }
+    ]
+  }
+}

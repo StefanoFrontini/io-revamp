@@ -1,0 +1,32 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "data": {"url": "https://pdnd-prod-dl-1-public-data.s3.eu-central-1.amazonaws.com/dashboard/pagopa/dashboard-io.json", "format": {"property": "idps"}},
+  "params": [{"name": "selection", "select": {"type": "point", "fields": ["key"], "toggle": "true"}, "bind": "legend"}],
+  "transform": [
+    {"fold": ["Poste ID", "Aruba ID", "Namirial ID", "Infocert ID", "Intesa ID", "Lepida ID", "Register\\.it", "Sielte ID", "TIM ID", "TeamSystem ID"]},
+    {"aggregate": [{"field": "value", "op": "sum", "as": "sum"}], "groupby": ["key"]},
+
+    {"calculate": "replace(datum.key, regexp(' ID|SPIDItalia '), '')", "as": "key"},
+    {"calculate": "replace(datum.key, 'Poste', 'Poste Italiane')", "as": "key"},
+    {"calculate": "replace(datum.key, 'Telecom Italia', 'TIM')", "as": "key"},
+
+    {"joinaggregate": [{"op": "sum", "field": "sum", "as": "total"}]},
+    {"calculate": "datum.sum / datum.total", "as": "perc"},
+
+    {"filter": {"param": "selection"}}
+  ],
+  "mark": {"type": "arc", "line": true, "tooltip": true},
+  "encoding": {
+    "theta": {"field": "sum", "type": "quantitative", "title": null},
+    "color": {"field": "key", "sort": {"field": "sum", "order": "descending"}, "scale": {
+      "domain": ["TeamSystem", "Sielte", "Lepida", "Aruba", "Poste Italiane", "Intesa", "Infocert", "Register.it", "TIM", "Namirial"],
+      "range": ["#e73c83", "#d70c25", "#ec7a27", "#fac125", "#ffe322", "#3edee4", "#50bdda", "#569dd0", "#577dc5", "#535ebb"]
+    }},
+    "order": {"field": "sum", "sort": "descending"},
+    "tooltip": [
+      {"field": "key", "title": "Provider"},
+      {"field": "sum", "format": ",", "title": "Login"},
+      {"field": "perc", "title": "su totale", "format": ".3p"}
+    ]
+  }
+}

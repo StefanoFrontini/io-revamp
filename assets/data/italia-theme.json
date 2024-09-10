@@ -1,0 +1,71 @@
+{
+  "padding": 0,
+  "view": { "stroke": null },
+  "arc": { "fill": "#0066CC", "hover": { "color": "#0BDAD3" } },
+  "area": { "fill": "#0066CC", "fillOpacity": 0.25 },
+  "axis": {
+    "domainColor": "#cbcbcb",
+    "grid": true,
+    "gridColor": "#cbcbcb",
+    "gridWidth": 1,
+    "labelColor": "#5c6f82",
+    "labelFont": "inherit",
+    "labelFontSize": 13,
+    "titleColor": "#333",
+    "tickColor": "#cbcbcb",
+    "tickSize": 10,
+    "titleFont": "inherit",
+    "titlePadding": 10,
+    "labelPadding": 4
+  },
+  "axisBand": { "grid": false },
+  "background": "transparent",
+  "legend": {
+    "labelColor": "#5c6f82",
+    "labelFont": ["Titillium Web", "Geneva"],
+    "labelFontSize": 13,
+    "symbolSize": 100,
+    "symbolType": "circle",
+    "titleColor": "#333",
+    "titleFont": "inherit",
+    "titleFontSize": 14,
+    "titlePadding": 10
+  },
+  "line": {
+    "stroke": "#0066CC",
+    "strokeWidth": 2,
+    "strokeJoin": "round",
+    "strokeCap": "round"
+  },
+  "header": { "labelFont": "inherit", "titleFont": "inherit" },
+  "path": { "stroke": "#0066CC", "strokeWidth": 0.5 },
+  "rect": { "fill": "#0066CC", "hover": { "color": "#0BDAD3" } },
+  "range": {
+    "category": [
+      "#0066CC",
+      "rgb(38, 200, 247)",
+      "#408AD4",
+      "#17324D",
+      "#004D9A",
+      "#2E649A"
+    ],
+    "diverging": ["#43ecee", "#b947ff"],
+    "heatmap": ["#9ff5f2", "#0066CC", "#fd338b"]
+  },
+  "point": { "filled": true, "shape": "circle" },
+  "shape": { "stroke": "#0066CC" },
+  "text": { "font": "inherit" },
+  "bar": { "binSpacing": 2, "fill": "#0066CC", "stroke": null },
+  "title": {
+    "anchor": "start",
+    "font": "inherit",
+    "subtitleFont": "inherit",
+    "fontSize": 24,
+    "fontWeight": 600,
+    "offset": 20
+  },
+  "selection": {
+    "highlight": { "type": "single", "empty": "none", "on": "mouseover" },
+    "select": { "type": "multi" }
+  }
+}

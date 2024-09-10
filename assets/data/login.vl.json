@@ -1,0 +1,23 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "data": {"url": "https://pdnd-prod-dl-1-public-data.s3.eu-central-1.amazonaws.com/dashboard/pagopa/dashboard-io.json", "format": {"property": "idps"}},
+  "transform": [
+    {"fold": ["CIE", "Poste ID", "Aruba ID", "Namirial ID", "Infocert ID", "Intesa ID", "Lepida ID", "Register\\.it", "Sielte ID", "TIM ID", "TeamSystem ID"]},
+    {"calculate": "datum.key === 'CIE' ? 'CIE' : 'SPID'", "as": "group"},
+    {"aggregate": [{"field": "value", "op": "sum", "as": "sum"}], "groupby": ["group"]},
+
+    {"joinaggregate": [{"op": "sum", "field": "sum", "as": "total"}]},
+    {"calculate": "datum.sum / datum.total", "as": "perc"}
+  ],
+  "mark": {"type": "arc", "line": true, "tooltip": true},
+  "encoding": {
+    "theta": {"field": "sum", "type": "quantitative"},
+    "color": {"field": "group", "sort": {"field": "sum", "order": "descending"}},
+    "order": {"field": "sum", "sort": "descending"},
+    "tooltip": [
+      {"field": "group", "title": "Autenticazione"},
+      {"field": "sum", "format": ",", "title": "Login"},
+      {"field": "perc", "title": "su totale", "format": ".3p"}
+    ]
+  }
+}

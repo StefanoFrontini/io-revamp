@@ -1,0 +1,34 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": "container",
+  "height": "container",
+  "params": [{"name": "property", "value": "all_range_june"}],
+  "data": {
+    "url": "https://pdnd-prod-dl-1-public-data.s3.eu-central-1.amazonaws.com/dashboard/pagopa/dashboard-io-archive.json",
+    "format": {"property": {"signal": "property"}}
+  },
+  "transform": [
+    {"calculate": "isNaN(+datum.bin_width) ? null : +datum.bin_width", "as": "bin_width"},
+
+    {"joinaggregate": [{"op": "sum", "field": "count", "as": "total"}]},
+    {"calculate": "datum.count / datum.total", "as": "perc"}
+  ],
+  "layer": [
+    {
+      "mark": {"type": "bar", "width": {"band": 0.9}},
+      "encoding": {
+        "y": {"field": "count", "type": "quantitative", "axis": {"format": "~s"}},
+        "color": {"field": "bin_width", "type": "ordinal", "scale": {"range": ["#00264D", "rgb(0, 115, 230)", "#2d489d"]}, "legend": null}
+        }
+      },
+      {"mark": {"type": "bar", "tooltip": true, "color": "transparent", "width": {"band": 1}}}
+    ],
+  "encoding": {
+    "x": {"field": "ran", "type": "ordinal", "sort": null, "scale": {"padding": 0}, "axis": {"labelAngle": 0, "labelExpr": "datum.label + '€'"}},
+    "tooltip": [
+      {"field": "ran", "title": "Intervallo importo"},
+      {"field": "count", "title": "Numero transazioni", "format": ","},
+      {"field": "perc", "title": "su totale", "format": ".3p"}
+    ]
+  }
+}

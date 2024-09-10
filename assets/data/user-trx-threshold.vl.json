@@ -1,0 +1,42 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": "container",
+  "height": "container",
+  "params": [
+    { "name": "threshold", "value": 50 },
+    { "name": "property", "value": "_june" }
+  ],
+  "data": {
+    "url": "https://pdnd-prod-dl-1-public-data.s3.eu-central-1.amazonaws.com/dashboard/pagopa/dashboard-io-archive.json"
+  },
+  "transform": [
+    { "calculate": "datum['trx_1' + property]", "as": "trx_1_period" },
+    { "calculate": "datum['trx_10' + property]", "as": "trx_threshold_period" },
+    { "fold": ["trx_1_period", "trx_threshold_period"] },
+
+    {
+      "calculate": "({trx_1_period: 'tra 1 e ' + (threshold - 1), trx_threshold_period: threshold + ' e più'})[datum.key]",
+      "as": "legend_label"
+    },
+
+    { "joinaggregate": [{ "op": "sum", "field": "value", "as": "total" }] },
+    { "calculate": "datum.value / datum.total", "as": "perc" }
+  ],
+  "mark": { "type": "arc", "tooltip": true },
+  "encoding": {
+    "theta": { "field": "value", "type": "quantitative" },
+    "color": {
+      "field": "legend_label",
+      "title": null,
+      "sort": null,
+      "scale": { "range": ["rgb(38, 200, 247)", "#fff"] },
+      "legend": { "labelColor": "#fff", "labelFontSize": 11 }
+    },
+    "order": { "field": "key" },
+    "tooltip": [
+      { "field": "legend_label", "title": "Intervallo transazioni" },
+      { "field": "value", "title": "Numero utenti", "format": "," },
+      { "field": "perc", "title": "su totale", "format": ".3p" }
+    ]
+  }
+}

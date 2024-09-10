@@ -1,0 +1,76 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "autosize": {"type": "fit", "contains": "padding"},
+  "description": "A basic grouped bar chart example.",
+  "width": 800,
+  "height": 360,
+  "padding": 5,
+  "data": [
+    {"name": "source_1", "url": "https://pdnd-prod-dl-1-public-data.s3.eu-central-1.amazonaws.com/dashboard/pagopa/dashboard-io-archive.json", "format": {"property": {"signal": "property_user"}}},
+    {
+      "name": "table",
+      "url": "https://pdnd-prod-dl-1-public-data.s3.eu-central-1.amazonaws.com/dashboard/pagopa/dashboard-io-archive.json",
+      "format": {"property": {"signal": "property_card"}, "parse": {"day": "date"}},
+      "transform": [
+        {"type": "lookup", "from": "source_1", "key": "day", "fields": ["day"], "values": ["total"], "as": ["Utenti aderenti"]},
+        {"type": "formula", "expr": "datum.tot", "as": "Strumenti di pagamento"},
+        {"type": "fold", "fields": ["Utenti aderenti", "Strumenti di pagamento"], "as": ["key", "value"]}
+      ]
+    }
+  ],
+  "scales": [
+    {"name": "xscale", "type": "band", "domain": {"data": "table", "field": "day", "sort": true}, "range": "width", "paddingOuter": 0, "paddingInner": 0.2},
+    {"name": "xscaletime", "type": "time", "domain": {"data": "table", "field": "day"}, "range": "width", "padding": {"signal": "band / 2"}},
+    {"name": "yscale", "type": "linear", "domain": {"data": "table", "field": "value"}, "range": "height", "round": true, "zero": true, "nice": true},
+    {"name": "color", "type": "ordinal", "domain": {"data": "table", "field": "key"}, "range": ["rgb(0, 115, 230)", "#15c5f8"]}
+  ],
+  "axes": [{"orient": "left", "scale": "yscale", "tickSize": 0, "labelPadding": 4, "zindex": 1}, {"orient": "bottom", "scale": "xscaletime", "tickCount": 5}],
+  "signals": [
+    {"name": "property_user", "value": "aderenti_june"},
+    {"name": "property_card", "value": "carteOnboard_june"},
+    {"name": "width", "init": "isFinite(containerSize()[0]) ? containerSize()[0] : 200", "on": [{"update": "isFinite(containerSize()[0]) ? containerSize()[0] : 200", "events": "window:resize"}]},
+    {"name": "height", "init": "isFinite(containerSize()[1]) ? containerSize()[1] : 200", "on": [{"update": "isFinite(containerSize()[1]) ? containerSize()[1] : 200", "events": "window:resize"}]},
+    {"name": "band", "update": "bandwidth('xscale')"}
+  ],
+  "marks": [
+    {
+      "type": "group",
+      "from": {"facet": {"data": "table", "name": "facet", "groupby": "day"}},
+      "encode": {"enter": {"x": {"scale": "xscale", "field": "day"}}},
+      "signals": [{"name": "width", "update": "bandwidth('xscale')"}],
+      "scales": [{"name": "pos", "type": "band", "range": "width", "domain": {"data": "facet", "field": "key"}}],
+      "marks": [
+        {
+          "name": "bars",
+          "from": {"data": "facet"},
+          "type": "rect",
+          "encode": {
+            "enter": {
+              "x": {"scale": "pos", "field": "key"},
+              "width": {"scale": "pos", "band": 1},
+              "y": {"scale": "yscale", "field": "value"},
+              "y2": {"scale": "yscale", "value": 0},
+              "fill": {"scale": "color", "field": "key"}
+            }
+          }
+        },
+        {
+          "name": "bars_tooltip",
+          "from": {"data": "facet"},
+          "type": "rect",
+          "encode": {
+            "enter": {
+              "fill": {"value": "transparent"},
+              "height": {"signal": "height"},
+              "width": {"scale": "xscale", "band": 1.3},
+              "tooltip": {
+                "signal": "{\"Giorno\": timeFormat(datum[\"day\"], '%d/%m/%Y'), \"Utenti aderenti\": format(datum[\"Utenti aderenti\"], \",\"), \"Strumenti di pagamento\": format(datum[\"Strumenti di pagamento\"], \",\")}"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "legends": [{"orient": "bottom", "fill": "color", "direction": "horizontal"}]
+}
