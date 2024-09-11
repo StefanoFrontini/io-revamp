@@ -4,34 +4,74 @@
   "height": "container",
   "data": {
     "url": "https://pdnd-prod-dl-1-public-data.s3.eu-central-1.amazonaws.com/dashboard/pagopa/dashboard-io.json",
-    "format": {"property": "messages"}
+    "format": { "property": "messages" }
   },
-  "params": [{"name": "is_cumulative", "value": false}],
+  "params": [{ "name": "is_cumulative", "value": false }],
   "transform": [
-    {"window": [{"op": "sum", "field": "total", "as": "cumulative"}]},
-    {"calculate": "is_cumulative ? datum.cumulative : datum.total", "as": "metric_value"}
+    { "window": [{ "op": "sum", "field": "total", "as": "cumulative" }] },
+    {
+      "calculate": "is_cumulative ? datum.cumulative : datum.total",
+      "as": "metric_value"
+    }
   ],
   "layer": [
     {
-      "mark": {"type": "area", "line": true},
+      "mark": {
+        "type": "area",
+        "line": {
+          "color": "#0B3EE3"
+        },
+        "color": {
+          "x1": 1,
+          "y1": 1,
+          "x2": 1,
+          "y2": 0,
+          "stops": [
+            {
+              "offset": 0,
+              "color": "white"
+            },
+            {
+              "offset": 1,
+              "color": "#0B3EE3"
+            }
+          ],
+          "gradient": "linear"
+        }
+      },
       "encoding": {
-        "y": {"field": "metric_value", "type": "quantitative", "aggregate": "sum", "axis": {"format": "~s"}}
+        "y": {
+          "field": "metric_value",
+          "type": "quantitative",
+          "aggregate": "sum",
+          "axis": { "format": "~s" }
+        }
       }
     },
     {
-      "mark": {"type": "area", "color": "transparent", "height": {"expr": "height"}, "binSpacing": 0},
+      "mark": {
+        "type": "area",
+        "color": "transparent",
+        "height": { "expr": "height" },
+        "binSpacing": 0
+      },
       "encoding": {
-        "y": {"value": 0},
-        "y2": {"value": "height"}
+        "y": { "value": 0 },
+        "y2": { "value": "height" }
       }
     }
   ],
   "encoding": {
-    "x": {"field": "month", "type": "temporal", "timeUnit": "yearmonth"},
+    "x": { "field": "month", "type": "temporal", "timeUnit": "yearmonth" },
     "tooltip": [
-      {"field": "month", "type": "temporal", "title": "Mese", "format": "%B %Y"},
-      {"field": "total", "title": "Messaggi mensili", "format": ","},
-      {"field": "cumulative", "title": "Cumulato messaggi", "format": ","}
+      {
+        "field": "month",
+        "type": "temporal",
+        "title": "Mese",
+        "format": "%B %Y"
+      },
+      { "field": "total", "title": "Messaggi mensili", "format": "," },
+      { "field": "cumulative", "title": "Cumulato messaggi", "format": "," }
     ]
   }
 }

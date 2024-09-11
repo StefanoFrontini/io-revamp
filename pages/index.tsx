@@ -6,12 +6,13 @@ import downloadKpiSpec from "@/assets/data/download-kpi.vl.json";
 import entiKpiSpec from "@/assets/data/enti-kpi.vl.json";
 import messagesKpiSpec from "@/assets/data/messages-kpi.vl.json";
 import servicesKpiSpec from "@/assets/data/services-kpi.vl.json";
-import { DataSectionWrapper } from "@/components/DataSectionWrapper";
 import DownloadTrend from "@/components/DownloadTrend";
+import FormatKpiCard from "@/components/FormatKpiCard";
 import Icons from "@/components/Icons";
 import Kpi from "@/components/Kpi";
 import KpiCard from "@/components/KpiCard";
 import MessagesTrend from "@/components/MessagesTrend";
+import SectionLayout from "@/components/SectionLayout";
 import { toVegaLiteSpec } from "@/shared/toVegaLiteSpec";
 import { Box, Stack } from "@mui/material";
 import Head from "next/head";
@@ -64,72 +65,57 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <DataSectionWrapper title="Download dell’app">
-        <Stack
-          direction={{ xs: "column", sm: "row" }}
-          spacing={{ xs: 1, sm: 2, md: 4 }}
-        >
-          <Box sx={{ flex: "0 0 25%" }}>
-            <KpiCard subLabel="Download complessivi dal 2020">
-              <Icons.DownloadIcon sx={{ fontSize: 30 }} />
+      <SectionLayout title="Download dell’app">
+        <Box sx={{ flex: "0 0 25%" }}>
+          <KpiCard subLabel="Download complessivi dal 2020">
+            <Icons.DownloadIcon />
+            <FormatKpiCard>
               <Kpi spec={toVegaLiteSpec(downloadKpiSpec)} />
-            </KpiCard>
-          </Box>
-          <Box sx={{ flex: "1 0 0" }}>
-            <DownloadTrend selYear={null} />
-          </Box>
-        </Stack>
-        {/* <Box style={{ flex: "1 0 0" }} mb={3}>
-          <KpiCard subLabel="sublabel">
-            <Icons.InitiavesIcon />
-            <ChartServices spec={toVegaLiteSpec(downloadKpiSpec)} />
+            </FormatKpiCard>
           </KpiCard>
-        </Box> */}
-        <DataSectionWrapper title="Servizi e enti attivi">
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            spacing={{ xs: 1, sm: 2, md: 4 }}
-          >
-            <Box sx={{ flex: "0 0 25%" }}>
-              <KpiCard subLabel="Servizi totali disponibili in app">
-                <Icons.InitiavesIcon sx={{ fontSize: 30 }} />
+        </Box>
+        <Box sx={{ flex: "1 0 0" }}>
+          <DownloadTrend selYear={null} />
+        </Box>
+      </SectionLayout>
+      <SectionLayout title="Servizi e enti attivi">
+        <Box sx={{ flex: "0 0 25%" }}>
+          <Stack direction="column" spacing={4}>
+            <KpiCard subLabel="Servizi totali disponibili in app">
+              <Icons.InitiavesIcon />
+              <FormatKpiCard>
                 <Kpi spec={toVegaLiteSpec(servicesKpiSpec)} />
-              </KpiCard>
-              <KpiCard subLabel="Enti attivi">
-                <Icons.InitiavesIcon sx={{ fontSize: 30 }} />
-                <Kpi spec={toVegaLiteSpec(entiKpiSpec)} />
-              </KpiCard>
-            </Box>
-            <Box sx={{ flex: "1 0 0" }}>
-              <DownloadTrend selYear={null} />
-            </Box>
-          </Stack>
-        </DataSectionWrapper>
-      </DataSectionWrapper>
-      <DataSectionWrapper title="Messaggi">
-        <Stack
-          direction={{ xs: "column", sm: "row" }}
-          spacing={{ xs: 1, sm: 2, md: 4 }}
-        >
-          <Box sx={{ flex: "0 0 25%" }}>
-            <KpiCard subLabel="Messaggi inviati dagli enti dal 2020">
-              <Icons.MessageIcon sx={{ fontSize: 30 }} />
-              <Kpi spec={toVegaLiteSpec(messagesKpiSpec)} />
+              </FormatKpiCard>
             </KpiCard>
-            {/* <KpiCard subLabel="Metodi di pagamento aggiunti dagli enti">
-            <Icons.CreditCardIcon sx={{ fontSize: 30 }} />
-            <Kpi spec={toVegaLiteSpec(epiKpiSpec)} />
-          </KpiCard> */}
-          </Box>
-          <Box sx={{ flex: "1 0 0" }}>
-            <MessagesTrend />
-          </Box>
-        </Stack>
-      </DataSectionWrapper>
+            <KpiCard subLabel="Enti attivi">
+              <Icons.InitiavesIcon />
+              <FormatKpiCard>
+                <Kpi spec={toVegaLiteSpec(entiKpiSpec)} />
+              </FormatKpiCard>
+            </KpiCard>
+          </Stack>
+        </Box>
+        <Box sx={{ flex: "1 0 0" }}>
+          <DownloadTrend selYear={null} />
+        </Box>
+      </SectionLayout>
+      <SectionLayout title="Messaggi">
+        <Box sx={{ flex: "0 0 25%" }}>
+          <KpiCard subLabel="Messaggi inviati dagli enti dal 2020">
+            <Icons.MessageIcon />
+            <FormatKpiCard>
+              <Kpi spec={toVegaLiteSpec(messagesKpiSpec)} />
+            </FormatKpiCard>
+          </KpiCard>
+        </Box>
+        <Box sx={{ flex: "1 0 0" }}>
+          <MessagesTrend />
+        </Box>
+      </SectionLayout>
 
       {/* <Tabs tabs={tabs.map((tab) => tab.label)} onTabChange={handleTabChange} />
       <Box sx={{ overflowX: "hidden" }}>
-        <DataSectionWrapper
+        <SectionLayout
           title={t("sent_notifications.title", { ns: "numeri" })}
           description={t("sent_notifications.description", { ns: "numeri" })}
         >
@@ -138,9 +124,9 @@ export default function Home() {
 
             <NotificationsTrend selYear={selYear} />
           </Box>
-        </DataSectionWrapper>
+        </SectionLayout>
 
-        <DataSectionWrapper
+        <SectionLayout
           title={t("authorities_and_types.title", { ns: "numeri" })}
           description={t("authorities_and_types.description", { ns: "numeri" })}
           background="grey"
@@ -149,7 +135,7 @@ export default function Home() {
             <KpiAuthoritiesServices />
             <TopServices />
           </Box>
-        </DataSectionWrapper>
+        </SectionLayout>
       </Box> */}
     </>
   );

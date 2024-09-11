@@ -6,8 +6,8 @@ import downloadKpiSpec from "@/assets/data/download-kpi.vl.json";
 import { toVegaLiteSpec } from "../shared/toVegaLiteSpec";
 import Icons from "./Icons";
 import IosAndroid from "./IosAndroid";
-import Kpi from "./Kpi";
 import KpiCard from "./KpiCard";
+import Kpi from "./old_Kpi";
 
 const KpiAuthoritiesServices = () => {
   return (

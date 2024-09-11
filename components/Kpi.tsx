@@ -3,64 +3,31 @@ import {
   SceneText,
   Scene as VegaScene,
   SceneGroup as VegaSceneGroup,
-  Spec as VegaSpec,
-  View,
-  parse,
 } from "vega";
-import { expressionInterpreter } from "vega-interpreter";
-
-import { dashboardColors } from "@/styles/colors";
-import { Typography } from "@mui/material";
 import { TopLevelSpec } from "vega-lite";
-import { VegaSceneRoot, searchTree, toVegaSpec } from "../shared/chart-utils";
-import { cacheLoader } from "../shared/vega-cache-loader";
+import { getMarks } from "../shared/chart-utils";
 
 type Props = {
-  spec: TopLevelSpec | VegaSpec;
-  className?: string;
+  spec: TopLevelSpec;
 };
+
 const isSceneText = (
   item: VegaScene | VegaSceneGroup | SceneText
 ): item is SceneText => "text" in item;
 
-const KpiAuthority = ({ spec, ...restProps }: Props): JSX.Element => {
+const Kpi = ({ spec }: Props) => {
   const [text, setText] = useState("#");
-  const [scenegraph, setScenegraph] = useState<VegaSceneRoot | null>(null);
 
   useEffect(() => {
-    function getText(): string {
-      if (scenegraph === null) return "";
-      const scene = searchTree(scenegraph.root, "role", "mark");
-      if (scene === null) return "";
-      const marks = scene.items;
-      return isSceneText(marks[0]) ? marks[0].text : "";
-    }
+    getMarks(spec).then((marks) => {
+      if (!marks[0]) return;
+      if (isSceneText(marks[0])) {
+        setText(marks[0].text);
+      }
+    });
+  });
 
-    setText(getText());
-  }, [scenegraph]);
-
-  useEffect(() => {
-    const vgSpec = toVegaSpec(spec);
-    new View(parse(vgSpec, undefined, { ast: true }), {
-      expr: expressionInterpreter,
-      renderer: "none",
-      loader: cacheLoader,
-    })
-      .runAsync()
-      .then((viewRes) =>
-        setScenegraph(viewRes.scenegraph() as unknown as VegaSceneRoot)
-      );
-  }, [spec]);
-
-  return (
-    <Typography
-      variant="h4"
-      sx={{ mt: 0, color: dashboardColors.get("blue-500") }}
-      {...restProps}
-    >
-      {text}
-    </Typography>
-  );
+  return <>{text}</>;
 };
 
-export default KpiAuthority;
+export default Kpi;

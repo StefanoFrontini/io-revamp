@@ -1,5 +1,5 @@
 import { dashboardColors } from "@/styles/colors";
-import { Paper, Typography } from "@mui/material";
+import { Paper, Stack, Typography } from "@mui/material";
 
 type Props = {
   children: React.ReactNode;
@@ -11,22 +11,26 @@ const KpiCard = ({ children, subLabel }: Props) => {
       elevation={8}
       sx={{
         px: 4,
-        py: 6,
+        py: 4,
         borderRadius: 2,
+        // boxShadow: "0 4px 32px 0 rgba(11, 62, 227, 0.5)",
       }}
     >
-      {children}
-      {subLabel && (
-        <Typography
-          variant="caption"
-          sx={{
-            color: dashboardColors.get("grey-650"),
-            fontWeight: 600,
-          }}
-        >
-          {subLabel}
-        </Typography>
-      )}{" "}
+      <Stack direction={"column"} spacing={2}>
+        {children}
+        {subLabel && (
+          <Typography
+            sx={{
+              color: dashboardColors.get("grey-650"),
+              fontWeight: 600,
+              fontSize: "1.125rem",
+              lineHeight: "1.5rem",
+            }}
+          >
+            {subLabel}
+          </Typography>
+        )}{" "}
+      </Stack>
     </Paper>
   );
 };

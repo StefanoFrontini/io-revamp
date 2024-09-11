@@ -1,6 +1,6 @@
 import SvgIcon, { SvgIconProps } from "@mui/material/SvgIcon";
 const CreditCardIcon = (props: SvgIconProps) => (
-  <SvgIcon {...props}>
+  <SvgIcon {...props} sx={{ fontSize: 48 }}>
     <svg
       width="48"
       height="48"
@@ -19,7 +19,7 @@ const CreditCardIcon = (props: SvgIconProps) => (
 );
 
 const DownloadIcon = (props: SvgIconProps) => (
-  <SvgIcon {...props}>
+  <SvgIcon {...props} sx={{ fontSize: 48 }}>
     <svg
       width="48"
       height="48"
@@ -38,7 +38,7 @@ const DownloadIcon = (props: SvgIconProps) => (
 );
 
 const InitiativesIcon = (props: SvgIconProps) => (
-  <SvgIcon {...props}>
+  <SvgIcon {...props} sx={{ fontSize: 48 }}>
     <svg
       width="48"
       height="48"
@@ -76,7 +76,7 @@ const InitiativesIcon = (props: SvgIconProps) => (
 );
 
 const MessageIcon = (props: SvgIconProps) => (
-  <SvgIcon {...props}>
+  <SvgIcon {...props} sx={{ fontSize: 48 }}>
     <svg
       width="48"
       height="48"
