@@ -20,7 +20,8 @@ const KpiCard = ({ children, subLabel }: Props) => {
         <Typography
           variant="caption"
           sx={{
-            color: dashboardColors.get("grey-850"),
+            color: dashboardColors.get("grey-650"),
+            fontWeight: 600,
           }}
         >
           {subLabel}

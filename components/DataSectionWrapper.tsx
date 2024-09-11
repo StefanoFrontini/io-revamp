@@ -1,4 +1,5 @@
 import LastUpdate from "@/components/LastUpdate";
+import { dashboardColors } from "@/styles/colors";
 import { Box, Container, Stack, Typography } from "@mui/material";
 
 type DataSectionWrapperProps = {
@@ -11,7 +12,6 @@ type DataSectionWrapperProps = {
 
 export const DataSectionWrapper: React.FC<DataSectionWrapperProps> = ({
   title,
-  background = "white",
   anchor,
   children,
 }) => {
@@ -19,21 +19,23 @@ export const DataSectionWrapper: React.FC<DataSectionWrapperProps> = ({
     <Box
       component="section"
       sx={{
-        backgroundColor:
-          background === "grey" ? "background.default" : "background.paper",
+        backgroundColor: "white",
       }}
     >
       <Container sx={{ py: 6, maxWidth: 1340 }} maxWidth={false}>
         <Stack
-          direction="row"
-          alignItems="center"
+          direction={{ xs: "column", sm: "row" }}
+          alignItems={{ xs: "flex-start", sm: "center" }}
           justifyContent="space-between"
         >
           <Typography
             variant="h4"
             component="h3"
+            sx={{
+              color: dashboardColors.get("grey-850"),
+              scrollMarginTop: "124px",
+            }}
             id={anchor}
-            sx={{ scrollMarginTop: "124px" }}
           >
             {title}
           </Typography>

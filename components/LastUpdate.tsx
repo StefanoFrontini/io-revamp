@@ -1,3 +1,4 @@
+import { dashboardColors } from "@/styles/colors";
 import { Stack, Typography } from "@mui/material";
 import lastUpdateSpec from "../assets/data/last-update.vl.json";
 import { toVegaLiteSpec } from "../shared/toVegaLiteSpec";
@@ -11,10 +12,22 @@ const LastUpdate = () => {
       spacing={0}
       justifyContent="center"
     >
-      <Typography color="textSecondary" variant="caption">
+      <Typography
+        sx={{
+          color: dashboardColors.get("grey-650"),
+          fontWeight: 600,
+        }}
+        variant="caption"
+      >
         Ultimo aggiornamento -&nbsp;
       </Typography>
-      <Typography color="textSecondary" variant="caption">
+      <Typography
+        sx={{
+          color: dashboardColors.get("grey-650"),
+          fontWeight: 600,
+        }}
+        variant="caption"
+      >
         <KpiWrapper spec={toVegaLiteSpec(lastUpdateSpec)} />
       </Typography>
     </Stack>
