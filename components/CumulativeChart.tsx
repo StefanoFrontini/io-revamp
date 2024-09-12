@@ -6,16 +6,9 @@ import chartConfig from "../shared/chart-config";
 
 type Props = {
   spec: TopLevelSpec;
-  cumulativeSignal: boolean;
-  filterSignal: string;
   yearSignal: number | null;
 };
-const CumulativeChart = ({
-  spec,
-  cumulativeSignal,
-  // filterSignal,
-  yearSignal,
-}: Props) => {
+const CumulativeChart = ({ yearSignal, spec }: Props) => {
   const [chart, setChart] = useState<Result | null>(null);
   const chartContent = useRef<HTMLDivElement>(null);
 
@@ -24,10 +17,10 @@ const CumulativeChart = ({
     embed(chartContent.current, spec, chartConfig).then(setChart);
   }, [spec]);
 
-  useEffect(() => {
-    if (chart === null) return;
-    chart.view.signal("is_cumulative", cumulativeSignal).runAsync();
-  }, [chart, cumulativeSignal]);
+  // useEffect(() => {
+  //   if (chart === null) return;
+  //   chart.view.signal("is_cumulative", cumulativeSignal).runAsync();
+  // }, [chart, cumulativeSignal]);
 
   // useEffect(() => {
   //   if (chart === null) return;

@@ -12,9 +12,11 @@ import Icons from "@/components/Icons";
 import Kpi from "@/components/Kpi";
 import KpiCard from "@/components/KpiCard";
 import MessagesTrend from "@/components/MessagesTrend";
+import SectionFirstColumnLayout from "@/components/SectionFirstColumnLayout";
 import SectionLayout from "@/components/SectionLayout";
+import SectionSecondColumnLayout from "@/components/SectionSecondColumnLayout";
+import ServicesTrend from "@/components/ServicesTrend";
 import { toVegaLiteSpec } from "@/shared/toVegaLiteSpec";
-import { Box, Stack } from "@mui/material";
 import Head from "next/head";
 // import { useState } from "react";
 // import Image from "next/image";
@@ -66,51 +68,49 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <SectionLayout title="Download dell’app">
-        <Box sx={{ flex: "0 0 25%" }}>
+        <SectionFirstColumnLayout>
           <KpiCard subLabel="Download complessivi dal 2020">
             <Icons.DownloadIcon />
             <FormatKpiCard>
               <Kpi spec={toVegaLiteSpec(downloadKpiSpec)} />
             </FormatKpiCard>
           </KpiCard>
-        </Box>
-        <Box sx={{ flex: "1 0 0" }}>
+        </SectionFirstColumnLayout>
+        <SectionSecondColumnLayout>
           <DownloadTrend selYear={null} />
-        </Box>
+        </SectionSecondColumnLayout>
       </SectionLayout>
       <SectionLayout title="Servizi e enti attivi">
-        <Box sx={{ flex: "0 0 25%" }}>
-          <Stack direction="column" spacing={4}>
-            <KpiCard subLabel="Servizi totali disponibili in app">
-              <Icons.InitiavesIcon />
-              <FormatKpiCard>
-                <Kpi spec={toVegaLiteSpec(servicesKpiSpec)} />
-              </FormatKpiCard>
-            </KpiCard>
-            <KpiCard subLabel="Enti attivi">
-              <Icons.InitiavesIcon />
-              <FormatKpiCard>
-                <Kpi spec={toVegaLiteSpec(entiKpiSpec)} />
-              </FormatKpiCard>
-            </KpiCard>
-          </Stack>
-        </Box>
-        <Box sx={{ flex: "1 0 0" }}>
-          <DownloadTrend selYear={null} />
-        </Box>
+        <SectionFirstColumnLayout>
+          <KpiCard subLabel="Servizi totali disponibili in app">
+            <Icons.InitiavesIcon />
+            <FormatKpiCard>
+              <Kpi spec={toVegaLiteSpec(servicesKpiSpec)} />
+            </FormatKpiCard>
+          </KpiCard>
+          <KpiCard subLabel="Enti attivi">
+            <Icons.CreditCardIcon />
+            <FormatKpiCard>
+              <Kpi spec={toVegaLiteSpec(entiKpiSpec)} />
+            </FormatKpiCard>
+          </KpiCard>
+        </SectionFirstColumnLayout>
+        <SectionSecondColumnLayout>
+          <ServicesTrend />
+        </SectionSecondColumnLayout>
       </SectionLayout>
       <SectionLayout title="Messaggi">
-        <Box sx={{ flex: "0 0 25%" }}>
+        <SectionFirstColumnLayout>
           <KpiCard subLabel="Messaggi inviati dagli enti dal 2020">
             <Icons.MessageIcon />
             <FormatKpiCard>
               <Kpi spec={toVegaLiteSpec(messagesKpiSpec)} />
             </FormatKpiCard>
           </KpiCard>
-        </Box>
-        <Box sx={{ flex: "1 0 0" }}>
+        </SectionFirstColumnLayout>
+        <SectionSecondColumnLayout>
           <MessagesTrend />
-        </Box>
+        </SectionSecondColumnLayout>
       </SectionLayout>
 
       {/* <Tabs tabs={tabs.map((tab) => tab.label)} onTabChange={handleTabChange} />

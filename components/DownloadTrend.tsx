@@ -53,10 +53,6 @@ const DownloadTrend = ({ selYear }: Props) => {
   const handleOptionsTotalDigitalAnalog = (id: number) => {
     setCurOptionTotalDigitalAnalog(id);
   };
-  const getLabel = (id: number) => {
-    const result = optionsTotalDigitalAnalog.find((f) => f.id === id);
-    return result ? result.label : "total";
-  };
   return (
     <KpiCard>
       <Stack direction="row" spacing={2} alignItems="center">
@@ -98,8 +94,6 @@ const DownloadTrend = ({ selYear }: Props) => {
       <Box style={{ height: "22rem" }}>
         <CumulativeChart
           spec={toVegaLiteSpec(downloadSpec)}
-          cumulativeSignal={curOptionCumulativeDaily === 1 ? true : false}
-          filterSignal={getLabel(curOptionTotalDigitalAnalog)}
           yearSignal={selYear}
         />
       </Box>

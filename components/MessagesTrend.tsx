@@ -1,4 +1,4 @@
-import messagesSeriesSpec from "@/assets/data/messages-series.vl.json";
+import messagesTrend from "@/assets/data/messages-trend.vl.json";
 import {
   Box,
   MenuItem,
@@ -61,8 +61,8 @@ const MessagesTrend = () => {
       </Stack>
       <Box style={{ height: "22rem" }}>
         <CumulativeChartMessages
-          spec={toVegaLiteSpec(messagesSeriesSpec)}
-          cumulativeSignal={curOptionCumulativeDaily === 1 ? true : false}
+          spec={toVegaLiteSpec(messagesTrend)}
+          yearSignal={2022}
         />
       </Box>
     </KpiCard>

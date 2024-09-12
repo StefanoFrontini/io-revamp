@@ -11,7 +11,7 @@ const SectionLayout = ({ title, children }: SectionLayoutProps) => {
   return (
     <Container
       component="section"
-      sx={{ py: 6, maxWidth: 1340, backgroundColor: "white" }}
+      sx={{ py: 6, maxWidth: 1340, backgroundColor: "white", height: "52rem" }}
       maxWidth={false}
     >
       <Stack
