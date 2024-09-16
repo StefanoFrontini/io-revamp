@@ -51,13 +51,22 @@
     "y": {
       "field": "metric_value",
       "type": "quantitative",
-      "axis": { "format": "~s" }
+      "axis": {
+        "format": "~s",
+        "labelFontWeight": 600,
+        "labelFont": "Titillium Web, sans-serif"
+      }
     },
     "x": {
       "field": "date",
       "type": "temporal",
       "timeUnit": "yearmonthdate",
-      "axis": { "format": "%b %Y", "gridDash": [6, 6] }
+      "axis": {
+        "format": "%b %Y",
+        "gridDash": [6, 6],
+        "labelFontWeight": 600,
+        "labelFont": "Titillium Web, sans-serif"
+      }
     },
     "tooltip": [
       {

@@ -7,7 +7,7 @@ const SectionFirstColumnLayout = ({
 }) => {
   return (
     <Box sx={{ flex: "0 0 25%" }}>
-      <Stack direction="column" spacing={4}>
+      <Stack direction="column" spacing={{ xs: 2, sm: 2, md: 4 }}>
         {children}
       </Stack>
     </Box>

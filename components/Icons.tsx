@@ -1,6 +1,11 @@
 import SvgIcon, { SvgIconProps } from "@mui/material/SvgIcon";
+
+const FormatIcon = (props: SvgIconProps) => {
+  const newProps = { ...props, sx: { fontSize: 48 } };
+  return <SvgIcon {...newProps}>{props.children}</SvgIcon>;
+};
 const CreditCardIcon = (props: SvgIconProps) => (
-  <SvgIcon {...props} sx={{ fontSize: 48 }}>
+  <FormatIcon {...props}>
     <svg
       width="48"
       height="48"
@@ -15,11 +20,11 @@ const CreditCardIcon = (props: SvgIconProps) => (
         fill="#BBC2D6"
       />
     </svg>
-  </SvgIcon>
+  </FormatIcon>
 );
 
 const DownloadIcon = (props: SvgIconProps) => (
-  <SvgIcon {...props} sx={{ fontSize: 48 }}>
+  <FormatIcon {...props}>
     <svg
       width="48"
       height="48"
@@ -34,11 +39,11 @@ const DownloadIcon = (props: SvgIconProps) => (
         fill="#BBC2D6"
       />
     </svg>
-  </SvgIcon>
+  </FormatIcon>
 );
 
 const InitiativesIcon = (props: SvgIconProps) => (
-  <SvgIcon {...props} sx={{ fontSize: 48 }}>
+  <FormatIcon {...props}>
     <svg
       width="48"
       height="48"
@@ -72,11 +77,11 @@ const InitiativesIcon = (props: SvgIconProps) => (
         </clipPath>
       </defs>
     </svg>
-  </SvgIcon>
+  </FormatIcon>
 );
 
 const MessageIcon = (props: SvgIconProps) => (
-  <SvgIcon {...props} sx={{ fontSize: 48 }}>
+  <FormatIcon {...props}>
     <svg
       width="48"
       height="48"
@@ -91,7 +96,45 @@ const MessageIcon = (props: SvgIconProps) => (
         fill="#BBC2D6"
       />
     </svg>
-  </SvgIcon>
+  </FormatIcon>
+);
+
+const NoteIcon = (props: SvgIconProps) => (
+  <FormatIcon {...props}>
+    <svg
+      width="48"
+      height="48"
+      viewBox="0 0 48 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M14 0C8.47715 0 4 4.47715 4 10V38C4 43.5228 8.47715 48 14 48H34C39.5228 48 44 43.5228 44 38V10C44 4.47715 39.5228 0 34 0H14ZM8 10C8 6.68629 10.6863 4 14 4H34C37.3137 4 40 6.68629 40 10V31.0242C39.0611 31.6713 37.1631 32 34.8588 32H13.1403C11.3759 32 9.13667 32.6427 8 33.4129V10ZM8 37.8466V38C8 41.3137 10.6863 44 14 44H34C37.3137 44 40 41.3137 40 38V35.2588C38.5449 35.8463 36.7822 36 34.8609 36H13.1424C10.8359 36 8.93763 36.8775 8 37.8466ZM12 12C12 10.8954 12.8954 10 14 10H32C33.1046 10 34 10.8954 34 12C34 13.1046 33.1046 14 32 14H14C12.8954 14 12 13.1046 12 12ZM14 16C12.8954 16 12 16.8954 12 18C12 19.1046 12.8954 20 14 20H26C27.1046 20 28 19.1046 28 18C28 16.8954 27.1046 16 26 16H14Z"
+        fill="#00C5CA"
+      />
+    </svg>
+  </FormatIcon>
+);
+
+const EntityIcon = (props: SvgIconProps) => (
+  <FormatIcon {...props}>
+    <svg
+      width="48"
+      height="48"
+      viewBox="0 0 48 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M20.8047 5.36994C22.7682 4.12042 25.2775 4.12042 27.2411 5.36994L43.0784 15.4483C43.6548 15.815 44.0038 16.4508 44.0038 17.134L43.958 19.9807H3.99619L4.04195 17.134C4.04195 16.4508 4.39097 15.815 4.96731 15.4483L20.8047 5.36994ZM29.3865 1.99851C26.114 -0.0840179 21.9318 -0.0840126 18.6592 1.99851L2.82186 12.0768C1.09282 13.1771 0.0457618 15.0845 0.0457618 17.134L0 21.9788C0 23.0823 0.894577 23.9769 1.99809 23.9769H3.99619V43.9579H1.99809C0.894577 43.9579 0 44.8525 0 45.956C0 47.0595 0.894577 47.9541 1.99809 47.9541H5.99428H13.9867H33.9676H41.96H45.9561C47.0597 47.9541 47.9542 47.0595 47.9542 45.956C47.9542 44.8525 47.0597 43.9579 45.9561 43.9579H43.958V23.9769H45.9561C47.0597 23.9769 47.9542 23.0823 47.9542 21.9788L48 17.134C48 15.0845 46.9529 13.1771 45.2239 12.0768L29.3865 1.99851ZM11.9886 43.9579H7.99237V23.977H11.9886V43.9579ZM31.9695 23.9769V43.9579H15.9847V23.9769H31.9695ZM39.9619 43.9579H35.9657V23.977H39.9619V43.9579ZM27.02 12.9421C27.02 14.5974 25.6782 15.9392 24.0229 15.9392C22.3676 15.9392 21.0257 14.5974 21.0257 12.9421C21.0257 11.2868 22.3676 9.94493 24.0229 9.94493C25.6782 9.94493 27.02 11.2868 27.02 12.9421Z"
+        fill="#BBC2D6"
+      />
+    </svg>
+  </FormatIcon>
 );
 
 const Icons = ({ children }: { children: React.ReactNode }) => <>{children}</>;
@@ -100,5 +143,7 @@ Icons.CreditCardIcon = CreditCardIcon;
 Icons.MessageIcon = MessageIcon;
 Icons.InitiavesIcon = InitiativesIcon;
 Icons.DownloadIcon = DownloadIcon;
+Icons.NoteIcon = NoteIcon;
+Icons.EntityIcon = EntityIcon;
 
 export default Icons;

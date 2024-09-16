@@ -12,7 +12,11 @@
     "y": {
       "field": "num_iun_total",
       "type": "quantitative",
-      "axis": { "format": "~s" }
+      "axis": {
+        "format": "~s",
+        "labelFontWeight": 600,
+        "labelFont": "Titillium Web, sans-serif"
+      }
     },
     "x": {
       "field": "month",
@@ -21,7 +25,9 @@
       "axis": {
         "gridDash": [6, 6],
         "tickCount": 12,
-        "grid": true
+        "grid": true,
+        "labelFontWeight": 600,
+        "labelFont": "Titillium Web, sans-serif"
       }
     },
     "color": { "value": "#0B3EE3" },

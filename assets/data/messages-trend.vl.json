@@ -68,7 +68,6 @@
       "axis": {
         "format": "~s",
         "labelFontWeight": 600,
-        "labelFontSize": 18,
         "labelFont": "Titillium Web, sans-serif"
       }
     },
@@ -80,8 +79,8 @@
         "grid": true,
         "labelAngle": 0,
         "labelFontWeight": 600,
-        "labelFontSize": 18,
-        "labelFont": "Titillium Web, sans-serif"
+        "labelFont": "Titillium Web, sans-serif",
+        "labelOverlap": true
       },
       "sort": [
         "Gen",
