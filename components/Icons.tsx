@@ -1,7 +1,7 @@
 import SvgIcon, { SvgIconProps } from "@mui/material/SvgIcon";
 
 const FormatIcon = (props: SvgIconProps) => {
-  const newProps = { ...props, sx: { fontSize: 48 } };
+  const newProps = { sx: { fontSize: 48 }, ...props };
   return <SvgIcon {...newProps}>{props.children}</SvgIcon>;
 };
 const CreditCardIcon = (props: SvgIconProps) => (

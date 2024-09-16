@@ -1,3 +1,4 @@
+import { dashboardColors } from "@/styles/colors";
 import {
   Box,
   MenuItem,
@@ -10,6 +11,7 @@ import { useState } from "react";
 import downloadSpec from "../assets/data/download.vl.json";
 import { toVegaLiteSpec } from "../shared/toVegaLiteSpec";
 import CumulativeChart from "./CumulativeChart";
+import Icons from "./Icons";
 import KpiCard from "./KpiCard";
 
 type Props = {
@@ -96,6 +98,27 @@ const DownloadTrend = ({ selYear }: Props) => {
           spec={toVegaLiteSpec(downloadSpec)}
           yearSignal={selYear}
         />
+      </Box>
+      <Typography
+        sx={{ fontSize: "0.75rem", fontWeight: 600, lineHeight: 1.166666 }}
+      >
+        I dati mostrati sono da considerare come valori cumulati
+      </Typography>
+      <Box sx={{ backgroundColor: dashboardColors.get("turquoise"), p: 2 }}>
+        <Stack direction="row" spacing={1} alignItems="center">
+          <Icons.NoteIcon sx={{ fontSize: "1.5rem" }} />{" "}
+          <Typography
+            sx={{ fontSize: "1rem", fontWeight: 600, lineHeight: 1.5 }}
+          >
+            Cos’è un dato cumulato
+          </Typography>
+        </Stack>
+        <Box sx={{ mt: 1 }}>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Odit,
+          deserunt officiis? Fugit culpa veniam nam, molestiae vero, esse magni
+          dolor illum repellat temporibus et, id distinctio aut provident libero
+          iste.
+        </Box>
       </Box>
     </KpiCard>
   );

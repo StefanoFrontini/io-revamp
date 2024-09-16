@@ -89,7 +89,7 @@ export default function Home() {
             </FormatKpiCard>
           </KpiCard>
           <KpiCard subLabel="Enti attivi">
-            <Icons.CreditCardIcon />
+            <Icons.EntityIcon />
             <FormatKpiCard>
               <Kpi spec={toVegaLiteSpec(entiKpiSpec)} />
             </FormatKpiCard>
