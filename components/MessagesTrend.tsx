@@ -1,4 +1,6 @@
 import messagesTrend from "@/assets/data/messages-trend.vl.json";
+import { dashboardColors } from "@/styles/colors";
+import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import {
   Box,
   MenuItem,
@@ -12,59 +14,95 @@ import { toVegaLiteSpec } from "../shared/toVegaLiteSpec";
 import CumulativeChartMessages from "./CumulativeChartMessages";
 import KpiCard from "./KpiCard";
 
-type LabelsCumulativeDaily = "aggregate" | "monthly";
+const curYear = new Date().getFullYear();
 
-type OptionsCumulativeDaily = {
-  id: number;
-  label: LabelsCumulativeDaily;
-};
-
-const optionsCumulativeDaily: OptionsCumulativeDaily[] = [
-  { id: 1, label: "aggregate" },
-  { id: 2, label: "monthly" },
+const optionsYear = [
+  {
+    id: 1,
+    label: "overall",
+    chart: null,
+  },
+  {
+    id: 2,
+    label: String(curYear),
+    chart: curYear,
+  },
+  {
+    id: 3,
+    label: String(curYear - 1),
+    chart: curYear - 1,
+  },
+  {
+    id: 4,
+    label: String(curYear - 2),
+    chart: curYear - 2,
+  },
 ];
 
 const MessagesTrend = () => {
-  const [curOptionCumulativeDaily, setCurOptionCumulativeDaily] = useState(
-    optionsCumulativeDaily[0].id
-  );
+  const [curOptionYear, setCurOptionYear] = useState(optionsYear[0].id);
 
-  const handleOptionCumulativeDaily = (id: number) => {
-    setCurOptionCumulativeDaily(id);
+  const handleOptionsYear = (id: number) => {
+    setCurOptionYear(id);
+  };
+  const getChartOption = (id: number) => {
+    const result = optionsYear.find((f) => f.id === id);
+    return result ? result.chart : null;
   };
 
   return (
     <KpiCard>
-      <Stack direction="row" spacing={2} alignItems="center">
-        <Typography variant="caption" color="textSecondary">
-          description
+      <Typography
+        sx={{ fontWeight: 700, fontSize: "2rem", lineHeight: 1.3125 }}
+      >
+        Andamento dei messaggi inviati
+      </Typography>
+      <Stack
+        direction={{ xs: "column", sm: "row" }}
+        spacing={2}
+        alignItems={{ xs: "flex-start", sm: "center" }}
+      >
+        <Typography
+          sx={{ fontSize: "1.125rem", fontWeight: 600, lineHeight: 1.333333 }}
+        >
+          Seleziona il periodo di riferimento
         </Typography>
 
         <Select
-          value={curOptionCumulativeDaily}
+          IconComponent={ExpandMoreOutlinedIcon}
+          value={curOptionYear}
           size="small"
-          sx={{ fontSize: 14 }}
+          sx={{
+            fontSize: "1.125rem",
+            fontWeight: 600,
+            lineHeight: 1.333333,
+            color: dashboardColors.get("grey-850"),
+            "& .MuiSvgIcon-root": {
+              color: dashboardColors.get("blue-500"),
+            },
+          }}
           onChange={(e: SelectChangeEvent<number>) =>
-            handleOptionCumulativeDaily(+e.target.value)
+            handleOptionsYear(+e.target.value)
           }
         >
-          {optionsCumulativeDaily.map((option) => (
+          {optionsYear.map((option) => (
             <MenuItem key={option.id} value={option.id}>
-              label
+              {option.label}
             </MenuItem>
           ))}
         </Select>
-        <Typography variant="caption" color="textSecondary">
-          {" "}
-          description
-        </Typography>
       </Stack>
       <Box style={{ height: "22rem" }}>
         <CumulativeChartMessages
           spec={toVegaLiteSpec(messagesTrend)}
-          yearSignal={2022}
+          yearSignal={getChartOption(curOptionYear)}
         />
       </Box>
+      <Typography
+        sx={{ fontSize: "0.75rem", fontWeight: 600, lineHeight: 1.166666 }}
+      >
+        I dati mostrati sono da considerare come valori cumulati
+      </Typography>
     </KpiCard>
   );
 };
