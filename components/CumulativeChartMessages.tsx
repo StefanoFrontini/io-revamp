@@ -8,28 +8,31 @@ type Props = {
   spec: TopLevelSpec;
   yearSignal: number | null;
 };
-const CumulativeChartMessages = ({
-  spec,
-  yearSignal,
-}: // filterSignal,
-Props) => {
+type Values = {
+  total_count: number;
+  formatted_label: string;
+};
+const CumulativeChartMessages = ({ spec, yearSignal }: Props) => {
   const [chart, setChart] = useState<Result | null>(null);
   const chartContent = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!chartContent.current) return;
-    embed(chartContent.current, spec, chartConfig).then(setChart);
-  }, [spec]);
-
-  // useEffect(() => {
-  //   if (chart === null) return;
-  //   chart.view.signal("is_overall", overallSignal).runAsync();
-  // }, [chart, overallSignal]);
-
-  // useEffect(() => {
-  //   if (chart === null) return;
-  //   chart.view.signal("notification_type", filterSignal).runAsync();
-  // }, [chart, filterSignal]);
+    const tooltipOptions = {
+      formatTooltip: (
+        value: Values,
+        sanitize: (x: string | number) => string
+      ) =>
+        `
+      <p>${sanitize(value.formatted_label)}&nbsp;${
+          yearSignal ? yearSignal : ""
+        }</p>
+      <p>${sanitize(value.total_count)}</p>
+  `,
+    };
+    const options = { ...chartConfig, tooltip: tooltipOptions };
+    embed(chartContent.current, spec, options).then(setChart);
+  }, [spec, yearSignal]);
 
   useEffect(() => {
     if (chart === null) return;

@@ -100,14 +100,11 @@
     "color": { "value": "#0B3EE3" },
     "tooltip": [
       {
-        "field": "formatted_label",
-        "type": "ordinal",
-        "title": "Anno o Data"
+        "field": "total_count",
+        "format": ","
       },
       {
-        "field": "total_count",
-        "title": "Messaggi",
-        "format": ","
+        "field": "formatted_label"
       }
     ]
   }
