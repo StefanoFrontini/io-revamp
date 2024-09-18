@@ -4,7 +4,7 @@
   "height": "container",
   "padding": 5,
   "data": {
-    "url": "https://gist.githubusercontent.com/StefanoFrontini/226359c662d78a7de33f5e5ec688e3f0/raw/ea55b6b0f6313e545ccd53825aca4ef49fcd8621/io.json",
+    "url": "https://pdnd-prod-dl-1-public-data.s3.eu-central-1.amazonaws.com/dashboard/io/dashboard-io.json",
     "format": { "property": "messages" }
   },
   "params": [

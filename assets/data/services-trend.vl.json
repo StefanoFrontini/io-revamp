@@ -4,13 +4,19 @@
   "height": "container",
   "padding": 5,
   "data": {
-    "url": "https://pdnd-prod-dl-1-public-data.s3.eu-central-1.amazonaws.com/dashboard/send/dashboard-send-sezione1.json",
-    "format": { "property": "notifiche_per_mese" }
+    "url": "https://pdnd-prod-dl-1-public-data.s3.eu-central-1.amazonaws.com/dashboard/io/dashboard-io.json",
+    "format": { "property": "services" }
   },
+  "transform": [
+    {
+      "calculate": "year(datum.date)",
+      "as": "year"
+    }
+  ],
   "mark": { "type": "bar", "width": { "band": 0.7 }, "cornerRadiusEnd": 5 },
   "encoding": {
     "y": {
-      "field": "num_iun_total",
+      "field": "count",
       "type": "quantitative",
       "axis": {
         "format": "~s",
@@ -19,13 +25,12 @@
       }
     },
     "x": {
-      "field": "month",
-      "timeUnit": "month",
+      "field": "year",
       "type": "ordinal",
       "axis": {
         "gridDash": [6, 6],
-        "tickCount": 12,
         "grid": true,
+        "labelAngle": 0,
         "labelFontWeight": 600,
         "labelFont": "Titillium Web, sans-serif"
       }
@@ -33,15 +38,10 @@
     "color": { "value": "#0B3EE3" },
     "tooltip": [
       {
-        "field": "month",
-        "type": "temporal",
-        "title": "Mese",
-        "format": "%m/%Y"
+        "field": "year"
       },
-      { "field": "cumulative", "title": "Notifiche cumulate", "format": "," },
       {
-        "field": "num_iun_total",
-        "title": "Notifiche mensili",
+        "field": "count",
         "format": ","
       }
     ]

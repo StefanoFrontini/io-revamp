@@ -16,7 +16,7 @@ const ServicesTrend = () => {
           lineHeight: "1.5rem",
         }}
       >
-        title
+        I servizi su IO:
       </Typography>
       <ServicesChart spec={toVegaLiteSpec(servicesTrend)} />
     </KpiCard>

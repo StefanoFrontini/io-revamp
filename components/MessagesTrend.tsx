@@ -63,7 +63,12 @@ const MessagesTrend = () => {
         alignItems={{ xs: "flex-start", sm: "center" }}
       >
         <Typography
-          sx={{ fontSize: "1.125rem", fontWeight: 600, lineHeight: 1.333333 }}
+          sx={{
+            color: dashboardColors.get("grey-650"),
+            fontWeight: 600,
+            fontSize: "1.125rem",
+            lineHeight: "1.5rem",
+          }}
         >
           Seleziona il periodo di riferimento
         </Typography>
