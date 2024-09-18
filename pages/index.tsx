@@ -77,7 +77,7 @@ export default function Home() {
           </KpiCard>
         </SectionFirstColumnLayout>
         <SectionSecondColumnLayout>
-          <DownloadTrend selYear={null} />
+          <DownloadTrend />
         </SectionSecondColumnLayout>
       </SectionLayout>
       <SectionLayout title="Servizi e enti attivi">

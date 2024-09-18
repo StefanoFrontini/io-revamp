@@ -1,4 +1,5 @@
 import { dashboardColors } from "@/styles/colors";
+import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import {
   Box,
   MenuItem,
@@ -14,81 +15,80 @@ import CumulativeChart from "./CumulativeChart";
 import Icons from "./Icons";
 import KpiCard from "./KpiCard";
 
-type Props = {
-  selYear: number | null;
-};
+const curYear = new Date().getFullYear();
 
-type LabelsCumulativeDaily = "aggregate" | "monthly";
-type LabelsTotalDigitalAnalog = "total" | "digital" | "analog";
-
-type OptionsCumulativeDaily = {
-  id: number;
-  label: LabelsCumulativeDaily;
-};
-type OptionsTotalDigitalAnalog = {
-  id: number;
-  label: LabelsTotalDigitalAnalog;
-};
-
-const optionsCumulativeDaily: OptionsCumulativeDaily[] = [
-  { id: 1, label: "aggregate" },
-  { id: 2, label: "monthly" },
+const optionsYear = [
+  {
+    id: 1,
+    label: "overall",
+    chart: null,
+  },
+  {
+    id: 2,
+    label: String(curYear),
+    chart: curYear,
+  },
+  {
+    id: 3,
+    label: String(curYear - 1),
+    chart: curYear - 1,
+  },
+  {
+    id: 4,
+    label: String(curYear - 2),
+    chart: curYear - 2,
+  },
 ];
 
-const optionsTotalDigitalAnalog: OptionsTotalDigitalAnalog[] = [
-  { id: 1, label: "total" },
-  { id: 2, label: "digital" },
-  { id: 3, label: "analog" },
-];
+const DownloadTrend = () => {
+  const [curOptionYear, setCurOptionYear] = useState(optionsYear[0].id);
 
-const DownloadTrend = ({ selYear }: Props) => {
-  const [curOptionCumulativeDaily, setCurOptionCumulativeDaily] = useState(
-    optionsCumulativeDaily[0].id
-  );
-  const [curOptionTotalDigitalAnalog, setCurOptionTotalDigitalAnalog] =
-    useState(optionsTotalDigitalAnalog[0].id);
-
-  const handleOptionCumulativeDaily = (id: number) => {
-    setCurOptionCumulativeDaily(id);
+  const handleOptionsYear = (id: number) => {
+    setCurOptionYear(id);
+  };
+  const getChartOption = (id: number) => {
+    const result = optionsYear.find((f) => f.id === id);
+    return result ? result.chart : null;
   };
 
-  const handleOptionsTotalDigitalAnalog = (id: number) => {
-    setCurOptionTotalDigitalAnalog(id);
-  };
   return (
     <KpiCard>
-      <Stack direction="row" spacing={2} alignItems="center">
-        <Typography variant="caption" color="textSecondary">
-          description
+      <Stack
+        direction={{ xs: "column", sm: "row" }}
+        spacing={2}
+        alignItems={{ xs: "flex-start", sm: "center" }}
+      >
+        <Typography
+          sx={{
+            color: dashboardColors.get("grey-650"),
+            fontWeight: 600,
+            fontSize: "1.125rem",
+            lineHeight: "1.5rem",
+          }}
+        >
+          Seleziona il periodo di riferimento
         </Typography>
 
         <Select
-          value={curOptionCumulativeDaily}
+          IconComponent={ExpandMoreOutlinedIcon}
+          value={curOptionYear}
           size="small"
-          sx={{ fontSize: 14 }}
+          sx={{
+            fontSize: "1.125rem",
+            fontWeight: 600,
+            lineHeight: 1.333333,
+            color: dashboardColors.get("grey-850"),
+            "& .MuiSvgIcon-root": {
+              color: dashboardColors.get("blue-500"),
+            },
+          }}
           onChange={(e: SelectChangeEvent<number>) =>
-            handleOptionCumulativeDaily(+e.target.value)
+            handleOptionsYear(+e.target.value)
           }
         >
-          {optionsCumulativeDaily.map((option) => (
+          {optionsYear.map((option) => (
             <MenuItem key={option.id} value={option.id}>
-              label
-            </MenuItem>
-          ))}
-        </Select>
-        <Typography variant="caption" color="textSecondary">
-          {" "}
-          description
-        </Typography>
-        <Select
-          size={"small"}
-          sx={{ fontSize: 14 }}
-          value={curOptionTotalDigitalAnalog}
-          onChange={(e) => handleOptionsTotalDigitalAnalog(+e.target.value)}
-        >
-          {optionsTotalDigitalAnalog.map((option) => (
-            <MenuItem key={option.id} value={option.id}>
-              label
+              {option.label}
             </MenuItem>
           ))}
         </Select>
@@ -96,7 +96,7 @@ const DownloadTrend = ({ selYear }: Props) => {
       <Box style={{ height: "22rem" }}>
         <CumulativeChart
           spec={toVegaLiteSpec(downloadSpec)}
-          yearSignal={selYear}
+          yearSignal={getChartOption(curOptionYear)}
         />
       </Box>
       <Typography
