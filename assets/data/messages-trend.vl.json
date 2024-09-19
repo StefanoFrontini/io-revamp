@@ -42,7 +42,7 @@
       "as": "month"
     },
     {
-      "calculate": "datum.month == 0 ? 'Gen' : datum.month == 1 ? 'Feb' : datum.month == 2 ? 'Mar' : datum.month == 3 ? 'Apr' : datum.month == 4 ? 'Mag' : datum.month == 5 ? 'Giu' : datum.month == 6 ? 'Lug' : datum.month == 7 ? 'Ago' : datum.month == 8 ? 'Set' : datum.month == 9 ? 'Ott' : datum.month == 10 ? 'Nov' : 'Dic'",
+      "calculate": "datum.month === 0 ? 'Gen' : datum.month === 1 ? 'Feb' : datum.month === 2 ? 'Mar' : datum.month === 3 ? 'Apr' : datum.month === 4 ? 'Mag' : datum.month === 5 ? 'Giu' : datum.month === 6 ? 'Lug' : datum.month === 7 ? 'Ago' : datum.month === 8 ? 'Set' : datum.month === 9 ? 'Ott' : datum.month === 10 ? 'Nov' : 'Dic'",
       "as": "month_name"
     },
     {
@@ -82,20 +82,8 @@
         "labelFont": "Titillium Web, sans-serif",
         "labelOverlap": true
       },
-      "sort": [
-        "Gen",
-        "Feb",
-        "Mar",
-        "Apr",
-        "Mag",
-        "Giu",
-        "Lug",
-        "Ago",
-        "Set",
-        "Ott",
-        "Nov",
-        "Dic"
-      ]
+
+      "sort": "y"
     },
     "color": { "value": "#0B3EE3" },
     "tooltip": [

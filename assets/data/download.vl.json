@@ -72,13 +72,11 @@
       {
         "field": "date",
         "type": "temporal",
-        "title": "Giorno",
         "format": "%d/%m/%Y"
       },
-      { "field": "cumulative", "title": "Downloads IO", "format": "," },
+      { "field": "cumulative", "format": "," },
       {
         "field": "$ae_first_open",
-        "title": "Downloads giornalieri",
         "format": ","
       }
     ]

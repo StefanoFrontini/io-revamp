@@ -8,24 +8,29 @@ type Props = {
   spec: TopLevelSpec;
   yearSignal: number | null;
 };
+type Values = {
+  date: number;
+  cumulative: string;
+};
 const CumulativeChart = ({ yearSignal, spec }: Props) => {
   const [chart, setChart] = useState<Result | null>(null);
   const chartContent = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!chartContent.current) return;
-    embed(chartContent.current, spec, chartConfig).then(setChart);
-  }, [spec]);
-
-  // useEffect(() => {
-  //   if (chart === null) return;
-  //   chart.view.signal("is_cumulative", cumulativeSignal).runAsync();
-  // }, [chart, cumulativeSignal]);
-
-  // useEffect(() => {
-  //   if (chart === null) return;
-  //   chart.view.signal("notification_type", filterSignal).runAsync();
-  // }, [chart, filterSignal]);
+    const tooltipOptions = {
+      formatTooltip: (
+        value: Values,
+        sanitize: (x: string | number) => string
+      ) =>
+        `
+      <p>${sanitize(value.date)}&nbsp;${yearSignal ? yearSignal : ""}</p>
+      <p>${sanitize(value.cumulative)}</p>
+  `,
+    };
+    const options = { ...chartConfig, tooltip: tooltipOptions };
+    embed(chartContent.current, spec, options).then(setChart);
+  }, [spec, yearSignal]);
 
   useEffect(() => {
     if (chart === null) return;
