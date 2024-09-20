@@ -15,7 +15,7 @@
   ],
   "transform": [
     {
-      "window": [{ "op": "max", "field": "data", "as": "last_date" }],
+      "window": [{ "op": "max", "field": "date", "as": "last_date" }],
       "frame": [null, null]
     },
     {
@@ -31,10 +31,10 @@
       "as": "two_years_ago_december"
     },
     {
-      "filter": "year === null ? datum.data === datum.two_years_ago_december || datum.data === datum.previous_year_december || datum.data === datum.last_year_december || datum.data === datum.last_date : year(datum.data) === year"
+      "filter": "year === null ? datum.date === datum.two_years_ago_december || datum.date === datum.previous_year_december || datum.date === datum.last_year_december || datum.date === datum.last_date : year(datum.date) === year"
     },
     {
-      "calculate": "year === null ? (datum.data === datum.two_years_ago_december ? year(datum.two_years_ago_december) : datum.data === datum.previous_year_december ? year(datum.previous_year_december) : datum.data === datum.last_year_december ? year(datum.last_year_december) : year(datum.last_date)) : datum.data",
+      "calculate": "year === null ? (datum.date === datum.two_years_ago_december ? year(datum.two_years_ago_december) : datum.date === datum.previous_year_december ? year(datum.previous_year_december) : datum.date === datum.last_year_december ? year(datum.last_year_december) : year(datum.last_date)) : datum.date",
       "as": "year_or_date"
     },
     {
@@ -68,19 +68,21 @@
       "axis": {
         "format": "~s",
         "labelFontWeight": 600,
-        "labelFont": "Titillium Web, sans-serif"
+        "labelFont": "Titillium Web, sans-serif",
+        "domain": false
       }
     },
     "x": {
       "field": "formatted_label",
       "type": "ordinal",
       "axis": {
-        "gridDash": [6, 6],
+        "gridDash": [4, 4],
         "grid": true,
         "labelAngle": 0,
         "labelFontWeight": 600,
         "labelFont": "Titillium Web, sans-serif",
-        "labelOverlap": true
+        "labelOverlap": true,
+        "tickDash": [4, 4]
       },
 
       "sort": "y"

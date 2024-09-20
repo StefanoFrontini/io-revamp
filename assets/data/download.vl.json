@@ -3,27 +3,11 @@
   "width": "container",
   "height": "container",
   "data": {
-    "url": "https://pdnd-prod-dl-1-public-data.s3.eu-central-1.amazonaws.com/dashboard/pagopa/dashboard-io.json",
+    "url": "https://pdnd-prod-dl-1-public-data.s3.eu-central-1.amazonaws.com/dashboard/io/dashboard-io.json",
     "format": { "property": "downloads" }
   },
-  "params": [
-    { "name": "is_cumulative", "value": true },
-    { "name": "year", "value": null }
-  ],
-  "transform": [
-    { "filter": "year === null || year(datum.date) === year" },
-    {
-      "window": [
-        { "op": "sum", "field": "$ae_first_open", "as": "cumulative" }
-      ],
-      "sort": [{ "field": "date" }]
-    },
-
-    {
-      "calculate": "is_cumulative ? datum.cumulative : datum.$ae_first_open",
-      "as": "metric_value"
-    }
-  ],
+  "params": [{ "name": "year", "value": null }],
+  "transform": [{ "filter": "year === null || year(datum.date) === year" }],
   "mark": {
     "type": "area",
     "line": {
@@ -49,12 +33,13 @@
   },
   "encoding": {
     "y": {
-      "field": "metric_value",
+      "field": "count",
       "type": "quantitative",
       "axis": {
         "format": "~s",
         "labelFontWeight": 600,
-        "labelFont": "Titillium Web, sans-serif"
+        "labelFont": "Titillium Web, sans-serif",
+        "domain": false
       }
     },
     "x": {
@@ -62,21 +47,22 @@
       "type": "temporal",
       "timeUnit": "yearmonthdate",
       "axis": {
-        "format": "%b %Y",
-        "gridDash": [6, 6],
+        "labelExpr": "year === null ? timeFormat(datum.value, '%b %Y') : timeFormat(datum.value, '%b')",
+        "gridDash": [4, 4],
         "labelFontWeight": 600,
-        "labelFont": "Titillium Web, sans-serif"
+        "labelFont": "Titillium Web, sans-serif",
+        "labelOverlap": "parity",
+        "tickDash": [4, 4]
       }
     },
     "tooltip": [
       {
         "field": "date",
         "type": "temporal",
-        "format": "%d/%m/%Y"
+        "format": "%b %Y"
       },
-      { "field": "cumulative", "format": "," },
       {
-        "field": "$ae_first_open",
+        "field": "count",
         "format": ","
       }
     ]

@@ -21,18 +21,20 @@
       "axis": {
         "format": "~s",
         "labelFontWeight": 600,
-        "labelFont": "Titillium Web, sans-serif"
+        "labelFont": "Titillium Web, sans-serif",
+        "domain": false
       }
     },
     "x": {
       "field": "year",
       "type": "ordinal",
       "axis": {
-        "gridDash": [6, 6],
+        "gridDash": [4, 4],
         "grid": true,
         "labelAngle": 0,
         "labelFontWeight": 600,
-        "labelFont": "Titillium Web, sans-serif"
+        "labelFont": "Titillium Web, sans-serif",
+        "tickDash": [4, 4]
       }
     },
     "color": { "value": "#0B3EE3" },

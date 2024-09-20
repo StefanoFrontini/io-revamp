@@ -10,7 +10,7 @@ type Props = {
 };
 type Values = {
   date: number;
-  cumulative: string;
+  count: string;
 };
 const CumulativeChart = ({ yearSignal, spec }: Props) => {
   const [chart, setChart] = useState<Result | null>(null);
@@ -24,8 +24,8 @@ const CumulativeChart = ({ yearSignal, spec }: Props) => {
         sanitize: (x: string | number) => string
       ) =>
         `
-      <p>${sanitize(value.date)}&nbsp;${yearSignal ? yearSignal : ""}</p>
-      <p>${sanitize(value.cumulative)}</p>
+      <p>${sanitize(value.date)}</p>
+      <p>${sanitize(value.count)}</p>
   `,
     };
     const options = { ...chartConfig, tooltip: tooltipOptions };
