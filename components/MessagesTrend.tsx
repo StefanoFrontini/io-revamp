@@ -90,9 +90,9 @@ const MessagesTrend = () => {
             handleOptionsYear(+e.target.value)
           }
         >
-          {optionsYear.map((option) => (
-            <MenuItem key={option.id} value={option.id}>
-              {option.label}
+          {optionsYear.map(({ id, label }) => (
+            <MenuItem key={id} value={id}>
+              {label}
             </MenuItem>
           ))}
         </Select>
