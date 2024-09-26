@@ -73,15 +73,6 @@ const DownloadTrend = () => {
           IconComponent={ExpandMoreOutlinedIcon}
           value={curOptionYear}
           size="small"
-          sx={{
-            fontSize: "1.125rem",
-            fontWeight: 600,
-            lineHeight: 1.333333,
-            color: dashboardColors.get("grey-850"),
-            "& .MuiSvgIcon-root": {
-              color: dashboardColors.get("blue-500"),
-            },
-          }}
           onChange={(e: SelectChangeEvent<number>) =>
             handleOptionsYear(+e.target.value)
           }
