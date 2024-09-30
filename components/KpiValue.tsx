@@ -15,7 +15,7 @@ const isSceneText = (
   item: VegaScene | VegaSceneGroup | SceneText
 ): item is SceneText => "text" in item;
 
-const Kpi = ({ spec }: Props) => {
+const KpiValue = ({ spec }: Props) => {
   const [text, setText] = useState("#");
 
   useEffect(() => {
@@ -30,4 +30,4 @@ const Kpi = ({ spec }: Props) => {
   return <>{text}</>;
 };
 
-export default Kpi;
+export default KpiValue;

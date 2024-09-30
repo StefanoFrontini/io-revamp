@@ -2,7 +2,7 @@ import { dashboardColors } from "@/styles/colors";
 import { Typography } from "@mui/material";
 import lastUpdateSpec from "../assets/data/last-update.vl.json";
 import { toVegaLiteSpec } from "../shared/toVegaLiteSpec";
-import KpiWrapper from "./Kpi";
+import KpiValue from "./KpiValue";
 
 const LastUpdate = () => {
   return (
@@ -15,7 +15,7 @@ const LastUpdate = () => {
       }}
     >
       Ultimo aggiornamento -&nbsp;
-      <KpiWrapper spec={toVegaLiteSpec(lastUpdateSpec)} />
+      <KpiValue spec={toVegaLiteSpec(lastUpdateSpec)} />
     </Typography>
   );
 };

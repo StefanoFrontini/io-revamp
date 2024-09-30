@@ -11,8 +11,8 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { toVegaLiteSpec } from "../shared/toVegaLiteSpec";
-import CumulativeChartMessages from "./CumulativeChartMessages";
 import KpiCard from "./KpiCard";
+import MessagesChart from "./old-MessagesChart";
 
 const curYear = new Date().getFullYear();
 
@@ -89,7 +89,7 @@ const MessagesTrend = () => {
         </Select>
       </Stack>
       <Box style={{ height: "22rem" }}>
-        <CumulativeChartMessages
+        <MessagesChart
           spec={toVegaLiteSpec(messagesTrend)}
           yearSignal={getChartOption(curOptionYear)}
         />

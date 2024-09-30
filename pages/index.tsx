@@ -3,15 +3,16 @@
 // import { useTheme } from "@mui/material/styles";
 // import localFont from "next/font/local";
 import downloadKpiSpec from "@/assets/data/download-kpi.vl.json";
+import downloadsTrend from "@/assets/data/downloads-trend.vl.json";
 import entiKpiSpec from "@/assets/data/enti-kpi.vl.json";
 import messagesKpiSpec from "@/assets/data/messages-kpi.vl.json";
+import messagesTrend from "@/assets/data/messages-trend.vl.json";
 import servicesKpiSpec from "@/assets/data/services-kpi.vl.json";
-import DownloadTrend from "@/components/DownloadTrend";
-import FormatKpiCard from "@/components/FormatKpiCard";
+import DownloadsMessagesTrend from "@/components/DownloadsMessagesTrend";
 import Icons from "@/components/Icons";
-import Kpi from "@/components/Kpi";
 import KpiCard from "@/components/KpiCard";
-import MessagesTrend from "@/components/MessagesTrend";
+import KpiCardFormat from "@/components/KpiCardFormat";
+import KpiValue from "@/components/KpiValue";
 import SectionFirstColumnLayout from "@/components/SectionFirstColumnLayout";
 import SectionLayout from "@/components/SectionLayout";
 import SectionSecondColumnLayout from "@/components/SectionSecondColumnLayout";
@@ -71,28 +72,31 @@ export default function Home() {
         <SectionFirstColumnLayout>
           <KpiCard subLabel="Download complessivi dal 2020">
             <Icons.DownloadIcon />
-            <FormatKpiCard>
-              <Kpi spec={toVegaLiteSpec(downloadKpiSpec)} />
-            </FormatKpiCard>
+            <KpiCardFormat>
+              <KpiValue spec={toVegaLiteSpec(downloadKpiSpec)} />
+            </KpiCardFormat>
           </KpiCard>
         </SectionFirstColumnLayout>
         <SectionSecondColumnLayout>
-          <DownloadTrend />
+          <DownloadsMessagesTrend
+            spec={toVegaLiteSpec(downloadsTrend)}
+            title="Andamento dei download"
+          />
         </SectionSecondColumnLayout>
       </SectionLayout>
       <SectionLayout title="Servizi e enti attivi">
         <SectionFirstColumnLayout>
           <KpiCard subLabel="Servizi totali disponibili in app">
             <Icons.InitiavesIcon />
-            <FormatKpiCard>
-              <Kpi spec={toVegaLiteSpec(servicesKpiSpec)} />
-            </FormatKpiCard>
+            <KpiCardFormat>
+              <KpiValue spec={toVegaLiteSpec(servicesKpiSpec)} />
+            </KpiCardFormat>
           </KpiCard>
           <KpiCard subLabel="Enti attivi">
             <Icons.EntityIcon />
-            <FormatKpiCard>
-              <Kpi spec={toVegaLiteSpec(entiKpiSpec)} />
-            </FormatKpiCard>
+            <KpiCardFormat>
+              <KpiValue spec={toVegaLiteSpec(entiKpiSpec)} />
+            </KpiCardFormat>
           </KpiCard>
         </SectionFirstColumnLayout>
         <SectionSecondColumnLayout>
@@ -103,13 +107,16 @@ export default function Home() {
         <SectionFirstColumnLayout>
           <KpiCard subLabel="Messaggi inviati dagli enti dal 2020">
             <Icons.MessageIcon />
-            <FormatKpiCard>
-              <Kpi spec={toVegaLiteSpec(messagesKpiSpec)} />
-            </FormatKpiCard>
+            <KpiCardFormat>
+              <KpiValue spec={toVegaLiteSpec(messagesKpiSpec)} />
+            </KpiCardFormat>
           </KpiCard>
         </SectionFirstColumnLayout>
         <SectionSecondColumnLayout>
-          <MessagesTrend />
+          <DownloadsMessagesTrend
+            spec={toVegaLiteSpec(messagesTrend)}
+            title="Andamento dei messaggi inviati"
+          />
         </SectionSecondColumnLayout>
       </SectionLayout>
 

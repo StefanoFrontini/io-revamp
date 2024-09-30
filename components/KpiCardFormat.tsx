@@ -1,7 +1,7 @@
 import { dashboardColors } from "@/styles/colors";
 import { Typography } from "@mui/material";
 
-const FormatKpiCard = ({ children }: { children: React.ReactNode }) => {
+const KpiCardFormat = ({ children }: { children: React.ReactNode }) => {
   return (
     <Typography
       component={"h3"}
@@ -17,4 +17,4 @@ const FormatKpiCard = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default FormatKpiCard;
+export default KpiCardFormat;

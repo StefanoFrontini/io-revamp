@@ -1,0 +1,101 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": "container",
+  "height": "container",
+  "padding": 5,
+  "data": {
+    "url": "https://pdnd-prod-dl-1-public-data.s3.eu-central-1.amazonaws.com/dashboard/io/dashboard-io.json",
+    "format": { "property": "downloads" }
+  },
+  "params": [
+    {
+      "name": "year",
+      "value": null
+    }
+  ],
+  "transform": [
+    {
+      "window": [{ "op": "max", "field": "date", "as": "last_date" }],
+      "frame": [null, null]
+    },
+    {
+      "calculate": "year(datum.last_date) + '-12'",
+      "as": "last_year_december"
+    },
+    {
+      "calculate": "(year(datum.last_date) - 1) + '-12'",
+      "as": "previous_year_december"
+    },
+    {
+      "calculate": "(year(datum.last_date) - 2) + '-12'",
+      "as": "two_years_ago_december"
+    },
+    {
+      "filter": "year === null ? datum.date === datum.two_years_ago_december || datum.date === datum.previous_year_december || datum.date === datum.last_year_december || datum.date === datum.last_date : year(datum.date) === year"
+    },
+    {
+      "calculate": "year === null ? (datum.date === datum.two_years_ago_december ? year(datum.two_years_ago_december) : datum.date === datum.previous_year_december ? year(datum.previous_year_december) : datum.date === datum.last_year_december ? year(datum.last_year_december) : year(datum.last_date)) : datum.date",
+      "as": "year_or_date"
+    },
+    {
+      "calculate": "month(datum.year_or_date)",
+      "as": "month"
+    },
+    {
+      "calculate": "datum.month === 0 ? 'Gen' : datum.month === 1 ? 'Feb' : datum.month === 2 ? 'Mar' : datum.month === 3 ? 'Apr' : datum.month === 4 ? 'Mag' : datum.month === 5 ? 'Giu' : datum.month === 6 ? 'Lug' : datum.month === 7 ? 'Ago' : datum.month === 8 ? 'Set' : datum.month === 9 ? 'Ott' : datum.month === 10 ? 'Nov' : 'Dic'",
+      "as": "month_name"
+    },
+    {
+      "calculate": "year === null ? datum.year_or_date : datum.month_name",
+      "as": "formatted_label"
+    },
+    {
+      "aggregate": [
+        {
+          "op": "sum",
+          "field": "count",
+          "as": "total_count"
+        }
+      ],
+      "groupby": ["formatted_label", "month"]
+    }
+  ],
+  "mark": { "type": "bar", "width": { "band": 0.7 }, "cornerRadiusEnd": 5 },
+  "encoding": {
+    "y": {
+      "field": "total_count",
+      "type": "quantitative",
+      "axis": {
+        "format": "~s",
+        "labelFontWeight": 600,
+        "labelFont": "Titillium Web, sans-serif",
+        "domain": false
+      }
+    },
+    "x": {
+      "field": "formatted_label",
+      "type": "ordinal",
+      "axis": {
+        "gridDash": [4, 4],
+        "grid": true,
+        "labelAngle": 0,
+        "labelFontWeight": 600,
+        "labelFont": "Titillium Web, sans-serif",
+        "labelOverlap": true,
+        "tickDash": [4, 4]
+      },
+
+      "sort": "y"
+    },
+    "color": { "value": "#0B3EE3" },
+    "tooltip": [
+      {
+        "field": "total_count",
+        "format": ","
+      },
+      {
+        "field": "formatted_label"
+      }
+    ]
+  }
+}

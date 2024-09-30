@@ -9,10 +9,10 @@ type Props = {
   yearSignal: number | null;
 };
 type Values = {
-  date: number;
-  count: string;
+  total_count: number;
+  formatted_label: string;
 };
-const CumulativeChart = ({ yearSignal, spec }: Props) => {
+const DownloadsMessagesChart = ({ spec, yearSignal }: Props) => {
   const [chart, setChart] = useState<Result | null>(null);
   const chartContent = useRef<HTMLDivElement>(null);
 
@@ -24,8 +24,10 @@ const CumulativeChart = ({ yearSignal, spec }: Props) => {
         sanitize: (x: string | number) => string
       ) =>
         `
-      <p>${sanitize(value.date)}</p>
-      <p>${sanitize(value.count)}</p>
+      <p>${sanitize(value.formatted_label)}&nbsp;${
+          yearSignal ? yearSignal : ""
+        }</p>
+      <p>${sanitize(value.total_count)}</p>
   `,
     };
     const options = { ...chartConfig, tooltip: tooltipOptions };
@@ -37,12 +39,6 @@ const CumulativeChart = ({ yearSignal, spec }: Props) => {
     chart.view.signal("year", yearSignal).runAsync();
   }, [chart, yearSignal]);
 
-  return (
-    <Box
-      sx={{ height: "100%", width: "100%" }}
-      ref={chartContent}
-      id="chart-content"
-    ></Box>
-  );
+  return <Box sx={{ height: "100%", width: "100%" }} ref={chartContent}></Box>;
 };
-export default CumulativeChart;
+export default DownloadsMessagesChart;

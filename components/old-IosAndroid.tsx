@@ -3,12 +3,12 @@
 // import notificationsTotalSpec from "../assets/data/notifications-total.vl.json";
 // import pieChartAnalogSpec from "../assets/data/pie-chart-analog.vl.json";
 // import pieChartDigitalSpec from "../assets/data/pie-chart-digital.vl.json";
-import downloadOsSpec from "@/assets/data/download-os.vl.json";
+import downloadOsSpec from "@/assets/data/old_download-os.vl.json";
 import { toVegaLiteSpec } from "@/shared/toVegaLiteSpec";
 import { dashboardColors } from "@/styles/colors";
 import { Box, Stack, Typography } from "@mui/material";
 import KpiCard from "./KpiCard";
-import PieChart from "./PieChart";
+import PieChart from "./old-PieChart";
 
 interface LegendProps {
   color: string | undefined;
