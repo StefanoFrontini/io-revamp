@@ -7,9 +7,6 @@ const nextConfig = {
   output: "export",
   assetPrefix: isProd ? "/assets/js/dashboard-new/" : undefined,
   generateBuildId: () => "fixed-build-id",
-  images: {
-    unoptimized: true,
-  },
   webpack: (config) => {
     config.externals = [...config.externals, "canvas", "jQuery"];
     config.optimization.splitChunks = false;

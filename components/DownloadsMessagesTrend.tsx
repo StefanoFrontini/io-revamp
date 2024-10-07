@@ -57,7 +57,12 @@ const DownloadsMessagesTrend = ({ title, spec }: Props) => {
   return (
     <KpiCard>
       <Typography
-        sx={{ fontWeight: 700, fontSize: "2rem", lineHeight: 1.3125 }}
+        sx={{
+          fontWeight: 700,
+          fontSize: "2rem",
+          lineHeight: 1.3125,
+          color: dashboardColors.get("grey-850"),
+        }}
       >
         {title}
       </Typography>
