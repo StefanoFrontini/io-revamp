@@ -1,4 +1,5 @@
-import { Html, Head, Main, NextScript } from "next/document";
+import { Head, Html, Main, NextScript } from "next/document";
+import Script from "next/script";
 
 export default function Document() {
   return (
@@ -7,6 +8,12 @@ export default function Document() {
       <body>
         <Main />
         <NextScript />
+        <Script
+          src="/iframe-resizer/child/index.umd.js"
+          type="text/javascript"
+          id="iframe-resizer-child"
+          strategy="beforeInteractive"
+        />
       </body>
     </Html>
   );

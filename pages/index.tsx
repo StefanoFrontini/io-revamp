@@ -18,7 +18,6 @@ import SectionLayout from "@/components/SectionLayout";
 import SectionSecondColumnLayout from "@/components/SectionSecondColumnLayout";
 import ServicesTrend from "@/components/ServicesTrend";
 import { toVegaLiteSpec } from "@/shared/toVegaLiteSpec";
-import Head from "next/head";
 // import { useState } from "react";
 // import Image from "next/image";
 
@@ -62,12 +61,6 @@ export default function Home() {
   // };
   return (
     <>
-      <Head>
-        <title>Dashboard IO</title>
-        <meta name="description" content="numeri" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
       <SectionLayout title="Download dell’app">
         <SectionFirstColumnLayout>
           <KpiCard subLabel="Download complessivi dal 2020">
