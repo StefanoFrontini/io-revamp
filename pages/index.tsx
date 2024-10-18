@@ -3,10 +3,12 @@
 // import { useTheme } from "@mui/material/styles";
 // import localFont from "next/font/local";
 import downloadKpiSpec from "@/assets/data/download-kpi.vl.json";
+import downloadsTrendJson from "@/assets/data/downloads-trend.vl.json";
 import entiKpiSpec from "@/assets/data/enti-kpi.vl.json";
 import messagesKpiSpec from "@/assets/data/messages-kpi.vl.json";
 import messagesTrendJson from "@/assets/data/messages-trend.vl.json";
 import servicesKpiSpec from "@/assets/data/services-kpi.vl.json";
+import DownloadsTrend from "@/components/DownloadsTrend";
 import MessagesTrend from "@/components/MessagesTrend";
 // import DownloadsMessagesTrend from "@/components/DownloadsMessagesTrend";
 import Icons from "@/components/Icons";
@@ -120,6 +122,13 @@ export default function Home() {
             idChart="messages-trend"
           />
         </SectionSecondColumnLayout> */}
+        <SectionSecondColumnLayout>
+          <DownloadsTrend
+            spec={toVegaLiteSpec(downloadsTrendJson)}
+            title="Andamento dei download"
+            idChart="downloads-trend"
+          />
+        </SectionSecondColumnLayout>
       </SectionLayout>
 
       {/* <Tabs tabs={tabs.map((tab) => tab.label)} onTabChange={handleTabChange} />
