@@ -3,14 +3,12 @@
 // import { useTheme } from "@mui/material/styles";
 // import localFont from "next/font/local";
 import downloadKpiSpec from "@/assets/data/download-kpi.vl.json";
-import downloadsTrend from "@/assets/data/downloads-trend.vl.json";
 import entiKpiSpec from "@/assets/data/enti-kpi.vl.json";
 import messagesKpiSpec from "@/assets/data/messages-kpi.vl.json";
 import messagesTrendJson from "@/assets/data/messages-trend.vl.json";
 import servicesKpiSpec from "@/assets/data/services-kpi.vl.json";
 import MessagesTrend from "@/components/MessagesTrend";
 // import DownloadsMessagesTrend from "@/components/DownloadsMessagesTrend";
-import DownloadsTrend from "@/components/DownloadsTrend";
 import Icons from "@/components/Icons";
 import KpiCard from "@/components/KpiCard";
 import KpiCardFormat from "@/components/KpiCardFormat";
@@ -72,13 +70,13 @@ export default function Home() {
             </KpiCardFormat>
           </KpiCard>
         </SectionFirstColumnLayout>
-        <SectionSecondColumnLayout>
+        {/* <SectionSecondColumnLayout>
           <DownloadsTrend
             spec={toVegaLiteSpec(downloadsTrend)}
             title="Andamento dei download"
             idChart="downloads-trend"
           />
-        </SectionSecondColumnLayout>
+        </SectionSecondColumnLayout> */}
       </SectionLayout>
       <SectionLayout title="Servizi e enti attivi">
         <SectionFirstColumnLayout>
