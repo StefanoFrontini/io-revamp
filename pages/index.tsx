@@ -6,9 +6,11 @@ import downloadKpiSpec from "@/assets/data/download-kpi.vl.json";
 import downloadsTrend from "@/assets/data/downloads-trend.vl.json";
 import entiKpiSpec from "@/assets/data/enti-kpi.vl.json";
 import messagesKpiSpec from "@/assets/data/messages-kpi.vl.json";
-import messagesTrend from "@/assets/data/messages-trend.vl.json";
+import messagesTrendJson from "@/assets/data/messages-trend.vl.json";
 import servicesKpiSpec from "@/assets/data/services-kpi.vl.json";
-import DownloadsMessagesTrend from "@/components/DownloadsMessagesTrend";
+import MessagesTrend from "@/components/MessagesTrend";
+// import DownloadsMessagesTrend from "@/components/DownloadsMessagesTrend";
+import DownloadsTrend from "@/components/DownloadsTrend";
 import Icons from "@/components/Icons";
 import KpiCard from "@/components/KpiCard";
 import KpiCardFormat from "@/components/KpiCardFormat";
@@ -71,7 +73,7 @@ export default function Home() {
           </KpiCard>
         </SectionFirstColumnLayout>
         <SectionSecondColumnLayout>
-          <DownloadsMessagesTrend
+          <DownloadsTrend
             spec={toVegaLiteSpec(downloadsTrend)}
             title="Andamento dei download"
             idChart="downloads-trend"
@@ -107,8 +109,8 @@ export default function Home() {
           </KpiCard>
         </SectionFirstColumnLayout>
         <SectionSecondColumnLayout>
-          <DownloadsMessagesTrend
-            spec={toVegaLiteSpec(messagesTrend)}
+          <MessagesTrend
+            spec={toVegaLiteSpec(messagesTrendJson)}
             title="Andamento dei messaggi inviati"
             idChart="messages-trend"
           />
