@@ -82,6 +82,7 @@ const DownloadsMessagesTrend = ({ idChart, title, spec }: Props) => {
           <Select
             IconComponent={ExpandMoreOutlinedIcon}
             id={idChart}
+            inputProps={{ id: idChart + "-input" }}
             value={curOptionYear}
             size="small"
             onChange={(e: SelectChangeEvent<number>) =>
