@@ -85,6 +85,7 @@ const DownloadsMessagesTrend = ({ idChart, title, spec }: Props) => {
             inputProps={{ id: idChart + "-input" }}
             value={curOptionYear}
             size="small"
+            MenuProps={{ disableScrollLock: true }}
             onChange={(e: SelectChangeEvent<number>) =>
               handleOptionsYear(+e.target.value)
             }
