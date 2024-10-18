@@ -77,6 +77,13 @@ export default function Home() {
             idChart="downloads-trend"
           />
         </SectionSecondColumnLayout> */}
+        <SectionSecondColumnLayout>
+          <MessagesTrend
+            spec={toVegaLiteSpec(messagesTrendJson)}
+            title="Andamento dei messaggi inviati"
+            idChart="messages-trend"
+          />
+        </SectionSecondColumnLayout>
       </SectionLayout>
       <SectionLayout title="Servizi e enti attivi">
         <SectionFirstColumnLayout>
@@ -106,13 +113,13 @@ export default function Home() {
             </KpiCardFormat>
           </KpiCard>
         </SectionFirstColumnLayout>
-        <SectionSecondColumnLayout>
+        {/* <SectionSecondColumnLayout>
           <MessagesTrend
             spec={toVegaLiteSpec(messagesTrendJson)}
             title="Andamento dei messaggi inviati"
             idChart="messages-trend"
           />
-        </SectionSecondColumnLayout>
+        </SectionSecondColumnLayout> */}
       </SectionLayout>
 
       {/* <Tabs tabs={tabs.map((tab) => tab.label)} onTabChange={handleTabChange} />
