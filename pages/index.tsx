@@ -74,6 +74,7 @@ export default function Home() {
           <DownloadsMessagesTrend
             spec={toVegaLiteSpec(downloadsTrend)}
             title="Andamento dei download"
+            idChart="downloads-trend"
           />
         </SectionSecondColumnLayout>
       </SectionLayout>
@@ -109,6 +110,7 @@ export default function Home() {
           <DownloadsMessagesTrend
             spec={toVegaLiteSpec(messagesTrend)}
             title="Andamento dei messaggi inviati"
+            idChart="messages-trend"
           />
         </SectionSecondColumnLayout>
       </SectionLayout>

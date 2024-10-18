@@ -2,6 +2,7 @@ import { dashboardColors } from "@/styles/colors";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import {
   Box,
+  FormControl,
   MenuItem,
   Select,
   SelectChangeEvent,
@@ -39,11 +40,12 @@ const optionsYear = [
 ];
 
 type Props = {
+  idChart: string;
   title: string;
   spec: TopLevelSpec;
 };
 
-const DownloadsMessagesTrend = ({ title, spec }: Props) => {
+const DownloadsMessagesTrend = ({ idChart, title, spec }: Props) => {
   const [curOptionYear, setCurOptionYear] = useState(optionsYear[0].id);
 
   const handleOptionsYear = (id: number) => {
@@ -76,21 +78,23 @@ const DownloadsMessagesTrend = ({ title, spec }: Props) => {
         >
           Seleziona il periodo di riferimento
         </Typography>
-
-        <Select
-          IconComponent={ExpandMoreOutlinedIcon}
-          value={curOptionYear}
-          size="small"
-          onChange={(e: SelectChangeEvent<number>) =>
-            handleOptionsYear(+e.target.value)
-          }
-        >
-          {optionsYear.map(({ id, label }) => (
-            <MenuItem key={id} value={id}>
-              {label}
-            </MenuItem>
-          ))}
-        </Select>
+        <FormControl>
+          <Select
+            IconComponent={ExpandMoreOutlinedIcon}
+            id={idChart}
+            value={curOptionYear}
+            size="small"
+            onChange={(e: SelectChangeEvent<number>) =>
+              handleOptionsYear(+e.target.value)
+            }
+          >
+            {optionsYear.map(({ id, label }) => (
+              <MenuItem key={id} value={id}>
+                {label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </Stack>
       <Box style={{ height: "22rem" }}>
         <DownloadsMessagesChart
