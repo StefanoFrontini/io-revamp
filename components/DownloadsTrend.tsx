@@ -115,8 +115,8 @@ const DownloadsMessagesTrend = ({ idChart, title, spec }: Props) => {
             value={curOptionYear}
             size="small"
             MenuProps={{
-              disableAutoFocus: true,
-              disableEnforceFocus: true,
+              disableAutoFocusItem: true,
+              autoFocus: false,
             }}
             onChange={(e: SelectChangeEvent<number>) =>
               handleOptionsYear(+e.target.value)
