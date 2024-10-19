@@ -12,7 +12,7 @@ export default function Document() {
           src="/iframe-resizer/child/index.umd.js"
           type="text/javascript"
           id="iframe-resizer-child"
-          strategy="lazyOnload"
+          strategy="beforeInteractive"
         />
       </body>
     </Html>
