@@ -106,7 +106,12 @@ const DownloadsMessagesTrend = ({ idChart, title, spec }: Props) => {
 
             IconComponent={ExpandMoreOutlinedIcon}
             id={idChart}
-            inputProps={{ id: idChart + "-input" }}
+            inputProps={{
+              id: idChart + "-input",
+              disableAutoFocus: true,
+              disableEnforceFocus: true,
+              autoFocusItem: false,
+            }}
             value={curOptionYear}
             size="small"
             MenuProps={{
