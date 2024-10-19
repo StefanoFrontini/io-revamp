@@ -99,6 +99,7 @@ const DownloadsMessagesTrend = ({ idChart, title, spec }: Props) => {
         </Typography>
         <FormControl>
           <Select
+            onClick={preventScrollOnFocus}
             onFocus={preventScrollOnFocus}
             IconComponent={ExpandMoreOutlinedIcon}
             id={idChart}
