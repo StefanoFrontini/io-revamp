@@ -108,15 +108,11 @@ const DownloadsMessagesTrend = ({ idChart, title, spec }: Props) => {
             id={idChart}
             inputProps={{
               id: idChart + "-input",
-              disableAutoFocus: true,
-              disableEnforceFocus: true,
-              autoFocusItem: false,
             }}
             value={curOptionYear}
             size="small"
             MenuProps={{
-              disableAutoFocusItem: true,
-              autoFocus: false,
+              disableAutoFocus: true,
             }}
             onChange={(e: SelectChangeEvent<number>) =>
               handleOptionsYear(+e.target.value)
