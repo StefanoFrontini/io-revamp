@@ -63,7 +63,11 @@ export default function Home() {
   //   setSelYear(tabs[tab].id);
   // };
   useEffect(() => {
-    scrollTo(0, 0);
+    window.iFrameResizer = {
+      onReady: function () {
+        window.parentIFrame.scrollTo(0, 0);
+      },
+    };
   }, []);
   return (
     <>
