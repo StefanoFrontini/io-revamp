@@ -20,6 +20,7 @@ import SectionLayout from "@/components/SectionLayout";
 import SectionSecondColumnLayout from "@/components/SectionSecondColumnLayout";
 import ServicesTrend from "@/components/ServicesTrend";
 import { toVegaLiteSpec } from "@/shared/toVegaLiteSpec";
+import { useEffect } from "react";
 // import { useState } from "react";
 // import Image from "next/image";
 
@@ -61,6 +62,9 @@ export default function Home() {
   //   }
   //   setSelYear(tabs[tab].id);
   // };
+  useEffect(() => {
+    scrollTo(0, 0);
+  }, []);
   return (
     <>
       <SectionLayout title="Download dell’app">
