@@ -9,7 +9,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { TopLevelSpec } from "vega-lite";
 import DownloadsMessagesChart from "./DownloadsMessagesChart";
 import KpiCard from "./KpiCard";
@@ -44,9 +44,28 @@ type Props = {
   title: string;
   spec: TopLevelSpec;
 };
+function usePreventScrollOnFocus() {
+  const scrollPos = useRef<[number, number]>([0, 0]);
+
+  useEffect(() => {
+    const scrollHandler = () => {
+      scrollPos.current[0] = window.scrollX;
+      scrollPos.current[1] = window.scrollY;
+    };
+    window.addEventListener("scroll", scrollHandler);
+    return () => window.removeEventListener("scroll", scrollHandler);
+  }, []);
+
+  const handleFocus = useCallback(() => {
+    window.scrollTo(...scrollPos.current);
+  }, []);
+
+  return handleFocus;
+}
 
 const DownloadsMessagesTrend = ({ idChart, title, spec }: Props) => {
   const [curOptionYear, setCurOptionYear] = useState(optionsYear[0].id);
+  const preventScrollOnFocus = usePreventScrollOnFocus();
 
   const handleOptionsYear = (id: number) => {
     setCurOptionYear(id);
@@ -80,12 +99,15 @@ const DownloadsMessagesTrend = ({ idChart, title, spec }: Props) => {
         </Typography>
         <FormControl>
           <Select
+            onFocus={preventScrollOnFocus}
             IconComponent={ExpandMoreOutlinedIcon}
             id={idChart}
             inputProps={{ id: idChart + "-input" }}
             value={curOptionYear}
             size="small"
-            MenuProps={{ disableScrollLock: true }}
+            MenuProps={{
+              onFocus: preventScrollOnFocus,
+            }}
             onChange={(e: SelectChangeEvent<number>) =>
               handleOptionsYear(+e.target.value)
             }

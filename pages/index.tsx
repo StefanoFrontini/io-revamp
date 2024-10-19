@@ -20,7 +20,7 @@ import SectionLayout from "@/components/SectionLayout";
 import SectionSecondColumnLayout from "@/components/SectionSecondColumnLayout";
 import ServicesTrend from "@/components/ServicesTrend";
 import { toVegaLiteSpec } from "@/shared/toVegaLiteSpec";
-import { useEffect } from "react";
+// import { useEffect } from "react";
 // import { useState } from "react";
 // import Image from "next/image";
 
@@ -51,6 +51,19 @@ import { useEffect } from "react";
 // const years = Array.from({ length: numYear }, (_, i) => curYear - i).map(
 //   (y) => ({ id: y, label: String(y) })
 // );
+// Extend the Window interface to include iFrameResizer
+// interface CustomWindow extends Window {
+//   iFrameResizer: {
+//     onReady: () => void;
+//   };
+//   parentIFrame: HTMLIFrameElement;
+// }
+
+// // Assign it to the window object
+// const customWindow = window as unknown as CustomWindow;
+// customWindow.iFrameResizer = {
+//   onReady: () => {},
+// };
 
 export default function Home() {
   // const [selYear, setSelYear] = useState<number | null>(null);
@@ -62,13 +75,14 @@ export default function Home() {
   //   }
   //   setSelYear(tabs[tab].id);
   // };
-  useEffect(() => {
-    window.iFrameResizer = {
-      onReady: function () {
-        window.parentIFrame.scrollTo(0, 0);
-      },
-    };
-  }, []);
+
+  // useEffect(() => {
+  //   customWindow.iFrameResizer = {
+  //     onReady: function () {
+  //       customWindow.parentIFrame.scrollTo(0, 0);
+  //     },
+  //   };
+  // }, []);
   return (
     <>
       <SectionLayout title="Download dell’app">
