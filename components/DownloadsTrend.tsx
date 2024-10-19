@@ -45,12 +45,14 @@ type Props = {
   spec: TopLevelSpec;
 };
 function usePreventScrollOnFocus() {
+  console.log("usePreventScrollOnFocus");
   const scrollPos = useRef<[number, number]>([0, 0]);
 
   useEffect(() => {
     const scrollHandler = () => {
       scrollPos.current[0] = window.scrollX;
       scrollPos.current[1] = window.scrollY;
+      console.log("scrollHandler", ...scrollPos.current);
     };
     window.addEventListener("scroll", scrollHandler);
     return () => window.removeEventListener("scroll", scrollHandler);
@@ -58,6 +60,7 @@ function usePreventScrollOnFocus() {
 
   const handleFocus = useCallback(() => {
     window.scrollTo(...scrollPos.current);
+    console.log("scrollTo", ...scrollPos.current);
   }, []);
 
   return handleFocus;
