@@ -9,7 +9,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { TopLevelSpec } from "vega-lite";
 import DownloadsMessagesChart from "./DownloadsMessagesChart";
 import KpiCard from "./KpiCard";
@@ -40,13 +40,13 @@ const optionsYear = [
 ];
 
 type Props = {
-  idChart: string;
   title: string;
   spec: TopLevelSpec;
 };
 
-const DownloadsMessagesTrend = ({ idChart, title, spec }: Props) => {
+const DownloadsMessagesTrend = ({ title, spec }: Props) => {
   const [curOptionYear, setCurOptionYear] = useState(optionsYear[0].id);
+  const selectId = useId();
 
   const handleOptionsYear = (id: number) => {
     setCurOptionYear(id);
@@ -81,8 +81,16 @@ const DownloadsMessagesTrend = ({ idChart, title, spec }: Props) => {
         <FormControl>
           <Select
             IconComponent={ExpandMoreOutlinedIcon}
-            id={idChart}
-            inputProps={{ id: idChart + "-input" }}
+            id={selectId}
+            MenuProps={{
+              autoFocus: false,
+              disableAutoFocusItem: true,
+              disableEnforceFocus: true,
+              disableAutoFocus: true,
+            }}
+            inputProps={{
+              id: selectId + "-input",
+            }}
             value={curOptionYear}
             size="small"
             onChange={(e: SelectChangeEvent<number>) =>
