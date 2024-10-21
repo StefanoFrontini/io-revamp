@@ -98,7 +98,7 @@ const DownloadsMessagesTrend = ({ title, spec }: Props) => {
             }
           >
             {optionsYear.map(({ id, label }) => (
-              <MenuItem key={id} value={id}>
+              <MenuItem sx={{ fontWeight: 600 }} key={id} value={id}>
                 {label}
               </MenuItem>
             ))}

@@ -20,7 +20,7 @@ body {
   /* color: var(--foreground);
   background: var(--background); */
   /* font-family: Arial, Helvetica, sans-serif; */
-  font-family: "Titillium Web", sans-serif;
+  /* font-family: "Titillium Web", sans-serif; */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -32,7 +32,7 @@ body {
 }
 
 #vg-tooltip-element {
-  font-family: "Titillium Web", sans-serif;
+  font-family: "__titilliumWeb_84b8aa";
   padding: 0.5rem;
   border: 0;
   line-height: 1.285;
