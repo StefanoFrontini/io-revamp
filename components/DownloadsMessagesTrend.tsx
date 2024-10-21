@@ -82,12 +82,12 @@ const DownloadsMessagesTrend = ({ title, spec }: Props) => {
           <Select
             IconComponent={ExpandMoreOutlinedIcon}
             id={selectId}
-            MenuProps={{
-              autoFocus: false,
-              disableAutoFocusItem: true,
-              disableEnforceFocus: true,
-              disableAutoFocus: true,
-            }}
+            // MenuProps={{
+            //   autoFocus: false,
+            //   disableAutoFocusItem: true,
+            //   disableEnforceFocus: true,
+            //   disableAutoFocus: true,
+            // }}
             inputProps={{
               id: selectId + "-input",
             }}
