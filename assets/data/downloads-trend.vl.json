@@ -68,7 +68,7 @@
       "axis": {
         "format": "~s",
         "labelFontWeight": 600,
-        "labelFont": "Titillium Web, sans-serif",
+        "labelFont": "titilliumWeb",
         "domain": false
       }
     },
@@ -78,9 +78,10 @@
       "axis": {
         "gridDash": [4, 4],
         "grid": true,
+        "gridColor": "#D2D6E3",
         "labelAngle": 0,
         "labelFontWeight": 600,
-        "labelFont": "Titillium Web, sans-serif",
+        "labelFont": "titilliumWeb",
         "labelOverlap": true,
         "tickDash": [4, 4]
       },

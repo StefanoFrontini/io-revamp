@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type JSX } from "react";
 import embed from "vega-embed";
 import { TopLevelSpec } from "vega-lite";
 import chartConfig from "../shared/chart-config";

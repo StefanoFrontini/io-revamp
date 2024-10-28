@@ -1,0 +1,75 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": 500,
+  "height": 300,
+  "data": {
+    "url": "https://raw.githubusercontent.com/openpolis/geojson-italy/refs/heads/master/topojson/limits_IT_regions.topo.json",
+    "format": {
+      "type": "topojson",
+      "feature": "regions"
+    }
+  },
+
+  "projection": {
+    "type": "mercator"
+  },
+  "mark": {
+    "type": "geoshape",
+    "stroke": "#636B82",
+    "strokeWidth": 0.5
+  },
+  "encoding": {
+    "color": {
+      "field": "num_serv",
+      "type": "quantitative"
+    },
+    "tooltip": [
+      { "field": "properties.reg_name", "type": "nominal", "title": "Regione" },
+      {
+        "field": "num_serv",
+        "type": "quantitative",
+        "format": ",",
+        "title": "Numero servizi"
+      }
+    ]
+  },
+  "transform": [
+    {
+      "lookup": "properties.reg_name",
+      "from": {
+        "data": {
+          "values": [
+            { "regione": "Marche", "num_serv": 11235 },
+            { "regione": "Liguria", "num_serv": 7509 },
+            { "regione": "Veneto", "num_serv": 32778 },
+            { "regione": "Lombardia", "num_serv": 54914 },
+            { "regione": "Molise", "num_serv": 5296 },
+            { "regione": "Lazio", "num_serv": 23652 },
+            { "regione": "Piemonte", "num_serv": 28451 },
+            {
+              "regione": "Trentino-Alto Adige/S\u00fcdtirol",
+              "num_serv": 4134
+            },
+            { "regione": "Sicilia", "num_serv": 26460 },
+            { "regione": "Abruzzo", "num_serv": 9503 },
+            { "regione": "Campania", "num_serv": 28399 },
+            { "regione": "Calabria", "num_serv": 14055 },
+            { "regione": "Emilia-Romagna", "num_serv": 18252 },
+            { "regione": "Toscana", "num_serv": 15578 },
+            { "regione": "Basilicata", "num_serv": 7578 },
+            { "regione": "Sardegna", "num_serv": 14977 },
+            { "regione": "Puglia", "num_serv": 17948 },
+            { "regione": "Umbria", "num_serv": 4359 },
+            {
+              "regione": "Valle d'Aosta/Vall\u00e9e d'Aoste",
+              "num_serv": 1732
+            },
+            { "regione": "Friuli-Venezia Giulia", "num_serv": 7658 }
+          ]
+        },
+        "key": "regione",
+        "fields": ["num_serv"]
+      }
+    }
+  ]
+}

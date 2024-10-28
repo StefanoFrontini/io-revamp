@@ -12,6 +12,7 @@ import KpiValue from "@/components/KpiValue";
 import SectionFirstColumnLayout from "@/components/SectionFirstColumnLayout";
 import SectionLayout from "@/components/SectionLayout";
 import SectionSecondColumnLayout from "@/components/SectionSecondColumnLayout";
+import ServicesTaxonomy from "@/components/ServicesTaxonomy";
 import ServicesTrend from "@/components/ServicesTrend";
 import { toVegaLiteSpec } from "@/shared/toVegaLiteSpec";
 export default function Home() {
@@ -50,6 +51,7 @@ export default function Home() {
         </SectionFirstColumnLayout>
         <SectionSecondColumnLayout>
           <ServicesTrend />
+          <ServicesTaxonomy />
         </SectionSecondColumnLayout>
       </SectionLayout>
       <SectionLayout title="Messaggi">
@@ -68,6 +70,7 @@ export default function Home() {
           />
         </SectionSecondColumnLayout>
       </SectionLayout>
+      {/* <MapChart spec={toVegaLiteSpec(mapJsonSpec)} /> */}
     </>
   );
 }

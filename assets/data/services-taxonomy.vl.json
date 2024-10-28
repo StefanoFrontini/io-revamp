@@ -1,0 +1,74 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "data": {
+    "url": "https://pdnd-prod-dl-1-public-data.s3.eu-central-1.amazonaws.com/dashboard/io/dashboard-io.json",
+    "format": { "property": "services_by_taxonomy" }
+  },
+  "width": "container",
+  "height": "container",
+  "padding": 5,
+  "encoding": {
+    "y": {
+      "field": "topic",
+      "sort": { "field": "ranking" },
+      "scale": { "padding": 0 },
+      "axis": {
+        "domain": false,
+        "labelAlign": "left",
+        "labelLimit": 0,
+        "labelOffset": -20,
+        "labelPadding": 0,
+        "ticks": false,
+        "labelFontWeight": 600,
+        "labelFont": "titilliumWeb"
+      }
+    }
+  },
+  "layer": [
+    {
+      "mark": { "type": "bar", "height": 19 },
+      "encoding": {
+        "x": {
+          "field": "num_serv",
+          "type": "quantitative",
+          "aggregate": "sum",
+          "axis": {
+            "format": "~s",
+            "gridDash": [4, 4],
+            "labelFontWeight": 600,
+            "labelFont": "titilliumWeb",
+            "tickDash": [4, 4],
+            "tickColor": {
+              "condition": {
+                "test": "datum.value !== 0",
+                "value": "#D2D6E3"
+              },
+              "value": "none"
+            },
+            "grid": true,
+            "gridColor": {
+              "condition": {
+                "test": "datum.value !== 0",
+                "value": "#D2D6E3"
+              },
+              "value": "none"
+            }
+          }
+        },
+        "color": { "value": "#0B3EE3" }
+      }
+    },
+    {
+      "mark": { "type": "bar", "tooltip": true, "color": "transparent" },
+      "encoding": {
+        "tooltip": [
+          { "field": "topic" },
+          {
+            "field": "num_serv",
+            "format": ",d"
+          }
+        ]
+      }
+    }
+  ]
+}
