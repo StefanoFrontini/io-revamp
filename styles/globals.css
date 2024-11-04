@@ -48,20 +48,7 @@ body {
   font-weight: 400;
 }
 
-#__next
-  > section:nth-child(2)
-  > div.MuiStack-root.css-md5dlf-MuiStack-root
-  > div.MuiBox-root.css-14d5zh9
-  > div
-  > div:nth-child(3)
-  > div
-  > div
-  > svg
-  > g
-  > g
-  > g
-  > g
-  > g.mark-symbol.role-mark.layer_1_marks {
+g.mark-symbol.role-mark.layer_1_marks {
   filter: blur(2px);
 }
 
