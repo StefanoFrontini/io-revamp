@@ -1,183 +1,96 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "width": 500,
-  "height": 300,
+  "width": "container",
+  "height": "container",
+  "padding": 5,
+  "datasets": {
+    "regions_coordinates": [
+      { "regione": "Marche", "longitude": 13.5765, "latitude": 43.6167 },
+      { "regione": "Liguria", "longitude": 8.93, "latitude": 44.4115 },
+      { "regione": "Veneto", "longitude": 11.8768, "latitude": 45.4345 },
+      { "regione": "Lombardia", "longitude": 9.69, "latitude": 45.4642 },
+      { "regione": "Molise", "longitude": 14.6667, "latitude": 41.6667 },
+      { "regione": "Lazio", "longitude": 12.4964, "latitude": 41.9028 },
+      { "regione": "Piemonte", "longitude": 7.6869, "latitude": 45.0703 },
+      {
+        "regione": "Trentino-Alto Adige/Südtirol",
+        "longitude": 11.1217,
+        "latitude": 46.4993
+      },
+      { "regione": "Sicilia", "longitude": 13.3615, "latitude": 38.1157 },
+      { "regione": "Abruzzo", "longitude": 13.6184, "latitude": 42.3512 },
+      { "regione": "Campania", "longitude": 14.2681, "latitude": 40.8518 },
+      { "regione": "Calabria", "longitude": 16.255, "latitude": 39.3088 },
+      {
+        "regione": "Emilia-Romagna",
+        "longitude": 11.3426,
+        "latitude": 44.4949
+      },
+      { "regione": "Toscana", "longitude": 11.2558, "latitude": 43.4696 },
+      { "regione": "Basilicata", "longitude": 15.805, "latitude": 40.6395 },
+      { "regione": "Sardegna", "longitude": 9.1217, "latitude": 40.2153 },
+      { "regione": "Puglia", "longitude": 16.8698, "latitude": 41.1258 },
+      { "regione": "Umbria", "longitude": 12.3888, "latitude": 43.1122 },
+      {
+        "regione": "Valle d'Aosta/Vallée d'Aoste",
+        "longitude": 7.4167,
+        "latitude": 45.7372
+      },
+      {
+        "regione": "Friuli-Venezia Giulia",
+        "longitude": 13.3768,
+        "latitude": 46.1495
+      }
+    ]
+  },
   "layer": [
     {
       "data": {
         "url": "https://raw.githubusercontent.com/openpolis/geojson-italy/refs/heads/master/topojson/limits_IT_regions.topo.json",
-        "format": {
-          "type": "topojson",
-          "feature": "regions"
-        }
+        "format": { "type": "topojson", "feature": "regions" }
       },
-      "projection": {
-        "type": "mercator"
-      },
-      "mark": {
-        "type": "geoshape",
-        "fill": "lightgray",
-        "stroke": "white"
-      }
+      "projection": { "type": "mercator" },
+      "mark": { "type": "geoshape", "fill": "#eeeeee", "stroke": "white" }
     },
     {
       "data": {
-        "values": [
-          {
-            "regione": "Marche",
-            "num_serv": 11235,
-            "longitude": 13.5765,
-            "latitude": 43.6167
-          },
-          {
-            "regione": "Liguria",
-            "num_serv": 7509,
-            "longitude": 8.93,
-            "latitude": 44.4115
-          },
-          {
-            "regione": "Veneto",
-            "num_serv": 32778,
-            "longitude": 11.8768,
-            "latitude": 45.4345
-          },
-          {
-            "regione": "Lombardia",
-            "num_serv": 54914,
-            "longitude": 9.19,
-            "latitude": 45.4642
-          },
-          {
-            "regione": "Molise",
-            "num_serv": 5296,
-            "longitude": 14.6667,
-            "latitude": 41.6667
-          },
-          {
-            "regione": "Lazio",
-            "num_serv": 23652,
-            "longitude": 12.4964,
-            "latitude": 41.9028
-          },
-          {
-            "regione": "Piemonte",
-            "num_serv": 28451,
-            "longitude": 7.6869,
-            "latitude": 45.0703
-          },
-          {
-            "regione": "Trentino-Alto Adige/Südtirol",
-            "num_serv": 4134,
-            "longitude": 11.1217,
-            "latitude": 46.4993
-          },
-          {
-            "regione": "Sicilia",
-            "num_serv": 26460,
-            "longitude": 13.3615,
-            "latitude": 38.1157
-          },
-          {
-            "regione": "Abruzzo",
-            "num_serv": 9503,
-            "longitude": 13.6184,
-            "latitude": 42.3512
-          },
-          {
-            "regione": "Campania",
-            "num_serv": 28399,
-            "longitude": 14.2681,
-            "latitude": 40.8518
-          },
-          {
-            "regione": "Calabria",
-            "num_serv": 14055,
-            "longitude": 16.255,
-            "latitude": 39.3088
-          },
-          {
-            "regione": "Emilia-Romagna",
-            "num_serv": 18252,
-            "longitude": 11.3426,
-            "latitude": 44.4949
-          },
-          {
-            "regione": "Toscana",
-            "num_serv": 15578,
-            "longitude": 11.2558,
-            "latitude": 43.7696
-          },
-          {
-            "regione": "Basilicata",
-            "num_serv": 7578,
-            "longitude": 15.805,
-            "latitude": 40.6395
-          },
-          {
-            "regione": "Sardegna",
-            "num_serv": 14977,
-            "longitude": 9.1217,
-            "latitude": 39.2153
-          },
-          {
-            "regione": "Puglia",
-            "num_serv": 17948,
-            "longitude": 16.8698,
-            "latitude": 41.1258
-          },
-          {
-            "regione": "Umbria",
-            "num_serv": 4359,
-            "longitude": 12.3888,
-            "latitude": 43.1122
-          },
-          {
-            "regione": "Valle d'Aosta/Vallée d'Aoste",
-            "num_serv": 1732,
-            "longitude": 7.0167,
-            "latitude": 45.7372
-          },
-          {
-            "regione": "Friuli-Venezia Giulia",
-            "num_serv": 7658,
-            "longitude": 13.7768,
-            "latitude": 45.6495
+        "url": "https://pdnd-prod-dl-1-public-data.s3.eu-central-1.amazonaws.com/dashboard/io/dashboard-io.json",
+        "format": { "property": "services_by_region" }
+      },
+      "transform": [
+        {
+          "lookup": "regione",
+          "from": {
+            "data": { "name": "regions_coordinates" },
+            "key": "regione",
+            "fields": ["longitude", "latitude"]
           }
-        ]
-      },
-      "projection": {
-        "type": "mercator"
-      },
+        }
+      ],
+      "projection": { "type": "mercator" },
       "mark": "circle",
       "encoding": {
-        "longitude": {
-          "field": "longitude",
-          "type": "quantitative"
-        },
-        "latitude": {
-          "field": "latitude",
-          "type": "quantitative"
-        },
+        "longitude": { "field": "longitude", "type": "quantitative" },
+        "latitude": { "field": "latitude", "type": "quantitative" },
         "size": {
           "field": "num_serv",
           "type": "quantitative",
           "scale": { "range": [0, 3000] },
           "legend": null
         },
-        "color": { "value": "steelblue" },
+        "color": { "value": "#0B3EE3" },
         "opacity": {
           "field": "num_serv",
           "type": "quantitative",
-          "scale": { "domain": [0, 55000], "range": [0.1, 1] },
+          "scale": { "domain": [0, 55000], "range": [0.1, 0.7] },
           "legend": null
         },
         "tooltip": [
-          { "field": "regione", "type": "nominal", "title": "Regione" },
+          { "field": "regione", "type": "nominal" },
           {
             "field": "num_serv",
             "type": "quantitative",
-            "format": ",",
-            "title": "Numero servizi"
+            "format": ","
           }
         ]
       }

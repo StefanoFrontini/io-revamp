@@ -20,13 +20,15 @@
         "labelPadding": 0,
         "ticks": false,
         "labelFontWeight": 600,
-        "labelFont": "titilliumWeb"
+        "labelFont": "titilliumWeb",
+        "grid": true,
+        "gridColor": "#D2D6E3"
       }
     }
   },
   "layer": [
     {
-      "mark": { "type": "bar", "height": 19 },
+      "mark": { "type": "bar", "height": 19, "cornerRadiusEnd": 5 },
       "encoding": {
         "x": {
           "field": "num_serv",
@@ -52,7 +54,8 @@
                 "value": "#D2D6E3"
               },
               "value": "none"
-            }
+            },
+            "labelExpr": "datum.index === 0 ? '' : datum.label"
           }
         },
         "color": { "value": "#0B3EE3" }

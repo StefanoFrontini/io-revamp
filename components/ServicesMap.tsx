@@ -1,11 +1,11 @@
-import servicesTaxonomy from "@/assets/data/services-taxonomy.vl.json";
+import mapJsonSpec from "@/assets/data/italy-regions-circles.vl.json";
 import { dashboardColors } from "@/styles/colors";
 import { Typography } from "@mui/material";
 import { toVegaLiteSpec } from "../shared/toVegaLiteSpec";
 import KpiCard from "./KpiCard";
-import ServicesTaxonomyChart from "./ServicesTaxonomyChart";
+import ServicesMapChart from "./ServicesMapChart";
 
-const ServicesTaxonomy = () => {
+const ServicesMap = () => {
   return (
     <KpiCard>
       <Typography
@@ -16,10 +16,10 @@ const ServicesTaxonomy = () => {
           lineHeight: "1.5rem",
         }}
       >
-        Distribuzione dei principali servizi per categoria
+        Distribuzione geografica dei servizi
       </Typography>
-      <ServicesTaxonomyChart spec={toVegaLiteSpec(servicesTaxonomy)} />
+      <ServicesMapChart spec={toVegaLiteSpec(mapJsonSpec)} />
     </KpiCard>
   );
 };
-export default ServicesTaxonomy;
+export default ServicesMap;
