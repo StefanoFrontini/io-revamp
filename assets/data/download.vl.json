@@ -3,7 +3,7 @@
   "width": "container",
   "height": "container",
   "data": {
-    "url": "https://pdnd-prod-dl-1-public-data.s3.eu-central-1.amazonaws.com/dashboard/io/dashboard-io.json",
+    "url": "https://gist.githubusercontent.com/StefanoFrontini/d615dacd6d07d3605cc7e27ce8292a7a/raw/482ed276fe487bae39d92d1213e2aaf258701e2d/io-revamp.json",
     "format": { "property": "downloads" }
   },
   "params": [{ "name": "year", "value": null }],
