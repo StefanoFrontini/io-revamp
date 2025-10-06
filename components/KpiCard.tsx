@@ -3,9 +3,9 @@ import { Paper, Stack, Typography } from "@mui/material";
 
 type Props = {
   children: React.ReactNode;
-  subLabel?: string;
+  text?: string;
 };
-const KpiCard = ({ children, subLabel }: Props) => {
+const KpiCard = ({ children, text }: Props) => {
   return (
     <Paper
       elevation={8}
@@ -13,21 +13,22 @@ const KpiCard = ({ children, subLabel }: Props) => {
         px: 4,
         py: 4,
         borderRadius: 2,
+        height: "100%",
         // boxShadow: "0 4px 32px 0 rgba(11, 62, 227, 0.5)",
       }}
     >
-      <Stack direction={"column"} spacing={2}>
+      <Stack direction={"column"} spacing={2} width={"100%"}>
         {children}
-        {subLabel && (
+        {text && (
           <Typography
             sx={{
               color: dashboardColors.get("grey-650"),
               fontWeight: 600,
               fontSize: "1.125rem",
-              lineHeight: "1.5rem",
+              lineHeight: "1.125rem",
             }}
           >
-            {subLabel}
+            {text}
           </Typography>
         )}{" "}
       </Stack>

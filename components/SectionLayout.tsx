@@ -5,9 +5,11 @@ import { Container, Stack, Typography } from "@mui/material";
 type SectionLayoutProps = {
   title: string;
   children: React.ReactNode;
+  date: string;
+  text?: string;
 };
 
-const SectionLayout = ({ title, children }: SectionLayoutProps) => {
+const SectionLayout = ({ title, children, date, text }: SectionLayoutProps) => {
   return (
     <Container
       component="section"
@@ -31,7 +33,7 @@ const SectionLayout = ({ title, children }: SectionLayoutProps) => {
         >
           {title}
         </Typography>
-        <LastUpdate />
+        <LastUpdate date={date} text={text} />
       </Stack>
 
       <Stack

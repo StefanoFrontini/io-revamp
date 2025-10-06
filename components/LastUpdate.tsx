@@ -1,22 +1,44 @@
 import { dashboardColors } from "@/styles/colors";
-import { Typography } from "@mui/material";
-import lastUpdateSpec from "../assets/data/last-update.vl.json";
-import { toVegaLiteSpec } from "../shared/toVegaLiteSpec";
-import KpiValue from "./KpiValue";
+import { Box, Typography } from "@mui/material";
+import AlertWrapper from "./AlertWrapper";
 
-const LastUpdate = () => {
+type Props = {
+  date: string;
+  text?: string;
+};
+const LastUpdate = ({ date, text }: Props) => {
   return (
-    <Typography
+    <Box
       sx={{
-        color: dashboardColors.get("grey-650"),
-        fontWeight: 600,
-        fontSize: "1.125rem",
-        lineHeight: "1.5rem",
+        flex: { xs: "0 0 40%", md: "0 0 30%", lg: "0 0 25%" },
+        textAlign: { xs: "start", sm: "end" },
       }}
     >
-      Ultimo aggiornamento -&nbsp;
-      <KpiValue spec={toVegaLiteSpec(lastUpdateSpec)} />
-    </Typography>
+      <Typography
+        sx={{
+          color: dashboardColors.get("grey-650"),
+          fontWeight: 600,
+          fontSize: "1.125rem",
+          lineHeight: "1.5rem",
+          mb: 1,
+        }}
+      >
+        Ultimo aggiornamento -&nbsp;
+        {date}
+      </Typography>
+      {text && (
+        <Typography
+          sx={{
+            color: dashboardColors.get("grey-650"),
+            fontWeight: 600,
+            fontSize: "0.875rem",
+            lineHeight: 1.285715,
+          }}
+        >
+          {text}
+        </Typography>
+      )}
+    </Box>
   );
 };
 

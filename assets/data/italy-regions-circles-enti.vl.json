@@ -1,0 +1,59 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+  "width": "container",
+  "height": "container",
+  "padding": 5,
+
+  "params": [{ "name": "category", "value": "Comuni" }],
+
+  "data": {
+    "name": "dashboardData"
+  },
+
+  "transform": [
+    {
+      "filter": "datum.category === category"
+    },
+    {
+      "lookup": "regione",
+      "from": {
+        "data": {
+          "url": "https://raw.githubusercontent.com/openpolis/geojson-italy/refs/heads/master/topojson/limits_IT_regions.topo.json",
+          "format": { "type": "topojson", "feature": "regions" }
+        },
+        "key": "properties.reg_name",
+        "fields": ["type", "properties", "geometry"]
+      }
+    }
+  ],
+
+  "projection": { "type": "mercator" },
+  "mark": { "type": "geoshape", "stroke": "#fff", "strokeWidth": 0.5 },
+  "encoding": {
+    "color": {
+      "field": "perc_enti",
+      "type": "quantitative",
+      "scale": {
+        "range": ["#b6c5f7", "#0B3EE3"]
+      },
+      "legend": null
+    },
+    "tooltip": [
+      { "field": "regione", "type": "nominal" },
+      { "field": "category", "type": "nominal" },
+      {
+        "field": "perc_enti",
+        "type": "quantitative",
+        "format": ".0%"
+      },
+      {
+        "field": "count_enti",
+        "type": "quantitative"
+      },
+      {
+        "field": "count_enti_ipa",
+        "type": "quantitative"
+      }
+    ]
+  }
+}

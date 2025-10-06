@@ -1,0 +1,101 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+  "width": "container",
+  "height": "container",
+  "padding": 2,
+  "data": {
+    "name": "dashboardData"
+  },
+  "params": [
+    { "name": "is_cumulative", "value": true },
+    { "name": "year", "value": "overall" }
+  ],
+  "transform": [
+    { "filter": "year === 'overall' || year(datum.date) === year" },
+    {
+      "window": [{ "op": "sum", "field": "count", "as": "cumulative" }],
+      "sort": [{ "field": "date" }]
+    },
+
+    {
+      "calculate": "is_cumulative ? datum.cumulative : datum.count",
+      "as": "metric_value"
+    },
+    {
+      "calculate": "month(datum.date)",
+      "as": "month"
+    },
+    {
+      "calculate": "datum.month === 0 ? 'Gen' : datum.month === 1 ? 'Feb' : datum.month === 2 ? 'Mar' : datum.month === 3 ? 'Apr' : datum.month === 4 ? 'Mag' : datum.month === 5 ? 'Giu' : datum.month === 6 ? 'Lug' : datum.month === 7 ? 'Ago' : datum.month === 8 ? 'Set' : datum.month === 9 ? 'Ott' : datum.month === 10 ? 'Nov' : 'Dic'",
+      "as": "month_name"
+    },
+    {
+      "calculate": "year(datum.date)",
+      "as": "year_label"
+    }
+  ],
+  "mark": {
+    "type": "area",
+    "line": {
+      "color": "#0B3EE3"
+    },
+    "color": {
+      "x1": 1,
+      "y1": 1,
+      "x2": 1,
+      "y2": 0,
+      "stops": [
+        {
+          "offset": 0,
+          "color": "white"
+        },
+        {
+          "offset": 1,
+          "color": "#0B3EE3"
+        }
+      ],
+      "gradient": "linear"
+    }
+  },
+  "encoding": {
+    "y": {
+      "field": "metric_value",
+      "type": "quantitative",
+      "axis": {
+        "format": "~s",
+        "labelFontWeight": 600,
+        "labelFont": "titilliumWeb",
+        "domain": false
+      }
+    },
+    "x": {
+      "field": "date",
+      "type": "temporal",
+      "timeUnit": "yearmonth",
+      "axis": {
+        "gridDash": [6, 6],
+        "grid": true,
+        "gridColor": "#D2D6E3",
+        "labelAngle": 0,
+        "labelFontWeight": 600,
+        "labelFont": "titilliumWeb",
+        "tickDash": [4, 4],
+        "title": null,
+        "format": "%b",
+        "tickCount": 12
+      }
+    },
+    "tooltip": [
+      {
+        "field": "month_name"
+      },
+      {
+        "field": "year_label"
+      },
+      {
+        "field": "metric_value",
+        "format": ","
+      }
+    ]
+  }
+}
