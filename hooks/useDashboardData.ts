@@ -3,8 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 const env = process.env.NODE_ENV;
-const src = env === "development" ? "" : "/dashboard-io";
-// const src = env === "development" ? "" : "";
+// const src = env === "development" ? "" : "/dashboard-io";
+const src = env === "development" ? "" : "";
 
 export const DASHBOARD_QUERY_KEY = "dashboardData";
 export const FALLBACK_QUERY_KEY = "fallbackDashboardData";
