@@ -13,7 +13,7 @@ type Props = {
 };
 const spec = toVegaLiteSpec(mapJsonSpec);
 const ServicesMapChart = ({ categorySignal }: Props) => {
-  const { data, isPending, isLoading } = useDashboardData();
+  const { data } = useDashboardData();
 
   const [chart, setChart] = useState<Result | null>(null);
   const chartContent = useRef<HTMLDivElement>(null);

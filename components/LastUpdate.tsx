@@ -1,6 +1,5 @@
 import { dashboardColors } from "@/styles/colors";
 import { Box, Typography } from "@mui/material";
-import AlertWrapper from "./AlertWrapper";
 
 type Props = {
   date: string;
