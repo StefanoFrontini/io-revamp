@@ -150,7 +150,7 @@ export default function Home() {
               <FormatIOIcon>
                 <Icons.DigitalDocIcon />
               </FormatIOIcon>
-              <IOCardTextContent text="Documenti digitali attivi aggiunti dagli utenti">
+              <IOCardTextContent text="Documenti digitali attivati dagli utenti">
                 <KpiCardFormat>
                   {formatNumberWallet(data.wallet_total_attivi)} Milioni
                 </KpiCardFormat>
