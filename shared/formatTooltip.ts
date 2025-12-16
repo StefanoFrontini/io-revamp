@@ -15,13 +15,17 @@ export const formatTooltipEntitiesMapChart: (
     `
   <p>${sanitize(value[title] ?? "")}</p>
   <p>${sanitize(value[text] ?? "")}</p>
-  <hr style="border-style: solid; border-color: ${dashboardColors.get("grey-200")};">
-  <strong><span>${sanitize(value?.count_enti ?? "")}</span></strong><span>/${sanitize(value?.count_enti_ipa ?? "")}</span>
+  <hr style="border-style: solid; border-color: ${dashboardColors.get(
+    "grey-200"
+  )};">
+  <strong><span>${sanitize(
+    value?.count_enti ?? ""
+  )}</span></strong><span>/${sanitize(value?.count_enti_ipa ?? "")}</span>
   `;
 
 export const formatTooltip: (title: string, text: string) => FormatTooltip =
-  (title, text) => (value, sanitize) => `
-
+  (title, text) => (value, sanitize) =>
+    `
   <p>${sanitize(value[title] ?? "")}</p>
   <p>${sanitize(value[text] ?? "")}</p>
   `;
@@ -33,6 +37,8 @@ export const formatTooltipMonthYear: (
   (title, text, year) =>
   (value, sanitize): string =>
     `
-      <p>${sanitize(value[title] ?? "")}&nbsp;${value[year] ? value[year] : ""}</p>
+      <p>${sanitize(value[title] ?? "")}&nbsp;${
+      value[year] ? value[year] : ""
+    }</p>
       <p>${sanitize(value[text] ?? "")}</p>
     `;
