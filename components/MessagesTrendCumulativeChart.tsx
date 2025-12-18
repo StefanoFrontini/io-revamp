@@ -6,37 +6,50 @@ import { Box } from "@mui/material";
 import { useEffect, useMemo, useRef, useState } from "react";
 import embed, { Result } from "vega-embed";
 import chartConfig from "../shared/chartConfig";
+import { DashboardData } from "@/services/zodSchema";
+import { formatNumber } from "@/shared/formatNumber";
+import { dashboardColors } from "@/styles/colors";
+import { visuallyHidden } from "@mui/utils";
 
 const spec = toVegaLiteSpec(messageTrendCumulativeLine);
+const ARIA_LABEL_TEXT =
+  "Grafico cumulativo annuale. Usa le frecce sinistra e destra per navigare i dati. Premi ESC per nascondere il tooltip.";
 
 const MessagesTrendCumulativeChart = () => {
   const { data } = useDashboardData();
   const [chart, setChart] = useState<Result | null>(null);
+  const [srText, setSrText] = useState("");
   const chartContent = useRef<HTMLDivElement>(null);
+  const chartInstanceRef = useRef<Result | null>(null);
+
+  /*
+  Tooltip keyboard navigation.
+  The tooltips are generated through the vega-tooltip plugin https://github.com/vega/vega-tooltip which is already installed in vega-embed. This plugin does not have a keyboard navigation feature.
+  The vega-tooltip plugin exposes a handler function that accept a mouse event and the tooltip data as arguments.
+  The idea is to generate a mock mouse event after a key press and pass it to the handler function.
+  */
 
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
 
-  // 1. FIX: Creazione corretta dei dati per la navigazione
   const processedData = useMemo(() => {
     if (!data?.messages_cumulative) return [];
 
-    // Ordiniamo per anno (convertendo la stringa in numero per sicurezza)
-    const sorted = [...data.messages_cumulative].sort((a: any, b: any) => {
-      return Number(a.year) - Number(b.year);
-    });
+    const sorted = [...data.messages_cumulative].sort(
+      (
+        a: DashboardData["messages_cumulative"][0],
+        b: DashboardData["messages_cumulative"][0]
+      ) => {
+        return Number(a.year) - Number(b.year);
+      }
+    );
 
-    return sorted.map((d: any) => {
-      // CORREZIONE NAN: Creiamo una data valida partendo dall'anno
-      // new Date(anno, mese (0=Gen), giorno)
+    return sorted.map((d: DashboardData["messages_cumulative"][0]) => {
       const dateObj = new Date(Number(d.year), 0, 1);
 
       return {
         ...d,
-        // Creiamo un timestamp valido per eventuali scale temporali
         timestamp: dateObj.getTime(),
-        // Assicuriamoci che year_text esista per il tooltip (copiandolo da year)
         year_text: d.year,
-        // Parsiamo count come numero per sicurezza
         count: Number(d.count),
       };
     });
@@ -46,9 +59,7 @@ const MessagesTrendCumulativeChart = () => {
     if (!chartContent.current || !data) return;
 
     const tooltipOptions = {
-      // Qui definisci le chiavi che ti aspetti nel 'datum' passato al tooltip
       formatTooltip: formatTooltip("year_text", "count"),
-      theme: "light",
     };
 
     const options = { ...chartConfig, tooltip: tooltipOptions };
@@ -58,18 +69,21 @@ const MessagesTrendCumulativeChart = () => {
         .insert("dashboardData", data.messages_cumulative)
         .resize()
         .runAsync();
+
+      chartInstanceRef.current = res;
       setChart(res);
     });
 
     return () => {
-      if (chart) {
-        const handler = (chart.view as any).tooltip();
+      if (chartInstanceRef.current) {
+        const view = chartInstanceRef.current.view;
+        const handler = (view as any).tooltip();
         if (typeof handler === "function") handler(null, {}, null, null);
+        chartInstanceRef.current?.finalize();
       }
     };
   }, [data]);
 
-  // Gestione Eventi Tastiera (Invariata)
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!chart || processedData.length === 0) return;
 
@@ -77,12 +91,14 @@ const MessagesTrendCumulativeChart = () => {
 
     if (e.key === "ArrowRight") {
       e.preventDefault();
+
       newIndex =
         selectedIndex === -1
           ? 0
           : Math.min(processedData.length - 1, selectedIndex + 1);
     } else if (e.key === "ArrowLeft") {
       e.preventDefault();
+
       newIndex =
         selectedIndex === -1
           ? processedData.length - 1
@@ -107,7 +123,7 @@ const MessagesTrendCumulativeChart = () => {
     }
   };
 
-  const updateTooltip = async (index: number) => {
+  const updateTooltip = (index: number) => {
     if (!chart || index === -1) {
       const handler = (chart?.view as any).tooltip();
       if (typeof handler === "function") handler(null, {}, null, null);
@@ -117,46 +133,48 @@ const MessagesTrendCumulativeChart = () => {
     const datum = processedData[index];
     const view = chart.view;
 
-    const renderEl = chartContent.current?.querySelector(
-      "canvas, svg"
-    ) as Element;
+    const renderEl = chartContent.current?.querySelector("svg") as Element;
     if (!renderEl) return;
 
     const scaleX = view.scale("x");
     const scaleY = view.scale("y");
 
     const rect = renderEl.getBoundingClientRect();
-    const padding = await view.padding();
+
+    const padding = view.padding();
     const paddingLeft = typeof padding === "object" ? padding.left : padding;
     const paddingTop = typeof padding === "object" ? padding.top : padding;
 
-    // FIX SCALA X:
-    // Proviamo prima a passare il timestamp (se asse temporale).
-    // Se scaleX restituisce undefined (perché asse ordinale/stringa), usiamo datum.year.
     let x = scaleX(datum.timestamp);
     if (x === undefined) {
-      x = scaleX(datum.year); // Fallback per assi ordinali ("2023", "2024")
+      x = scaleX(datum.year);
     }
 
     const y = scaleY(datum.count);
 
-    // Coordinate pagina
     const pageX = window.scrollX + rect.left + (paddingLeft || 0) + x;
     const pageY = window.scrollY + rect.top + (paddingTop || 0) + y;
 
     const mockEvent = {
-      pageX: pageX,
-      pageY: pageY,
+      pageX,
+      pageY,
       clientX: rect.left + (paddingLeft || 0) + x,
       clientY: rect.top + (paddingTop || 0) + y,
     };
 
-    // Usiamo year_text che abbiamo creato nel map sopra
     const tooltipValue = {
       year_text: datum.year_text,
-      // Formatta il numero usando il locale italiano (es. 500.784.123)
-      count: new Intl.NumberFormat("it-IT").format(datum.count),
+      count: formatNumber(datum.count),
     };
+    const yearText = `Anno: ${datum.year_text}.`;
+
+    const countText = `Numero messaggi: ${new Intl.NumberFormat("it-IT").format(
+      datum.count
+    )}.`;
+
+    const fullDescription = `${yearText} ${countText}`;
+
+    setSrText(fullDescription);
 
     const handler = (view as any).tooltip();
     if (typeof handler === "function") {
@@ -170,14 +188,30 @@ const MessagesTrendCumulativeChart = () => {
         height: "100%",
         width: "100%",
         outline: "none",
-        "&:focus": { boxShadow: "0 0 0 2px #0B3EE3" },
+        "&:focus": {
+          boxShadow: `0 0 0 2px ${dashboardColors.get("blue-500")}`,
+        },
       }}
-      ref={chartContent}
       tabIndex={0}
       onKeyDown={handleKeyDown}
       onBlur={handleBlur}
-      aria-label="Grafico cumulativo annuale"
-    />
+      aria-label={ARIA_LABEL_TEXT}
+      role="application"
+    >
+      <div
+        style={{ height: "100%", width: "100%" }}
+        aria-hidden="true"
+        ref={chartContent}
+      />
+      <div
+        style={visuallyHidden}
+        role="status"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        {srText}
+      </div>
+    </Box>
   );
 };
 export default MessagesTrendCumulativeChart;
