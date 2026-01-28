@@ -62,6 +62,9 @@ const ServicesMap = () => {
   const selectId = useId();
   const selectIdCategory = useId();
 
+  const labelIdMap = `${selectId}-label`;
+  const labelIdCategory = `${selectIdCategory}-label`;
+
   const handleOptionsMap = (tag: Servizi["tag"] | Enti["tag"]) => {
     setCurMapOption(tag);
   };
@@ -69,6 +72,7 @@ const ServicesMap = () => {
   const handleOptionsCategory = (tag: Comuni["tag"] | Istruzione["tag"]) => {
     setCurOptionCategory(tag);
   };
+
   const getCurOptionCategory = (tag: Comuni["tag"] | Istruzione["tag"]) => {
     switch (tag) {
       case "comuni":
@@ -118,16 +122,16 @@ const ServicesMap = () => {
   };
 
   const isCategoryValue = (
-    value: string
+    value: string,
   ): value is Comuni["tag"] | Istruzione["tag"] => {
     return value === "comuni" || value === "istruzione";
   };
 
   function parseEventTargetValue(
-    name: "map"
+    name: "map",
   ): (value: string) => Servizi["tag"] | Enti["tag"];
   function parseEventTargetValue(
-    name: "category"
+    name: "category",
   ): (value: string) => Comuni["tag"] | Istruzione["tag"];
 
   function parseEventTargetValue(name: "map" | "category") {
@@ -172,6 +176,7 @@ const ServicesMap = () => {
         alignItems={{ xs: "flex-start", sm: "center" }}
       >
         <Typography
+          id={labelIdMap}
           sx={{
             color: dashboardColors.get("grey-650"),
             fontWeight: 600,
@@ -185,11 +190,12 @@ const ServicesMap = () => {
           <Select
             IconComponent={ExpandMoreOutlinedIcon}
             id={selectId}
+            aria-labelledby={labelIdMap}
+            // Fix MenuProps for Iframe + keyboard navigation
             MenuProps={{
-              autoFocus: false,
-              disableAutoFocusItem: true,
+              disablePortal: true,
+              disableScrollLock: true,
               disableEnforceFocus: true,
-              disableAutoFocus: true,
             }}
             inputProps={{
               id: selectId + "-input",
@@ -208,7 +214,9 @@ const ServicesMap = () => {
             ))}
           </Select>
         </FormControl>
+
         <Typography
+          id={labelIdCategory}
           sx={{
             color: dashboardColors.get("grey-650"),
             fontWeight: 600,
@@ -223,11 +231,12 @@ const ServicesMap = () => {
           <Select
             IconComponent={ExpandMoreOutlinedIcon}
             id={selectIdCategory}
+            aria-labelledby={labelIdCategory}
+            // Fix MenuProps for Iframe + keyboard navigation
             MenuProps={{
-              autoFocus: false,
-              disableAutoFocusItem: true,
+              disablePortal: true,
+              disableScrollLock: true,
               disableEnforceFocus: true,
-              disableAutoFocus: true,
             }}
             inputProps={{
               id: selectIdCategory + "-input",
@@ -236,7 +245,7 @@ const ServicesMap = () => {
             size="small"
             onChange={(e: SelectChangeEvent<string>) =>
               handleOptionsCategory(
-                parseEventTargetValue("category")(e.target.value)
+                parseEventTargetValue("category")(e.target.value),
               )
             }
           >

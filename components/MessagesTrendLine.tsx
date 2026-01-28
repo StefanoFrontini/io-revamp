@@ -14,63 +14,29 @@ import KpiCard from "./KpiCard";
 import MessagesTrendChart from "./MessagesTrendChart";
 import MessagesTrendCumulativeChart from "./MessagesTrendCumulativeChart";
 
-type Overall = {
-  tag: "overall";
-  label: string;
-};
-type CurYear = {
-  tag: "cur_year";
-  label: string;
-};
-type CurYearMinusOne = {
-  tag: "cur_year_minus_one";
-  label: string;
-};
+type Overall = { tag: "overall"; label: string };
+type CurYear = { tag: "cur_year"; label: string };
+type CurYearMinusOne = { tag: "cur_year_minus_one"; label: string };
+type CurYearMinusTwo = { tag: "cur_year_minus_two"; label: string };
 
-type CurYearMinusTwo = {
-  tag: "cur_year_minus_two";
-  label: string;
-};
-
-type Cumulative = {
-  tag: "cumulative";
-  label: string;
-};
-type Monthly = {
-  tag: "monthly";
-  label: string;
-};
+type Cumulative = { tag: "cumulative"; label: string };
+type Monthly = { tag: "monthly"; label: string };
 
 const curYear = new Date().getFullYear();
 
-const overall: Overall = {
-  tag: "overall",
-  label: "Complessivo",
-};
-
-const year: CurYear = {
-  tag: "cur_year",
-  label: String(curYear),
-};
-
+const overall: Overall = { tag: "overall", label: "Complessivo" };
+const year: CurYear = { tag: "cur_year", label: String(curYear) };
 const yearMinusOne: CurYearMinusOne = {
   tag: "cur_year_minus_one",
   label: String(curYear - 1),
 };
-
 const yearMinusTwo: CurYearMinusTwo = {
   tag: "cur_year_minus_two",
   label: String(curYear - 2),
 };
 
-const cumulative: Cumulative = {
-  tag: "cumulative",
-  label: "cumulato",
-};
-const monthly: Monthly = {
-  tag: "monthly",
-  label: "mensile",
-};
+const cumulative: Cumulative = { tag: "cumulative", label: "cumulato" };
+const monthly: Monthly = { tag: "monthly", label: "mensile" };
 
 type Props = {
   title: string;
@@ -83,6 +49,7 @@ const MessagesTrendLine = ({ title }: Props) => {
     | CurYearMinusOne["tag"]
     | CurYearMinusTwo["tag"]
   >(overall.tag);
+
   const [curOptionCumulative, setCurOptionCumulative] = useState<
     Cumulative["tag"] | Monthly["tag"]
   >(cumulative.tag);
@@ -90,12 +57,15 @@ const MessagesTrendLine = ({ title }: Props) => {
   const selectIdYear = useId();
   const selectIdCumulative = useId();
 
+  const labelIdYear = `${selectIdYear}-label`;
+  const labelIdCumulative = `${selectIdCumulative}-label`;
+
   const handleOptionsYear = (
     tag:
       | Overall["tag"]
       | CurYear["tag"]
       | CurYearMinusOne["tag"]
-      | CurYearMinusTwo["tag"]
+      | CurYearMinusTwo["tag"],
   ) => {
     setCurOptionYear(tag);
   };
@@ -103,12 +73,13 @@ const MessagesTrendLine = ({ title }: Props) => {
   const handleOptionsCumulative = (tag: Cumulative["tag"] | Monthly["tag"]) => {
     setCurOptionCumulative(tag);
   };
+
   const getCurOptionYear = (
     tag:
       | Overall["tag"]
       | CurYear["tag"]
       | CurYearMinusOne["tag"]
-      | CurYearMinusTwo["tag"]
+      | CurYearMinusTwo["tag"],
   ) => {
     switch (tag) {
       case "overall":
@@ -124,8 +95,9 @@ const MessagesTrendLine = ({ title }: Props) => {
         throw new Error(JSON.stringify(_exhaustiveCheck));
     }
   };
+
   const isYearValue = (
-    value: string
+    value: string,
   ): value is
     | Overall["tag"]
     | CurYear["tag"]
@@ -140,22 +112,22 @@ const MessagesTrendLine = ({ title }: Props) => {
   };
 
   const isCumulativeValue = (
-    value: string
+    value: string,
   ): value is Cumulative["tag"] | Monthly["tag"] => {
     return value === "cumulative" || value === "monthly";
   };
 
   function parseEventTargetValue(
-    name: "year"
+    name: "year",
   ): (
-    value: string
+    value: string,
   ) =>
     | Overall["tag"]
     | CurYear["tag"]
     | CurYearMinusOne["tag"]
     | CurYearMinusTwo["tag"];
   function parseEventTargetValue(
-    name: "cumulative"
+    name: "cumulative",
   ): (value: string) => Cumulative["tag"] | Monthly["tag"];
 
   function parseEventTargetValue(name: "year" | "cumulative") {
@@ -187,6 +159,7 @@ const MessagesTrendLine = ({ title }: Props) => {
             alignItems={{ xs: "flex-start", sm: "center" }}
           >
             <Typography
+              id={labelIdCumulative}
               sx={{
                 color: dashboardColors.get("grey-650"),
                 fontWeight: 600,
@@ -200,11 +173,12 @@ const MessagesTrendLine = ({ title }: Props) => {
               <Select
                 IconComponent={ExpandMoreOutlinedIcon}
                 id={selectIdCumulative}
+                aria-labelledby={labelIdCumulative}
                 MenuProps={{
-                  autoFocus: false,
-                  disableAutoFocusItem: true,
+                  // Fix for Iframe: keep DOM local and allows keyboard navigation
+                  disablePortal: true,
+                  disableScrollLock: true,
                   disableEnforceFocus: true,
-                  disableAutoFocus: true,
                 }}
                 inputProps={{
                   id: selectIdCumulative + "-input",
@@ -213,7 +187,7 @@ const MessagesTrendLine = ({ title }: Props) => {
                 size="small"
                 onChange={(e: SelectChangeEvent<string>) =>
                   handleOptionsCumulative(
-                    parseEventTargetValue("cumulative")(e.target.value)
+                    parseEventTargetValue("cumulative")(e.target.value),
                   )
                 }
               >
@@ -237,9 +211,7 @@ const MessagesTrendLine = ({ title }: Props) => {
         return (
           <MessagesTrendChart
             yearSignal={getCurOptionYear(curOptionYear)}
-            cumulativeSignal={
-              curOptionCumulative === "cumulative" ? true : false
-            }
+            cumulativeSignal={curOptionCumulative === "cumulative"}
           />
         );
     }
@@ -285,6 +257,7 @@ const MessagesTrendLine = ({ title }: Props) => {
         alignItems={{ xs: "flex-start", sm: "center" }}
       >
         <Typography
+          id={labelIdYear}
           sx={{
             color: dashboardColors.get("grey-650"),
             fontWeight: 600,
@@ -298,11 +271,12 @@ const MessagesTrendLine = ({ title }: Props) => {
           <Select
             IconComponent={ExpandMoreOutlinedIcon}
             id={selectIdYear}
+            aria-labelledby={labelIdYear}
             MenuProps={{
-              autoFocus: false,
-              disableAutoFocusItem: true,
+              // Fix for Iframe: keep DOM local and allows keyboard navigation
+              disablePortal: true,
+              disableScrollLock: true,
               disableEnforceFocus: true,
-              disableAutoFocus: true,
             }}
             inputProps={{
               id: selectIdYear + "-input",
@@ -318,7 +292,7 @@ const MessagesTrendLine = ({ title }: Props) => {
                 <MenuItem sx={{ fontWeight: 600 }} key={tag} value={tag}>
                   {label}
                 </MenuItem>
-              )
+              ),
             )}
           </Select>
         </FormControl>
@@ -342,4 +316,5 @@ const MessagesTrendLine = ({ title }: Props) => {
     </KpiCard>
   );
 };
+
 export default MessagesTrendLine;
