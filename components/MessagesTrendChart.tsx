@@ -46,7 +46,7 @@ const MessagesTrendChart = ({ yearSignal, cumulativeSignal }: Props) => {
 
     filtered.sort(
       (a: DashboardData["messages"][0], b: DashboardData["messages"][0]) =>
-        new Date(a.date).getTime() - new Date(b.date).getTime()
+        new Date(a.date).getTime() - new Date(b.date).getTime(),
     );
 
     let runningTotal = 0;
@@ -69,7 +69,6 @@ const MessagesTrendChart = ({ yearSignal, cumulativeSignal }: Props) => {
       };
     });
   }, [data, yearSignal, cumulativeSignal]);
-  console.log(processedData);
 
   useEffect(() => {
     if (!chartContent.current || !data) return;
@@ -78,7 +77,7 @@ const MessagesTrendChart = ({ yearSignal, cumulativeSignal }: Props) => {
       formatTooltip: formatTooltipMonthYear(
         "month_name",
         "metric_value",
-        "year_label"
+        "year_label",
       ),
     };
 
@@ -194,7 +193,7 @@ const MessagesTrendChart = ({ yearSignal, cumulativeSignal }: Props) => {
     const yearText = `Anno: ${datum.year_label}.`;
 
     const countText = `Numero messaggi: ${new Intl.NumberFormat("it-IT").format(
-      datum.metric_value
+      datum.metric_value,
     )}.`;
 
     const fullDescription = `${monthText} ${yearText} ${countText}`;
