@@ -3,13 +3,10 @@
   "width": "container",
   "height": "container",
   "padding": 5,
-
   "params": [{ "name": "category", "value": "Comuni" }],
-
   "data": {
     "name": "dashboardData"
   },
-
   "transform": [
     {
       "filter": "datum.category === category"
@@ -24,9 +21,12 @@
         "key": "properties.reg_name",
         "fields": ["type", "properties", "geometry"]
       }
+    },
+    {
+      "calculate": "'regione: ' + datum.regione + '; categoria: ' + datum.category + '; percentuale enti attivi: ' + format(datum.perc_enti, '.0%') + ', enti attivi: ' + datum.count_enti + '; enti totali: ' + datum.count_enti_ipa",
+      "as": "custom_aria_label"
     }
   ],
-
   "projection": { "type": "mercator" },
   "mark": { "type": "geoshape", "stroke": "#fff", "strokeWidth": 0.5 },
   "encoding": {
@@ -54,6 +54,10 @@
         "field": "count_enti_ipa",
         "type": "quantitative"
       }
-    ]
+    ],
+    "description": {
+      "field": "custom_aria_label",
+      "type": "nominal"
+    }
   }
 }

@@ -3,7 +3,6 @@
   "width": "container",
   "height": "container",
   "padding": 5,
-
   "params": [{ "name": "category", "value": "Comuni" }],
   "datasets": {
     "regions_coordinates": [
@@ -55,13 +54,9 @@
       "mark": { "type": "geoshape", "fill": "#E6E6E6", "stroke": "white" }
     },
     {
-      "data": {
-        "name": "dashboardData"
-      },
+      "data": { "name": "dashboardData" },
       "transform": [
-        {
-          "filter": "datum.category === category"
-        },
+        { "filter": "datum.category === category" },
         {
           "lookup": "regione",
           "from": {
@@ -69,10 +64,16 @@
             "key": "regione",
             "fields": ["longitude", "latitude"]
           }
+        },
+        {
+          "calculate": "'regione: ' + datum.regione + '; servizi attivi: ' + format(datum.count_serv, ',')",
+          "as": "custom_aria_label"
         }
       ],
       "projection": { "type": "mercator" },
-      "mark": "circle",
+      "mark": {
+        "type": "circle"
+      },
       "encoding": {
         "longitude": { "field": "longitude", "type": "quantitative" },
         "latitude": { "field": "latitude", "type": "quantitative" },
@@ -86,11 +87,12 @@
         "color": { "value": "#0B3EE3" },
         "tooltip": [
           { "field": "regione", "type": "nominal" },
-          {
-            "field": "count_serv",
-            "format": ","
-          }
-        ]
+          { "field": "count_serv", "format": "," }
+        ],
+        "description": {
+          "field": "custom_aria_label",
+          "type": "nominal"
+        }
       }
     }
   ]
