@@ -64,22 +64,19 @@ const EntiMapChart = ({ categorySignal }: Props) => {
     data: null,
   });
 
-  // --- MODIFICA IMPORTANTE 1: Ref per accedere allo stato fresco dentro la callback ---
+  // Ref per accedere allo stato fresco
   const tooltipStateRef = useRef(tooltipState);
-
-  // Teniamo il ref sincronizzato con lo stato
   useEffect(() => {
     tooltipStateRef.current = tooltipState;
   }, [tooltipState]);
 
-  // Timer ref per gestire la chiusura
+  // Timer refs
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Timer ref per gestire l'apertura (debounce)
   const openTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
 
+  // --- Process Data ---
   const processedData = useMemo(() => {
     if (!data?.metrics_by_geo_cat) return [];
 
@@ -96,58 +93,86 @@ const EntiMapChart = ({ categorySignal }: Props) => {
     );
   }, [data, categorySignal]);
 
-  // --- Funzioni di Gestione Tooltip ---
+  // --- Gestione Tooltip ---
 
   const closeTooltip = useCallback(() => {
-    // Cancelliamo eventuali timer pendenti
     if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
     if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+    closeTimeoutRef.current = null;
+    openTimeoutRef.current = null;
 
     setTooltipState((prev) => ({ ...prev, isOpen: false }));
     setSelectedIndex(-1);
   }, []);
 
-  const handleMouseLeave = () => {
-    // Se il mouse esce dal punto, cancelliamo eventuali aperture pendenti
-    if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
+  // Logica di chiusura con timer (smart check)
+  const handleMouseLeave = useCallback(() => {
+    if (openTimeoutRef.current) {
+      clearTimeout(openTimeoutRef.current);
+      openTimeoutRef.current = null;
+    }
 
-    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+    // Se c'è già un timer di chiusura attivo, NON resettarlo.
+    if (closeTimeoutRef.current) return;
+
     closeTimeoutRef.current = setTimeout(() => {
       setTooltipState((prev) => ({ ...prev, isOpen: false }));
-    }, 400); // Manteniamo il delay lungo per facilitare l'uscita
-  };
+      closeTimeoutRef.current = null;
+    }, 200);
+  }, []);
+
+  // Ref per accedere a handleMouseLeave dentro il listener di Vega
+  const handleMouseLeaveRef = useRef(handleMouseLeave);
+  useEffect(() => {
+    handleMouseLeaveRef.current = handleMouseLeave;
+  }, [handleMouseLeave]);
 
   const handleMouseEnterTooltip = () => {
-    // 1. Annulla la chiusura (siamo entrati nella tooltip)
     if (closeTimeoutRef.current) {
       clearTimeout(closeTimeoutRef.current);
       closeTimeoutRef.current = null;
     }
-    // 2. Annulla l'apertura di altre regioni
     if (openTimeoutRef.current) {
       clearTimeout(openTimeoutRef.current);
       openTimeoutRef.current = null;
     }
   };
 
-  // Handler per intercettare il tooltip di Vega (Mouse hover)
+  // --- Gestione Click Esterno ---
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (tooltipStateRef.current.isOpen) {
+        const target = event.target as HTMLElement;
+        const isTooltip = target.closest("#enti-tooltip");
+        if (!isTooltip) {
+          closeTooltip();
+        }
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [closeTooltip]);
+
+  // Handler Custom per l'apertura
   const handleVegaTooltip = (
     handler: any,
     event: MouseEvent,
     item: any,
     value: any,
   ) => {
-    // Usiamo item.datum per accedere ai dati grezzi
     const datum = item && item.datum;
-
-    // --- MODIFICA IMPORTANTE 2: Leggiamo dal REF, non dallo stato direttamente ---
     const currentTooltipState = tooltipStateRef.current;
 
     if (datum && datum.regione) {
-      // Cancelliamo il timer di chiusura se esiste (siamo su un punto valido)
-      if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+      // 1. Annulla la chiusura
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+        closeTimeoutRef.current = null;
+      }
 
-      // Usiamo il valore aggiornato dal Ref per il controllo
+      // 2. Stop se già aperto
       if (
         currentTooltipState.isOpen &&
         currentTooltipState.data?.regione === datum.regione
@@ -155,10 +180,9 @@ const EntiMapChart = ({ categorySignal }: Props) => {
         return;
       }
 
-      // Se stiamo per cambiare regione, resettiamo il timer precedente
+      // 3. Debounce apertura
       if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
 
-      // Impostiamo un ritardo prima di cambiare la tooltip
       openTimeoutRef.current = setTimeout(() => {
         setTooltipState({
           isOpen: true,
@@ -171,10 +195,9 @@ const EntiMapChart = ({ categorySignal }: Props) => {
             count_enti_ipa: datum.count_enti_ipa,
           },
         });
-      }, 150); // 150ms di ritardo per "confermare" l'intenzione
-    } else {
-      handleMouseLeave();
+      }, 150);
     }
+    // Nota: L'uscita è gestita dal listener globale 'mousemove' aggiunto sotto
   };
 
   useEffect(() => {
@@ -185,13 +208,22 @@ const EntiMapChart = ({ categorySignal }: Props) => {
       tooltip: handleVegaTooltip,
     };
 
-    embed(chartContent.current, spec, options).then((res) => {
-      res.view
+    embed(chartContent.current, spec, options).then((chart) => {
+      chart.view
         .insert("dashboardData", data.metrics_by_geo_cat)
         .resize()
         .runAsync();
-      chartInstanceRef.current = res;
-      setChart(res);
+
+      chartInstanceRef.current = chart;
+      setChart(chart);
+
+      // --- Listener globale sulla vista per gestire l'uscita ---
+      chart.view.addEventListener("mousemove", (event: any, item: any) => {
+        // Se l'item sotto il mouse NON ha una regione (es. sfondo, bordo, vuoto)
+        if (!item || !item.datum || !item.datum.regione) {
+          handleMouseLeaveRef.current();
+        }
+      });
     });
 
     return () => {
@@ -207,11 +239,12 @@ const EntiMapChart = ({ categorySignal }: Props) => {
     chart.view.signal("category", categorySignal).resize().runAsync();
 
     setSelectedIndex(-1);
-    // Chiudiamo la tooltip al cambio categoria
     setTooltipState((prev) => ({ ...prev, isOpen: false }));
-    // Puliamo i timer
+
     if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
     if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+    closeTimeoutRef.current = null;
+    openTimeoutRef.current = null;
   }, [categorySignal, chart]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -337,6 +370,7 @@ const EntiMapChart = ({ categorySignal }: Props) => {
       tabIndex={0}
       onKeyDown={handleKeyDown}
       onBlur={handleBlur}
+      onMouseLeave={handleMouseLeave} // Gestione uscita dal box React
       aria-label={ARIA_LABEL_TEXT}
       role="application"
     >

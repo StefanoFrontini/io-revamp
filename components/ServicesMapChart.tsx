@@ -96,22 +96,19 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
     data: null,
   });
 
-  // --- MODIFICA: Ref per accedere allo stato fresco dentro la callback ---
+  // Ref per accedere allo stato fresco
   const tooltipStateRef = useRef(tooltipState);
-
-  // Teniamo il ref sincronizzato con lo stato
   useEffect(() => {
     tooltipStateRef.current = tooltipState;
   }, [tooltipState]);
 
-  // Timer ref per gestire la chiusura
+  // Timer refs
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Timer ref per gestire l'apertura (debounce)
   const openTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
 
+  // --- Process Data ---
   const processedData = useMemo(() => {
     if (!data?.metrics_by_geo_cat) return [];
 
@@ -134,58 +131,92 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
     return merged.sort((a, b) => a.regione.localeCompare(b.regione));
   }, [data, categorySignal]);
 
-  // --- Funzioni di Gestione Tooltip ---
+  // --- Gestione Tooltip ---
 
   const closeTooltip = useCallback(() => {
-    // Cancelliamo eventuali timer pendenti
     if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
     if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+    closeTimeoutRef.current = null;
+    openTimeoutRef.current = null;
 
     setTooltipState((prev) => ({ ...prev, isOpen: false }));
     setSelectedIndex(-1);
   }, []);
 
-  const handleMouseLeave = () => {
-    // Se il mouse esce, cancelliamo eventuali aperture pendenti
-    if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
+  // Logica di chiusura con timer
+  const handleMouseLeave = useCallback(() => {
+    // 1. Ferma qualsiasi tentativo di apertura pendente
+    if (openTimeoutRef.current) {
+      clearTimeout(openTimeoutRef.current);
+      openTimeoutRef.current = null;
+    }
 
-    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+    // 2. Se c'è già un timer di chiusura attivo, NON resettarlo.
+    // Questo è fondamentale: se muovi il mouse nel vuoto, non devi posticipare la chiusura.
+    if (closeTimeoutRef.current) return;
+
+    // 3. Avvia il timer di chiusura (200ms)
     closeTimeoutRef.current = setTimeout(() => {
       setTooltipState((prev) => ({ ...prev, isOpen: false }));
-    }, 400); // 400ms di tolleranza per l'uscita
-  };
+      closeTimeoutRef.current = null;
+    }, 200);
+  }, []);
+
+  // Ref per accedere a handleMouseLeave dentro il listener di Vega
+  const handleMouseLeaveRef = useRef(handleMouseLeave);
+  useEffect(() => {
+    handleMouseLeaveRef.current = handleMouseLeave;
+  }, [handleMouseLeave]);
 
   const handleMouseEnterTooltip = () => {
-    // 1. Blocca la chiusura
+    // Se entriamo nella tooltip, cancelliamo la chiusura
     if (closeTimeoutRef.current) {
       clearTimeout(closeTimeoutRef.current);
       closeTimeoutRef.current = null;
     }
-    // 2. Blocca l'apertura di altre regioni (se stiamo passando sopra i vicini)
+    // E cancelliamo eventuali aperture di altre regioni pendenti
     if (openTimeoutRef.current) {
       clearTimeout(openTimeoutRef.current);
       openTimeoutRef.current = null;
     }
   };
 
-  // Handler per intercettare il tooltip di Vega (Mouse hover)
+  // --- Gestione Click Esterno ---
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (tooltipStateRef.current.isOpen) {
+        const target = event.target as HTMLElement;
+        const isTooltip = target.closest("#map-tooltip");
+        if (!isTooltip) {
+          closeTooltip();
+        }
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [closeTooltip]);
+
+  // Handler Custom per l'apertura (passato a embed)
   const handleVegaTooltip = (
     handler: any,
     event: MouseEvent,
     item: any,
     value: any,
   ) => {
-    // Usiamo item.datum per accedere ai dati grezzi
     const datum = item && item.datum;
-
-    // --- MODIFICA: Leggiamo dal REF ---
     const currentTooltipState = tooltipStateRef.current;
 
+    // Se Vega ci dice che siamo su un dato valido...
     if (datum && datum.regione) {
-      if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+      // 1. Annulla la chiusura
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+        closeTimeoutRef.current = null;
+      }
 
-      // Se siamo già sulla stessa regione, non facciamo nulla (evita flickering o reset timer)
-      // Usiamo currentTooltipState invece di tooltipState
+      // 2. Se siamo già aperti su questo dato, stop.
       if (
         currentTooltipState.isOpen &&
         currentTooltipState.data?.regione === datum.regione
@@ -193,10 +224,9 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
         return;
       }
 
-      // Resettiamo timer precedenti di apertura
+      // 3. Debounce apertura
       if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
 
-      // Ritardiamo l'apertura (Debounce)
       openTimeoutRef.current = setTimeout(() => {
         setTooltipState({
           isOpen: true,
@@ -207,16 +237,14 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
             count_serv: datum.count_serv,
           },
         });
-      }, 150); // 150ms di ritardo
-    } else {
-      handleMouseLeave();
+      }, 150);
     }
+    // Nota: Non gestiamo l'else (chiusura) qui, perché lo gestisce il listener globale 'mousemove' sotto.
   };
 
   useEffect(() => {
     if (!chartContent.current || !data) return;
 
-    // Sostituiamo le opzioni di default con il nostro handler custom
     const options = {
       ...chartConfig,
       tooltip: handleVegaTooltip,
@@ -230,11 +258,22 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
 
       chartInstanceRef.current = chart;
       setChart(chart);
+
+      // --- NUOVO: Listener globale sulla vista per gestire l'uscita ---
+      // Questo intercetta il mouse anche quando è sopra la mappa grigia (senza dati)
+      chart.view.addEventListener("mousemove", (event: any, item: any) => {
+        // Se l'item sotto il mouse NON ha una regione (es. sfondo, bordo, vuoto)
+        if (!item || !item.datum || !item.datum.regione) {
+          // Chiama la funzione di chiusura (tramite Ref per evitare stale closures)
+          handleMouseLeaveRef.current();
+        }
+      });
     });
 
     return () => {
       if (chartInstanceRef.current) {
-        chartInstanceRef.current?.finalize();
+        // Rimuoviamo i listener se necessario (Vega lo fa spesso in automatico su finalize, ma per sicurezza)
+        chartInstanceRef.current.finalize();
       }
     };
   }, [data]);
@@ -246,9 +285,10 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
     setSelectedIndex(-1);
     setTooltipState((prev) => ({ ...prev, isOpen: false }));
 
-    // Pulizia Timer al cambio categoria
     if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
     if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+    closeTimeoutRef.current = null;
+    openTimeoutRef.current = null;
   }, [chart, categorySignal]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -310,7 +350,6 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
     }
 
     const bounds = scenegraphItem.bounds;
-    // Centro del cerchio
     const x = (bounds.x1 + bounds.x2) / 2;
     const y = (bounds.y1 + bounds.y2) / 2;
 
@@ -322,18 +361,15 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
     const paddingLeft = typeof padding === "object" ? padding.left : padding;
     const paddingTop = typeof padding === "object" ? padding.top : padding;
 
-    // Calcolo coordinate client per posizionamento React Tooltip
     const clientX = rect.left + (paddingLeft || 0) + x;
     const clientY = rect.top + (paddingTop || 0) + y;
 
-    // Aggiornamento testo Screen Reader
     const regionText = `Regione ${datum.regione}.`;
     const countText = `Numero servizi: ${new Intl.NumberFormat("it-IT", {
       useGrouping: true,
     }).format(Number(datum.count_serv))}.`;
     setSrText(`${regionText} ${countText}`);
 
-    // Aggiornamento stato Tooltip
     setTooltipState({
       isOpen: true,
       x: clientX,
@@ -360,6 +396,7 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
       tabIndex={0}
       onKeyDown={handleKeyDown}
       onBlur={handleBlur}
+      onMouseLeave={handleMouseLeave}
       aria-label={ARIA_LABEL_TEXT}
       role="application"
     >
@@ -400,7 +437,6 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
             pointerEvents: "auto",
           }}
         >
-          {/* Header con pulsante chiusura */}
           <Box
             display="flex"
             justifyContent="space-between"
@@ -427,7 +463,6 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
             </IconButton>
           </Box>
 
-          {/* Contenuto Dati */}
           <Box>
             <Typography
               sx={{
