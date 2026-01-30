@@ -1,14 +1,14 @@
 import mapJsonSpec from "@/assets/data/italy-regions-circles.vl.json";
 import { useDashboardData } from "@/hooks/useDashboardData";
-import { formatTooltip } from "@/shared/formatTooltip";
 import { toVegaLiteSpec } from "@/shared/toVegaLiteSpec";
-import { Box } from "@mui/material";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Box, IconButton, Paper, Typography } from "@mui/material";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import embed, { Result } from "vega-embed";
 import chartConfig from "../shared/chartConfig";
 import { DashboardData } from "@/services/zodSchema";
 import { dashboardColors } from "@/styles/colors";
 import { visuallyHidden } from "@mui/utils";
+import CloseIcon from "@mui/icons-material/Close";
 
 const REGIONS_COORDINATES = [
   { region: "Marche", longitude: 13.5765, latitude: 43.6167 },
@@ -40,6 +40,7 @@ const REGIONS_COORDINATES = [
   },
   { region: "Friuli-Venezia Giulia", longitude: 13.3768, latitude: 46.1495 },
 ];
+
 const ARIA_LABEL_TEXT =
   "Mappa dei servizi per regione. Usa le frecce sinistra e destra per navigare i dati. Premi ESC per nascondere il tooltip.";
 
@@ -67,6 +68,17 @@ type Props = {
   categorySignal: string;
 };
 
+// Tipo per lo stato del Tooltip
+type TooltipState = {
+  isOpen: boolean;
+  x: number;
+  y: number;
+  data: {
+    regione: string;
+    count_serv: number;
+  } | null;
+};
+
 const spec = toVegaLiteSpec(mapJsonSpec);
 
 const ServicesMapChart = ({ categorySignal }: Props) => {
@@ -74,23 +86,38 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
   const [chart, setChart] = useState<Result | null>(null);
   const [srText, setSrText] = useState("");
   const chartContent = useRef<HTMLDivElement>(null);
-
-  /*
-  Tooltip keyboard navigation.
-  The tooltips are generated through the vega-tooltip plugin https://github.com/vega/vega-tooltip which is already installed in vega-embed. This plugin does not have a keyboard navigation feature.
-  The vega-tooltip plugin exposes a handler function that accept a mouse event and the tooltip data as arguments.
-  The idea is to generate a mock mouse event after a key press and pass it to the handler function.
-  */
-  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
-
   const chartInstanceRef = useRef<Result | null>(null);
+
+  // Stato per il Tooltip personalizzato
+  const [tooltipState, setTooltipState] = useState<TooltipState>({
+    isOpen: false,
+    x: 0,
+    y: 0,
+    data: null,
+  });
+
+  // --- MODIFICA: Ref per accedere allo stato fresco dentro la callback ---
+  const tooltipStateRef = useRef(tooltipState);
+
+  // Teniamo il ref sincronizzato con lo stato
+  useEffect(() => {
+    tooltipStateRef.current = tooltipState;
+  }, [tooltipState]);
+
+  // Timer ref per gestire la chiusura
+  const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Timer ref per gestire l'apertura (debounce)
+  const openTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
 
   const processedData = useMemo(() => {
     if (!data?.metrics_by_geo_cat) return [];
 
     const filtered = data.metrics_by_geo_cat.filter(
       (d: DashboardData["metrics_by_geo_cat"][0]) =>
-        d.category === categorySignal
+        d.category === categorySignal,
     );
 
     const merged = filtered
@@ -107,15 +134,94 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
     return merged.sort((a, b) => a.regione.localeCompare(b.regione));
   }, [data, categorySignal]);
 
+  // --- Funzioni di Gestione Tooltip ---
+
+  const closeTooltip = useCallback(() => {
+    // Cancelliamo eventuali timer pendenti
+    if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
+    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+
+    setTooltipState((prev) => ({ ...prev, isOpen: false }));
+    setSelectedIndex(-1);
+  }, []);
+
+  const handleMouseLeave = () => {
+    // Se il mouse esce, cancelliamo eventuali aperture pendenti
+    if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
+
+    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+    closeTimeoutRef.current = setTimeout(() => {
+      setTooltipState((prev) => ({ ...prev, isOpen: false }));
+    }, 400); // 400ms di tolleranza per l'uscita
+  };
+
+  const handleMouseEnterTooltip = () => {
+    // 1. Blocca la chiusura
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+    // 2. Blocca l'apertura di altre regioni (se stiamo passando sopra i vicini)
+    if (openTimeoutRef.current) {
+      clearTimeout(openTimeoutRef.current);
+      openTimeoutRef.current = null;
+    }
+  };
+
+  // Handler per intercettare il tooltip di Vega (Mouse hover)
+  const handleVegaTooltip = (
+    handler: any,
+    event: MouseEvent,
+    item: any,
+    value: any,
+  ) => {
+    // Usiamo item.datum per accedere ai dati grezzi
+    const datum = item && item.datum;
+
+    // --- MODIFICA: Leggiamo dal REF ---
+    const currentTooltipState = tooltipStateRef.current;
+
+    if (datum && datum.regione) {
+      if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+
+      // Se siamo già sulla stessa regione, non facciamo nulla (evita flickering o reset timer)
+      // Usiamo currentTooltipState invece di tooltipState
+      if (
+        currentTooltipState.isOpen &&
+        currentTooltipState.data?.regione === datum.regione
+      ) {
+        return;
+      }
+
+      // Resettiamo timer precedenti di apertura
+      if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
+
+      // Ritardiamo l'apertura (Debounce)
+      openTimeoutRef.current = setTimeout(() => {
+        setTooltipState({
+          isOpen: true,
+          x: event.clientX,
+          y: event.clientY,
+          data: {
+            regione: datum.regione,
+            count_serv: datum.count_serv,
+          },
+        });
+      }, 150); // 150ms di ritardo
+    } else {
+      handleMouseLeave();
+    }
+  };
+
   useEffect(() => {
     if (!chartContent.current || !data) return;
-    const tooltipOptions = {
-      formatTooltip: formatTooltip("regione", "count_serv"),
-    };
+
+    // Sostituiamo le opzioni di default con il nostro handler custom
     const options = {
       ...chartConfig,
-      tooltip: tooltipOptions,
+      tooltip: handleVegaTooltip,
     };
+
     embed(chartContent.current, spec, options).then((chart) => {
       chart.view
         .insert("dashboardData", data.metrics_by_geo_cat)
@@ -128,9 +234,6 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
 
     return () => {
       if (chartInstanceRef.current) {
-        const view = chartInstanceRef.current.view;
-        const handler = (view as any).tooltip();
-        if (typeof handler === "function") handler(null, {}, null, null);
         chartInstanceRef.current?.finalize();
       }
     };
@@ -139,9 +242,13 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
   useEffect(() => {
     if (chart === null) return;
     chart.view.signal("category", categorySignal).runAsync();
+
     setSelectedIndex(-1);
-    const handler = (chart.view as any).tooltip();
-    if (typeof handler === "function") handler(null, {}, null, null);
+    setTooltipState((prev) => ({ ...prev, isOpen: false }));
+
+    // Pulizia Timer al cambio categoria
+    if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
+    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
   }, [chart, categorySignal]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -162,50 +269,48 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
           ? processedData.length - 1
           : Math.max(0, selectedIndex - 1);
     } else if (e.key === "Escape") {
+      e.preventDefault();
       newIndex = -1;
+      closeTooltip();
     } else {
       return;
     }
 
-    setSelectedIndex(newIndex);
-    updateTooltip(newIndex);
+    if (newIndex !== selectedIndex) {
+      setSelectedIndex(newIndex);
+      updateTooltip(newIndex);
+    }
   };
 
-  const handleBlur = () => {
+  const handleBlur = (e: React.FocusEvent) => {
+    const relatedTarget = e.relatedTarget as HTMLElement;
+    if (relatedTarget?.closest('[role="tooltip"]')) return;
+
     setSelectedIndex(-1);
-    if (chart) {
-      const handler = (chart.view as any).tooltip();
-      if (typeof handler === "function") handler(null, {}, null, null);
-    }
+    setTooltipState((prev) => ({ ...prev, isOpen: false }));
   };
 
   const updateTooltip = async (index: number) => {
     if (!chart || index === -1) {
-      const handler = (chart?.view as any).tooltip();
-      if (typeof handler === "function") handler(null, {}, null, null);
-
       setSrText("");
+      closeTooltip();
       return;
     }
 
     const datum = processedData[index];
     const view = chart.view;
 
-    // view.scenegraph().root.items contains all drawn elements
-    // we need to find the circle corresponding to the region
     const scenegraphItem = findScenegraphItem(
       (view.scenegraph() as any).root.items,
-      datum.regione
+      datum.regione,
     );
 
     if (!scenegraphItem || !scenegraphItem.bounds) {
       return;
     }
 
-    // bounds.x1 and bounds.y1 are the bounding box coordinates relative to the graph area
     const bounds = scenegraphItem.bounds;
-
-    // Circle center
+    // Centro del cerchio
     const x = (bounds.x1 + bounds.x2) / 2;
     const y = (bounds.y1 + bounds.y2) / 2;
 
@@ -213,42 +318,31 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
     if (!renderEl) return;
 
     const rect = renderEl.getBoundingClientRect();
-
     const padding = view.padding();
     const paddingLeft = typeof padding === "object" ? padding.left : padding;
     const paddingTop = typeof padding === "object" ? padding.top : padding;
 
-    const pageX = window.scrollX + rect.left + (paddingLeft || 0) + x;
-    const pageY = window.scrollY + rect.top + (paddingTop || 0) + y;
+    // Calcolo coordinate client per posizionamento React Tooltip
+    const clientX = rect.left + (paddingLeft || 0) + x;
+    const clientY = rect.top + (paddingTop || 0) + y;
 
-    const mockEvent = {
-      pageX,
-      pageY,
-      clientX: rect.left + (paddingLeft || 0) + x,
-      clientY: rect.top + (paddingTop || 0) + y,
-    };
-
-    const tooltipValue = {
-      regione: datum.regione,
-      count_serv: new Intl.NumberFormat("it-IT", {
-        useGrouping: true,
-      }).format(Number(datum.count_serv)),
-    };
-
+    // Aggiornamento testo Screen Reader
     const regionText = `Regione ${datum.regione}.`;
-
     const countText = `Numero servizi: ${new Intl.NumberFormat("it-IT", {
       useGrouping: true,
     }).format(Number(datum.count_serv))}.`;
+    setSrText(`${regionText} ${countText}`);
 
-    const fullDescription = `${regionText} ${countText}`;
-
-    setSrText(fullDescription);
-
-    const handler = (view as any).tooltip();
-    if (typeof handler === "function") {
-      handler(tooltipValue, mockEvent, null, tooltipValue);
-    }
+    // Aggiornamento stato Tooltip
+    setTooltipState({
+      isOpen: true,
+      x: clientX,
+      y: clientY,
+      data: {
+        regione: datum.regione,
+        count_serv: datum.count_serv,
+      },
+    });
   };
 
   return (
@@ -258,6 +352,7 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
         width: "100%",
         pt: { xs: "1rem", sm: "2rem" },
         outline: "none",
+        position: "relative",
         "&:focus": {
           boxShadow: `0 0 0 2px ${dashboardColors.get("blue-500")}`,
         },
@@ -281,6 +376,73 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
       >
         {srText}
       </div>
+
+      {/* --- Tooltip Personalizzato --- */}
+      {tooltipState.isOpen && tooltipState.data && (
+        <Paper
+          elevation={4}
+          role="tooltip"
+          id="map-tooltip"
+          onMouseEnter={handleMouseEnterTooltip}
+          onMouseLeave={handleMouseLeave}
+          sx={{
+            position: "fixed",
+            top: tooltipState.y,
+            left: tooltipState.x,
+            transform: "translate(-50%, -115%)",
+            zIndex: 1500,
+            paddingRight: "0.5rem",
+            paddingLeft: "1rem",
+            paddingBottom: "0.6rem",
+            paddingTop: "0.4rem",
+            backgroundColor: "white",
+            borderRadius: "6px",
+            pointerEvents: "auto",
+          }}
+        >
+          {/* Header con pulsante chiusura */}
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            gap="1rem"
+          >
+            <Typography
+              sx={{
+                fontWeight: 600,
+                fontSize: "0.875rem",
+                lineHeight: 1.285,
+                color: dashboardColors.get("grey-850"),
+                whiteSpace: "nowrap",
+              }}
+            >
+              {tooltipState.data.regione}
+            </Typography>
+            <IconButton
+              size="small"
+              onClick={closeTooltip}
+              aria-label="Chiudi tooltip"
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          </Box>
+
+          {/* Contenuto Dati */}
+          <Box>
+            <Typography
+              sx={{
+                fontWeight: 400,
+                color: dashboardColors.get("grey-850"),
+                lineHeight: 1.285,
+              }}
+            >
+              {new Intl.NumberFormat("it-IT", {
+                useGrouping: true,
+              }).format(Number(tooltipState.data.count_serv))}
+            </Typography>
+          </Box>
+        </Paper>
+      )}
     </Box>
   );
 };

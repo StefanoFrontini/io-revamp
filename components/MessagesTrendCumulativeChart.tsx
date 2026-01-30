@@ -1,15 +1,26 @@
 import messageTrendCumulativeLine from "@/assets/data/messages-trend-cumulative-line.vl.json";
 import { useDashboardData } from "@/hooks/useDashboardData";
-import { formatTooltip } from "@/shared/formatTooltip";
 import { toVegaLiteSpec } from "@/shared/toVegaLiteSpec";
-import { Box } from "@mui/material";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Box, IconButton, Paper, Typography } from "@mui/material";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import embed, { Result } from "vega-embed";
 import chartConfig from "../shared/chartConfig";
 import { DashboardData } from "@/services/zodSchema";
 import { formatNumber } from "@/shared/formatNumber";
 import { dashboardColors } from "@/styles/colors";
 import { visuallyHidden } from "@mui/utils";
+import CloseIcon from "@mui/icons-material/Close";
+
+// Tipo per lo stato del Tooltip
+type TooltipState = {
+  isOpen: boolean;
+  x: number;
+  y: number;
+  data: {
+    year_text: string;
+    count: number;
+  } | null;
+};
 
 const spec = toVegaLiteSpec(messageTrendCumulativeLine);
 const ARIA_LABEL_TEXT =
@@ -22,12 +33,27 @@ const MessagesTrendCumulativeChart = () => {
   const chartContent = useRef<HTMLDivElement>(null);
   const chartInstanceRef = useRef<Result | null>(null);
 
-  /*
-  Tooltip keyboard navigation.
-  The tooltips are generated through the vega-tooltip plugin https://github.com/vega/vega-tooltip which is already installed in vega-embed. This plugin does not have a keyboard navigation feature.
-  The vega-tooltip plugin exposes a handler function that accept a mouse event and the tooltip data as arguments.
-  The idea is to generate a mock mouse event after a key press and pass it to the handler function.
-  */
+  // Stato per il Tooltip personalizzato
+  const [tooltipState, setTooltipState] = useState<TooltipState>({
+    isOpen: false,
+    x: 0,
+    y: 0,
+    data: null,
+  });
+
+  // Ref per accedere allo stato fresco dentro la callback di Vega
+  const tooltipStateRef = useRef(tooltipState);
+
+  // Teniamo il ref sincronizzato con lo stato
+  useEffect(() => {
+    tooltipStateRef.current = tooltipState;
+  }, [tooltipState]);
+
+  // Timer ref per gestire la chiusura
+  const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Timer ref per gestire l'apertura (debounce)
+  const openTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
 
@@ -37,10 +63,10 @@ const MessagesTrendCumulativeChart = () => {
     const sorted = [...data.messages_cumulative].sort(
       (
         a: DashboardData["messages_cumulative"][0],
-        b: DashboardData["messages_cumulative"][0]
+        b: DashboardData["messages_cumulative"][0],
       ) => {
         return Number(a.year) - Number(b.year);
-      }
+      },
     );
 
     return sorted.map((d: DashboardData["messages_cumulative"][0]) => {
@@ -55,14 +81,86 @@ const MessagesTrendCumulativeChart = () => {
     });
   }, [data]);
 
+  // --- Funzioni di Gestione Tooltip ---
+
+  // Funzione per chiudere il tooltip (immediata)
+  const closeTooltip = useCallback(() => {
+    if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
+    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+
+    setTooltipState((prev) => ({ ...prev, isOpen: false }));
+    setSelectedIndex(-1);
+  }, []);
+
+  // Funzione chiamata quando il mouse esce dal grafico o dal tooltip
+  const handleMouseLeave = () => {
+    if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
+
+    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+    closeTimeoutRef.current = setTimeout(() => {
+      setTooltipState((prev) => ({ ...prev, isOpen: false }));
+    }, 400); // 400ms di tolleranza
+  };
+
+  // Funzione chiamata quando il mouse entra nel tooltip (o ritorna sul punto)
+  const handleMouseEnterTooltip = () => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+    if (openTimeoutRef.current) {
+      clearTimeout(openTimeoutRef.current);
+      openTimeoutRef.current = null;
+    }
+  };
+
+  // Handler personalizzato da passare a Vega
+  const handleVegaTooltip = (
+    handler: any,
+    event: MouseEvent,
+    item: any,
+    value: any,
+  ) => {
+    const datum = item && item.datum;
+    const currentTooltipState = tooltipStateRef.current;
+
+    if (datum) {
+      if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+
+      // Se siamo già sullo stesso punto, non facciamo nulla
+      if (
+        currentTooltipState.isOpen &&
+        currentTooltipState.data?.year_text === datum.year_text
+      ) {
+        return;
+      }
+
+      if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
+
+      openTimeoutRef.current = setTimeout(() => {
+        setTooltipState({
+          isOpen: true,
+          x: event.clientX,
+          y: event.clientY,
+          data: {
+            year_text: datum.year_text,
+            count: datum.count,
+          },
+        });
+      }, 150); // 150ms di ritardo
+    } else {
+      handleMouseLeave();
+    }
+  };
+
   useEffect(() => {
     if (!chartContent.current || !data) return;
 
-    const tooltipOptions = {
-      formatTooltip: formatTooltip("year_text", "count"),
+    // Sostituiamo le opzioni di default con il nostro handler custom
+    const options = {
+      ...chartConfig,
+      tooltip: handleVegaTooltip,
     };
-
-    const options = { ...chartConfig, tooltip: tooltipOptions };
 
     embed(chartContent.current, spec, options).then((res) => {
       res.view
@@ -76,12 +174,10 @@ const MessagesTrendCumulativeChart = () => {
 
     return () => {
       if (chartInstanceRef.current) {
-        const view = chartInstanceRef.current.view;
-        const handler = (view as any).tooltip();
-        if (typeof handler === "function") handler(null, {}, null, null);
         chartInstanceRef.current?.finalize();
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -91,42 +187,41 @@ const MessagesTrendCumulativeChart = () => {
 
     if (e.key === "ArrowRight") {
       e.preventDefault();
-
       newIndex =
         selectedIndex === -1
           ? 0
           : Math.min(processedData.length - 1, selectedIndex + 1);
     } else if (e.key === "ArrowLeft") {
       e.preventDefault();
-
       newIndex =
         selectedIndex === -1
           ? processedData.length - 1
           : Math.max(0, selectedIndex - 1);
     } else if (e.key === "Escape") {
+      e.preventDefault();
       newIndex = -1;
+      closeTooltip();
     } else {
       return;
     }
 
-    setSelectedIndex(newIndex);
-    updateTooltip(newIndex);
-  };
-
-  const handleBlur = () => {
-    setSelectedIndex(-1);
-    if (chart) {
-      const handler = (chart.view as any).tooltip();
-      if (typeof handler === "function") {
-        handler(null, {}, null, null);
-      }
+    if (newIndex !== selectedIndex) {
+      setSelectedIndex(newIndex);
+      updateTooltipFromKeyboard(newIndex);
     }
   };
 
-  const updateTooltip = (index: number) => {
+  const handleBlur = (e: React.FocusEvent) => {
+    const relatedTarget = e.relatedTarget as HTMLElement;
+    if (relatedTarget?.closest('[role="tooltip"]')) return;
+
+    setSelectedIndex(-1);
+    setTooltipState((prev) => ({ ...prev, isOpen: false }));
+  };
+
+  const updateTooltipFromKeyboard = (index: number) => {
     if (!chart || index === -1) {
-      const handler = (chart?.view as any).tooltip();
-      if (typeof handler === "function") handler(null, {}, null, null);
+      closeTooltip();
       return;
     }
 
@@ -140,7 +235,6 @@ const MessagesTrendCumulativeChart = () => {
     const scaleY = view.scale("y");
 
     const rect = renderEl.getBoundingClientRect();
-
     const padding = view.padding();
     const paddingLeft = typeof padding === "object" ? padding.left : padding;
     const paddingTop = typeof padding === "object" ? padding.top : padding;
@@ -149,37 +243,29 @@ const MessagesTrendCumulativeChart = () => {
     if (x === undefined) {
       x = scaleX(datum.year);
     }
-
     const y = scaleY(datum.count);
 
-    const pageX = window.scrollX + rect.left + (paddingLeft || 0) + x;
-    const pageY = window.scrollY + rect.top + (paddingTop || 0) + y;
+    // Coordinate client
+    const clientX = rect.left + (paddingLeft || 0) + x;
+    const clientY = rect.top + (paddingTop || 0) + y;
 
-    const mockEvent = {
-      pageX,
-      pageY,
-      clientX: rect.left + (paddingLeft || 0) + x,
-      clientY: rect.top + (paddingTop || 0) + y,
-    };
-
-    const tooltipValue = {
-      year_text: datum.year_text,
-      count: formatNumber(datum.count),
-    };
+    // Testo Screen Reader
     const yearText = `Anno: ${datum.year_text}.`;
-
     const countText = `Numero messaggi: ${new Intl.NumberFormat("it-IT").format(
-      datum.count
+      datum.count,
     )}.`;
+    setSrText(`${yearText} ${countText}`);
 
-    const fullDescription = `${yearText} ${countText}`;
-
-    setSrText(fullDescription);
-
-    const handler = (view as any).tooltip();
-    if (typeof handler === "function") {
-      handler(tooltipValue, mockEvent, null, tooltipValue);
-    }
+    // Aggiornamento Stato
+    setTooltipState({
+      isOpen: true,
+      x: clientX,
+      y: clientY,
+      data: {
+        year_text: datum.year_text,
+        count: datum.count,
+      },
+    });
   };
 
   return (
@@ -188,6 +274,7 @@ const MessagesTrendCumulativeChart = () => {
         height: "100%",
         width: "100%",
         outline: "none",
+        position: "relative",
         "&:focus": {
           boxShadow: `0 0 0 2px ${dashboardColors.get("blue-500")}`,
         },
@@ -211,6 +298,71 @@ const MessagesTrendCumulativeChart = () => {
       >
         {srText}
       </div>
+
+      {/* --- Tooltip Personalizzato --- */}
+      {tooltipState.isOpen && tooltipState.data && (
+        <Paper
+          elevation={4}
+          role="tooltip"
+          id="chart-tooltip"
+          onMouseEnter={handleMouseEnterTooltip}
+          onMouseLeave={handleMouseLeave}
+          sx={{
+            position: "fixed",
+            top: tooltipState.y,
+            left: tooltipState.x,
+            transform: "translate(-50%, -115%)",
+            zIndex: 1500,
+            paddingRight: "0.5rem",
+            paddingLeft: "1rem",
+            paddingBottom: "0.5rem",
+            paddingTop: "0.4rem",
+            backgroundColor: "white",
+            borderRadius: "6px",
+            pointerEvents: "auto",
+          }}
+        >
+          {/* Header con pulsante chiusura */}
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            gap="5rem"
+          >
+            <Typography
+              sx={{
+                fontWeight: 600,
+                fontSize: "0.875rem",
+                lineHeight: 1.285,
+                color: dashboardColors.get("grey-850"),
+                whiteSpace: "nowrap",
+              }}
+            >
+              {tooltipState.data.year_text}
+            </Typography>
+            <IconButton
+              size="small"
+              onClick={closeTooltip}
+              aria-label="Chiudi tooltip"
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          </Box>
+
+          {/* Contenuto Dati */}
+          <Box>
+            <Typography
+              sx={{
+                fontWeight: 400,
+                color: dashboardColors.get("grey-850"),
+                lineHeight: 1.285,
+              }}
+            >
+              {formatNumber(tooltipState.data.count)}
+            </Typography>
+          </Box>
+        </Paper>
+      )}
     </Box>
   );
 };
