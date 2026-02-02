@@ -16,7 +16,6 @@ type Props = {
   cumulativeSignal: boolean;
 };
 
-// Definiamo il tipo per lo stato del Tooltip
 type TooltipState = {
   isOpen: boolean;
   x: number;
@@ -39,7 +38,6 @@ const MessagesTrendChart = ({ yearSignal, cumulativeSignal }: Props) => {
   const chartContent = useRef<HTMLDivElement>(null);
   const chartInstanceRef = useRef<Result | null>(null);
 
-  // Stato per il Tooltip personalizzato
   const [tooltipState, setTooltipState] = useState<TooltipState>({
     isOpen: false,
     x: 0,
@@ -47,23 +45,11 @@ const MessagesTrendChart = ({ yearSignal, cumulativeSignal }: Props) => {
     data: null,
   });
 
-  // --- MODIFICA IMPORTANTE 1: Ref per accedere allo stato fresco dentro la callback ---
-  const tooltipStateRef = useRef(tooltipState);
-
-  // Teniamo il ref sincronizzato con lo stato
-  useEffect(() => {
-    tooltipStateRef.current = tooltipState;
-  }, [tooltipState]);
-
-  // Timer ref per gestire la chiusura
-  const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Timer ref per gestire l'apertura (debounce)
-  const openTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
 
-  // --- Elaborazione Dati (Invariata) ---
+  const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const openTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const processedData = useMemo(() => {
     if (!data?.messages) return [];
 
@@ -96,28 +82,44 @@ const MessagesTrendChart = ({ yearSignal, cumulativeSignal }: Props) => {
     });
   }, [data, yearSignal, cumulativeSignal]);
 
-  // --- Funzioni di Gestione Tooltip ---
+  // --- Tooltip Management Functions ---
 
-  // Funzione per chiudere il tooltip (immediata)
+  // Function to close the tooltip immediately
   const closeTooltip = useCallback(() => {
     if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
     if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+    openTimeoutRef.current = null;
+    closeTimeoutRef.current = null;
 
     setTooltipState((prev) => ({ ...prev, isOpen: false }));
     setSelectedIndex(-1);
   }, []);
 
-  // Funzione chiamata quando il mouse esce dal grafico o dal tooltip
-  const handleMouseLeave = () => {
-    if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
+  // Function called when mouse leaves the chart or tooltip
+  const handleMouseLeave = useCallback(() => {
+    // 1. Stop any pending opening attempt
+    if (openTimeoutRef.current) {
+      clearTimeout(openTimeoutRef.current);
+      openTimeoutRef.current = null;
+    }
 
-    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+    // 2. If a closing timer is already active, do not reset it
+    if (closeTimeoutRef.current) return;
+
+    // 3. Start closing timer
     closeTimeoutRef.current = setTimeout(() => {
       setTooltipState((prev) => ({ ...prev, isOpen: false }));
-    }, 400);
-  };
+      closeTimeoutRef.current = null;
+    }, 200); // 200ms tolerance
+  }, []);
 
-  // Funzione chiamata quando il mouse entra nel tooltip (o ritorna sul punto)
+  // Ref to access handleMouseLeave inside listeners
+  const handleMouseLeaveRef = useRef(handleMouseLeave);
+  useEffect(() => {
+    handleMouseLeaveRef.current = handleMouseLeave;
+  }, [handleMouseLeave]);
+
+  // Function called when mouse enters the tooltip
   const handleMouseEnterTooltip = () => {
     if (closeTimeoutRef.current) {
       clearTimeout(closeTimeoutRef.current);
@@ -129,89 +131,115 @@ const MessagesTrendChart = ({ yearSignal, cumulativeSignal }: Props) => {
     }
   };
 
-  // Handler personalizzato da passare a Vega
-  const handleVegaTooltip = (
-    handler: any,
-    event: MouseEvent,
-    item: any,
-    value: any,
-  ) => {
-    const datum = item && item.datum;
+  // This function opens and closes the tooltip based on the item received from the mouse move event
+  const handleMouseMove = useCallback(
+    (event: MouseEvent, item: any) => {
+      const datum = item && item.datum;
 
-    // --- MODIFICA IMPORTANTE 2: Leggiamo dal REF, non dallo stato direttamente ---
-    const currentTooltipState = tooltipStateRef.current;
+      // CASE 1: We are over valid data
+      if (datum) {
+        // Cancel pending closing
+        if (closeTimeoutRef.current) {
+          clearTimeout(closeTimeoutRef.current);
+          closeTimeoutRef.current = null;
+        }
 
-    if (datum) {
-      if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+        // If already open on this datum, stop
+        if (
+          tooltipState.isOpen &&
+          tooltipState.data?.month_name === datum.month_name &&
+          tooltipState.data?.year_label === datum.year_label
+        ) {
+          return;
+        }
 
-      // Ora il console.log funzionerà correttamente mostrando lo stato aggiornato
-      console.log("State aggiornato:", currentTooltipState);
+        // Debounce opening
+        if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
 
-      // Usiamo il valore aggiornato dal Ref per il controllo
-      if (
-        currentTooltipState.isOpen &&
-        currentTooltipState.data?.month_name === datum.month_name &&
-        currentTooltipState.data?.year_label === datum.year_label
-      ) {
-        return;
+        openTimeoutRef.current = setTimeout(() => {
+          setTooltipState({
+            isOpen: true,
+            x: event.clientX,
+            y: event.clientY,
+            data: {
+              month_name: datum.month_name,
+              year_label: datum.year_label,
+              metric_value: datum.metric_value,
+            },
+          });
+        }, 150); // 150ms delay
       }
+      // CASE 2: We are over the background (no valid data)
+      else {
+        handleMouseLeave();
+      }
+    },
+    [handleMouseLeave, tooltipState.isOpen, tooltipState.data],
+  );
 
-      if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
+  // Ref to access the function inside the listener (avoids stale closure if the function changes)
+  const handleGlobalMouseMoveRef = useRef(handleMouseMove);
 
-      openTimeoutRef.current = setTimeout(() => {
-        setTooltipState({
-          isOpen: true,
-          x: event.clientX,
-          y: event.clientY,
-          data: {
-            month_name: datum.month_name,
-            year_label: datum.year_label,
-            metric_value: datum.metric_value,
-          },
-        });
-      }, 150);
-    } else {
-      handleMouseLeave();
-    }
-  };
+  useEffect(() => {
+    handleGlobalMouseMoveRef.current = handleMouseMove;
+  }, [handleMouseMove]);
 
-  // --- Inizializzazione Grafico ---
+  // --- Chart Initialization ---
   useEffect(() => {
     if (!chartContent.current || !data) return;
 
+    // Disable default plugin and use our handler
     const options = {
       ...chartConfig,
-      tooltip: handleVegaTooltip,
+      tooltip: () => {}, // No-op to disable native tooltip
     };
 
     embed(chartContent.current, spec, options).then((res) => {
       res.view.insert("dashboardData", data.messages).resize().runAsync();
       chartInstanceRef.current = res;
       setChart(res);
+
+      // Global Mouse Move Listener
+      res.view.addEventListener("mousemove", (event: any, item: any) => {
+        handleGlobalMouseMoveRef.current(event, item);
+      });
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    return () => {
+      if (chartInstanceRef.current) {
+        chartInstanceRef.current.finalize();
+      }
+    };
   }, [data, yearSignal]);
 
-  // Gestione segnali e pulizia timer...
+  // Update signals and cleanup
   useEffect(() => {
     if (!chart) return;
     chart.view.signal("year", yearSignal).resize().runAsync();
+
     setSelectedIndex(-1);
     setTooltipState((prev) => ({ ...prev, isOpen: false }));
+
     if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
     if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+    closeTimeoutRef.current = null;
+    openTimeoutRef.current = null;
   }, [chart, yearSignal]);
 
   useEffect(() => {
     if (!chart) return;
     chart.view.signal("is_cumulative", cumulativeSignal).resize().runAsync();
+
     setSelectedIndex(-1);
     setTooltipState((prev) => ({ ...prev, isOpen: false }));
+
     if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
     if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+    closeTimeoutRef.current = null;
+    openTimeoutRef.current = null;
   }, [chart, cumulativeSignal]);
 
-  // --- Navigazione Tastiera (Invariata) ---
+  // --- Keyboard Navigation  ---
   const updateTooltipFromKeyboard = (index: number) => {
     if (!chart || index === -1) {
       closeTooltip();
@@ -309,6 +337,7 @@ const MessagesTrendChart = ({ yearSignal, cumulativeSignal }: Props) => {
       tabIndex={0}
       onKeyDown={handleKeyDown}
       onBlur={handleBlur}
+      onMouseLeave={handleMouseLeave} // Handle exit from React box
       aria-label={ARIA_LABEL_TEXT}
       role="application"
     >
@@ -326,6 +355,7 @@ const MessagesTrendChart = ({ yearSignal, cumulativeSignal }: Props) => {
         {srText}
       </div>
 
+      {/* --- Custom Tooltip --- */}
       {tooltipState.isOpen && tooltipState.data && (
         <Paper
           elevation={4}
@@ -348,6 +378,7 @@ const MessagesTrendChart = ({ yearSignal, cumulativeSignal }: Props) => {
             pointerEvents: "auto",
           }}
         >
+          {/* Header with Close Button */}
           <Box
             display="flex"
             justifyContent="space-between"
@@ -374,6 +405,7 @@ const MessagesTrendChart = ({ yearSignal, cumulativeSignal }: Props) => {
             </IconButton>
           </Box>
 
+          {/* Data Content */}
           <Box>
             <Typography
               sx={{
