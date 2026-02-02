@@ -41,6 +41,8 @@ const REGIONS_COORDINATES = [
   { region: "Friuli-Venezia Giulia", longitude: 13.3768, latitude: 46.1495 },
 ];
 
+const spec = toVegaLiteSpec(mapJsonSpec);
+
 const ARIA_LABEL_TEXT =
   "Mappa dei servizi per regione. Usa le frecce sinistra e destra per navigare i dati. Premi ESC per nascondere il tooltip.";
 
@@ -64,11 +66,6 @@ const findScenegraphItem = (items: any[], regionName: string): any => {
   return null;
 };
 
-type Props = {
-  categorySignal: string;
-};
-
-// Tipo per lo stato del Tooltip
 type TooltipState = {
   isOpen: boolean;
   x: number;
@@ -79,7 +76,9 @@ type TooltipState = {
   } | null;
 };
 
-const spec = toVegaLiteSpec(mapJsonSpec);
+type Props = {
+  categorySignal: string;
+};
 
 const ServicesMapChart = ({ categorySignal }: Props) => {
   const { data } = useDashboardData();
@@ -88,27 +87,18 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
   const chartContent = useRef<HTMLDivElement>(null);
   const chartInstanceRef = useRef<Result | null>(null);
 
-  // Stato per il Tooltip personalizzato
   const [tooltipState, setTooltipState] = useState<TooltipState>({
     isOpen: false,
     x: 0,
     y: 0,
     data: null,
   });
-
-  // Ref per accedere allo stato fresco
-  const tooltipStateRef = useRef(tooltipState);
-  useEffect(() => {
-    tooltipStateRef.current = tooltipState;
-  }, [tooltipState]);
+  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
 
   // Timer refs
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const openTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
-
-  // --- Process Data ---
   const processedData = useMemo(() => {
     if (!data?.metrics_by_geo_cat) return [];
 
@@ -131,123 +121,108 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
     return merged.sort((a, b) => a.regione.localeCompare(b.regione));
   }, [data, categorySignal]);
 
-  // --- Gestione Tooltip ---
+  // ---  Tooltip management ---
 
   const closeTooltip = useCallback(() => {
     if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
     if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
-    closeTimeoutRef.current = null;
     openTimeoutRef.current = null;
+    closeTimeoutRef.current = null;
 
     setTooltipState((prev) => ({ ...prev, isOpen: false }));
     setSelectedIndex(-1);
   }, []);
 
-  // Logica di chiusura con timer
+  // Closing logic with timer
   const handleMouseLeave = useCallback(() => {
-    // 1. Ferma qualsiasi tentativo di apertura pendente
+    // 1. Stop any pending opening attempt
     if (openTimeoutRef.current) {
       clearTimeout(openTimeoutRef.current);
       openTimeoutRef.current = null;
     }
 
-    // 2. Se c'è già un timer di chiusura attivo, NON resettarlo.
-    // Questo è fondamentale: se muovi il mouse nel vuoto, non devi posticipare la chiusura.
+    // 2. If a closing timer is already active, DO NOT reset it.
+    // This is crucial: if moving the mouse in void space, do not postpone closing.
     if (closeTimeoutRef.current) return;
 
-    // 3. Avvia il timer di chiusura (200ms)
+    // 3. Start the closing timer (200ms)
     closeTimeoutRef.current = setTimeout(() => {
       setTooltipState((prev) => ({ ...prev, isOpen: false }));
       closeTimeoutRef.current = null;
     }, 200);
   }, []);
 
-  // Ref per accedere a handleMouseLeave dentro il listener di Vega
-  const handleMouseLeaveRef = useRef(handleMouseLeave);
-  useEffect(() => {
-    handleMouseLeaveRef.current = handleMouseLeave;
-  }, [handleMouseLeave]);
-
   const handleMouseEnterTooltip = () => {
-    // Se entriamo nella tooltip, cancelliamo la chiusura
+    // If entering the tooltip, cancel the closing
     if (closeTimeoutRef.current) {
       clearTimeout(closeTimeoutRef.current);
       closeTimeoutRef.current = null;
     }
-    // E cancelliamo eventuali aperture di altre regioni pendenti
+    // And cancel any pending opening of other regions
     if (openTimeoutRef.current) {
       clearTimeout(openTimeoutRef.current);
       openTimeoutRef.current = null;
     }
   };
 
-  // --- Gestione Click Esterno ---
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (tooltipStateRef.current.isOpen) {
-        const target = event.target as HTMLElement;
-        const isTooltip = target.closest("#map-tooltip");
-        if (!isTooltip) {
-          closeTooltip();
+  // This function opens and closes the tooltip based on the item received from the mouse move event
+  const handleMouseMove = useCallback(
+    (event: MouseEvent, item: any) => {
+      const datum = item && item.datum;
+
+      // CASE 1: We are over valid data (Region)
+      if (datum && datum.regione) {
+        // Cancel pending closing
+        if (closeTimeoutRef.current) {
+          clearTimeout(closeTimeoutRef.current);
+          closeTimeoutRef.current = null;
         }
+
+        // If already open on this datum, stop
+        if (
+          tooltipState.isOpen &&
+          tooltipState.data?.regione === datum.regione
+        ) {
+          return;
+        }
+
+        // Debounce opening
+        if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
+
+        openTimeoutRef.current = setTimeout(() => {
+          setTooltipState({
+            isOpen: true,
+            x: event.clientX,
+            y: event.clientY,
+            data: {
+              regione: datum.regione,
+              count_serv: datum.count_serv,
+            },
+          });
+        }, 150);
       }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [closeTooltip]);
-
-  // Handler Custom per l'apertura (passato a embed)
-  const handleVegaTooltip = (
-    handler: any,
-    event: MouseEvent,
-    item: any,
-    value: any,
-  ) => {
-    const datum = item && item.datum;
-    const currentTooltipState = tooltipStateRef.current;
-
-    // Se Vega ci dice che siamo su un dato valido...
-    if (datum && datum.regione) {
-      // 1. Annulla la chiusura
-      if (closeTimeoutRef.current) {
-        clearTimeout(closeTimeoutRef.current);
-        closeTimeoutRef.current = null;
+      // CASE 2: We are over the background (no valid data)
+      else {
+        handleMouseLeave();
       }
+    },
+    [handleMouseLeave, tooltipState.isOpen, tooltipState.data],
+  );
 
-      // 2. Se siamo già aperti su questo dato, stop.
-      if (
-        currentTooltipState.isOpen &&
-        currentTooltipState.data?.regione === datum.regione
-      ) {
-        return;
-      }
+  // Ref to access the function inside the listener (avoids stale closure if the function changes)
+  const handleGlobalMouseMoveRef = useRef(handleMouseMove);
 
-      // 3. Debounce apertura
-      if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
-
-      openTimeoutRef.current = setTimeout(() => {
-        setTooltipState({
-          isOpen: true,
-          x: event.clientX,
-          y: event.clientY,
-          data: {
-            regione: datum.regione,
-            count_serv: datum.count_serv,
-          },
-        });
-      }, 150);
-    }
-    // Nota: Non gestiamo l'else (chiusura) qui, perché lo gestisce il listener globale 'mousemove' sotto.
-  };
+  useEffect(() => {
+    handleGlobalMouseMoveRef.current = handleMouseMove;
+  }, [handleMouseMove]);
 
   useEffect(() => {
     if (!chartContent.current || !data) return;
 
+    // Disable the native tooltip
     const options = {
       ...chartConfig,
-      tooltip: handleVegaTooltip,
+      tooltip: () => {},
     };
 
     embed(chartContent.current, spec, options).then((chart) => {
@@ -259,20 +234,14 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
       chartInstanceRef.current = chart;
       setChart(chart);
 
-      // --- NUOVO: Listener globale sulla vista per gestire l'uscita ---
-      // Questo intercetta il mouse anche quando è sopra la mappa grigia (senza dati)
+      // Global Mouse Move Listener
       chart.view.addEventListener("mousemove", (event: any, item: any) => {
-        // Se l'item sotto il mouse NON ha una regione (es. sfondo, bordo, vuoto)
-        if (!item || !item.datum || !item.datum.regione) {
-          // Chiama la funzione di chiusura (tramite Ref per evitare stale closures)
-          handleMouseLeaveRef.current();
-        }
+        handleGlobalMouseMoveRef.current(event, item);
       });
     });
 
     return () => {
       if (chartInstanceRef.current) {
-        // Rimuoviamo i listener se necessario (Vega lo fa spesso in automatico su finalize, ma per sicurezza)
         chartInstanceRef.current.finalize();
       }
     };
@@ -414,7 +383,7 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
         {srText}
       </div>
 
-      {/* --- Tooltip Personalizzato --- */}
+      {/* --- Custom Tooltip --- */}
       {tooltipState.isOpen && tooltipState.data && (
         <Paper
           elevation={4}
@@ -437,6 +406,7 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
             pointerEvents: "auto",
           }}
         >
+          {/* Header with Close Button */}
           <Box
             display="flex"
             justifyContent="space-between"
@@ -463,6 +433,7 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
             </IconButton>
           </Box>
 
+          {/* Data Content */}
           <Box>
             <Typography
               sx={{

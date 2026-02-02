@@ -14,7 +14,6 @@ type Props = {
   categorySignal: string;
 };
 
-// Tipo per lo stato del Tooltip
 type TooltipState = {
   isOpen: boolean;
   x: number;
@@ -56,27 +55,18 @@ const EntiMapChart = ({ categorySignal }: Props) => {
   const chartContent = useRef<HTMLDivElement>(null);
   const chartInstanceRef = useRef<Result | null>(null);
 
-  // Stato per il Tooltip personalizzato
   const [tooltipState, setTooltipState] = useState<TooltipState>({
     isOpen: false,
     x: 0,
     y: 0,
     data: null,
   });
-
-  // Ref per accedere allo stato fresco
-  const tooltipStateRef = useRef(tooltipState);
-  useEffect(() => {
-    tooltipStateRef.current = tooltipState;
-  }, [tooltipState]);
+  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
 
   // Timer refs
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const openTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
-
-  // --- Process Data ---
   const processedData = useMemo(() => {
     if (!data?.metrics_by_geo_cat) return [];
 
@@ -93,119 +83,115 @@ const EntiMapChart = ({ categorySignal }: Props) => {
     );
   }, [data, categorySignal]);
 
-  // --- Gestione Tooltip ---
+  // --- Tooltip management ---
 
   const closeTooltip = useCallback(() => {
     if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
     if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
-    closeTimeoutRef.current = null;
     openTimeoutRef.current = null;
+    closeTimeoutRef.current = null;
 
     setTooltipState((prev) => ({ ...prev, isOpen: false }));
     setSelectedIndex(-1);
   }, []);
 
-  // Logica di chiusura con timer (smart check)
+  // Closing logic with timer
   const handleMouseLeave = useCallback(() => {
+    // 1. Stop any pending opening attempt
     if (openTimeoutRef.current) {
       clearTimeout(openTimeoutRef.current);
       openTimeoutRef.current = null;
     }
 
-    // Se c'è già un timer di chiusura attivo, NON resettarlo.
+    // 2. If a closing timer is already active, DO NOT reset it.
     if (closeTimeoutRef.current) return;
 
+    // 3. Start the closing timer (200ms)
     closeTimeoutRef.current = setTimeout(() => {
       setTooltipState((prev) => ({ ...prev, isOpen: false }));
       closeTimeoutRef.current = null;
     }, 200);
   }, []);
 
-  // Ref per accedere a handleMouseLeave dentro il listener di Vega
+  // Ref to access handleMouseLeave inside the listener of Vega
   const handleMouseLeaveRef = useRef(handleMouseLeave);
   useEffect(() => {
     handleMouseLeaveRef.current = handleMouseLeave;
   }, [handleMouseLeave]);
 
   const handleMouseEnterTooltip = () => {
+    // If entering the tooltip, cancel the closing
     if (closeTimeoutRef.current) {
       clearTimeout(closeTimeoutRef.current);
       closeTimeoutRef.current = null;
     }
+    // And cancel any pending opening of other regions
     if (openTimeoutRef.current) {
       clearTimeout(openTimeoutRef.current);
       openTimeoutRef.current = null;
     }
   };
 
-  // --- Gestione Click Esterno ---
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (tooltipStateRef.current.isOpen) {
-        const target = event.target as HTMLElement;
-        const isTooltip = target.closest("#enti-tooltip");
-        if (!isTooltip) {
-          closeTooltip();
+  // This function opens and closes the tooltip based on the item received from the mouse move event
+  const handleMouseMove = useCallback(
+    (event: MouseEvent, item: any) => {
+      const datum = item && item.datum;
+
+      // CASE 1: we are on a valid data
+      if (datum && datum.regione) {
+        // Cancel pending closing
+        if (closeTimeoutRef.current) {
+          clearTimeout(closeTimeoutRef.current);
+          closeTimeoutRef.current = null;
         }
+
+        // If already open on this datum, stop
+        if (
+          tooltipState.isOpen &&
+          tooltipState.data?.regione === datum.regione
+        ) {
+          return;
+        }
+
+        // Debounce opening
+        if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
+
+        openTimeoutRef.current = setTimeout(() => {
+          setTooltipState({
+            isOpen: true,
+            x: event.clientX,
+            y: event.clientY,
+            data: {
+              regione: datum.regione,
+              perc_enti: datum.perc_enti,
+              count_enti: datum.count_enti,
+              count_enti_ipa: datum.count_enti_ipa,
+            },
+          });
+        }, 150);
       }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [closeTooltip]);
-
-  // Handler Custom per l'apertura
-  const handleVegaTooltip = (
-    handler: any,
-    event: MouseEvent,
-    item: any,
-    value: any,
-  ) => {
-    const datum = item && item.datum;
-    const currentTooltipState = tooltipStateRef.current;
-
-    if (datum && datum.regione) {
-      // 1. Annulla la chiusura
-      if (closeTimeoutRef.current) {
-        clearTimeout(closeTimeoutRef.current);
-        closeTimeoutRef.current = null;
+      // CASE 2: We are above the background (no valid data)
+      else {
+        handleMouseLeave();
       }
+    },
+    [handleMouseLeave, tooltipState.isOpen, tooltipState.data],
+  );
 
-      // 2. Stop se già aperto
-      if (
-        currentTooltipState.isOpen &&
-        currentTooltipState.data?.regione === datum.regione
-      ) {
-        return;
-      }
+  // Ref to access the function inside the listener (avoids stale closure if the function changes)
+  const handleGlobalMouseMoveRef = useRef(handleMouseMove);
 
-      // 3. Debounce apertura
-      if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
-
-      openTimeoutRef.current = setTimeout(() => {
-        setTooltipState({
-          isOpen: true,
-          x: event.clientX,
-          y: event.clientY,
-          data: {
-            regione: datum.regione,
-            perc_enti: datum.perc_enti,
-            count_enti: datum.count_enti,
-            count_enti_ipa: datum.count_enti_ipa,
-          },
-        });
-      }, 150);
-    }
-    // Nota: L'uscita è gestita dal listener globale 'mousemove' aggiunto sotto
-  };
+  useEffect(() => {
+    handleGlobalMouseMoveRef.current = handleMouseMove;
+  }, [handleMouseMove]);
 
   useEffect(() => {
     if (!chartContent.current || !data) return;
 
+    // Disable the native tooltip
     const options = {
       ...chartConfig,
-      tooltip: handleVegaTooltip,
+      tooltip: () => {},
     };
 
     embed(chartContent.current, spec, options).then((chart) => {
@@ -217,18 +203,15 @@ const EntiMapChart = ({ categorySignal }: Props) => {
       chartInstanceRef.current = chart;
       setChart(chart);
 
-      // --- Listener globale sulla vista per gestire l'uscita ---
+      // Global Mouse Move Listener
       chart.view.addEventListener("mousemove", (event: any, item: any) => {
-        // Se l'item sotto il mouse NON ha una regione (es. sfondo, bordo, vuoto)
-        if (!item || !item.datum || !item.datum.regione) {
-          handleMouseLeaveRef.current();
-        }
+        handleGlobalMouseMoveRef.current(event, item);
       });
     });
 
     return () => {
       if (chartInstanceRef.current) {
-        chartInstanceRef.current?.finalize();
+        chartInstanceRef.current.finalize();
       }
     };
   }, [data]);
@@ -341,7 +324,6 @@ const EntiMapChart = ({ categorySignal }: Props) => {
 
     setSrText(`${regionText} ${percentText} ${countText}`);
 
-    // Aggiornamento Stato React
     setTooltipState({
       isOpen: true,
       x: clientX,
@@ -370,7 +352,7 @@ const EntiMapChart = ({ categorySignal }: Props) => {
       tabIndex={0}
       onKeyDown={handleKeyDown}
       onBlur={handleBlur}
-      onMouseLeave={handleMouseLeave} // Gestione uscita dal box React
+      onMouseLeave={handleMouseLeave} // Handle exit from React box
       aria-label={ARIA_LABEL_TEXT}
       role="application"
     >
@@ -388,7 +370,7 @@ const EntiMapChart = ({ categorySignal }: Props) => {
         {srText}
       </div>
 
-      {/* --- Tooltip Personalizzato --- */}
+      {/* --- Custom Tooltip --- */}
       {tooltipState.isOpen && tooltipState.data && (
         <Paper
           elevation={4}
@@ -398,32 +380,20 @@ const EntiMapChart = ({ categorySignal }: Props) => {
           onMouseLeave={handleMouseLeave}
           sx={{
             position: "fixed",
-
             top: tooltipState.y,
-
             left: tooltipState.x,
-
             transform: "translate(-50%, -115%)",
-
             zIndex: 1500,
-
             paddingBottom: "0.5rem",
-
             paddingTop: "0.25rem",
-
             paddingX: "0.5rem",
-
             backgroundColor: "white",
-
             borderRadius: "8px",
-
             pointerEvents: "auto",
-
             textAlign: "center",
           }}
         >
-          {/* Header con Regione e Pulsante Chiusura */}
-
+          {/* Header with Region and Close Button */}
           <Box display="flex" justifyContent="center" alignItems="center">
             <IconButton
               size="small"
@@ -433,63 +403,46 @@ const EntiMapChart = ({ categorySignal }: Props) => {
               <CloseIcon fontSize="small" />
             </IconButton>
           </Box>
-
           <Typography
             sx={{
               fontWeight: 600,
-
               fontSize: "0.875rem",
-
               color: dashboardColors.get("grey-850"),
-
               whiteSpace: "nowrap",
-
               lineHeight: 1.285,
-
               textAlign: "center",
             }}
           >
             {tooltipState.data.regione}
           </Typography>
 
-          {/* Contenuto Dati: Percentuale e Frazione */}
-
+          {/* Data Content: Percentage and Fraction */}
           <Box display="flex" flexDirection="column" alignItems="center">
             <Typography
               sx={{
                 fontWeight: 400,
-
                 fontSize: "0.875rem",
-
                 lineHeight: 1.285,
-
                 color: dashboardColors.get("grey-850"),
               }}
             >
               {new Intl.NumberFormat("it-IT", {
                 style: "percent",
-
                 maximumFractionDigits: 0,
               }).format(Number(tooltipState.data.perc_enti))}
             </Typography>
-
             <Divider
               sx={{
                 width: "80%",
-
                 my: 0.5,
-
                 borderColor: dashboardColors.get("grey-300"),
               }}
             />
-
             <Box display="flex" alignItems="baseline" justifyContent="center">
               <Typography
                 sx={{
                   fontWeight: 700,
-
                   fontSize: "0.875rem",
-
                   color: dashboardColors.get("grey-850"),
                 }}
               >
@@ -497,27 +450,20 @@ const EntiMapChart = ({ categorySignal }: Props) => {
                   tooltipState.data.count_enti,
                 )}
               </Typography>
-
               <Typography
                 sx={{
                   fontWeight: 400,
-
                   fontSize: "0.875rem",
-
                   color: dashboardColors.get("grey-850"),
-
                   mx: 0.25,
                 }}
               >
                 /
               </Typography>
-
               <Typography
                 sx={{
                   fontWeight: 400,
-
                   fontSize: "0.875rem",
-
                   color: dashboardColors.get("grey-850"),
                 }}
               >
