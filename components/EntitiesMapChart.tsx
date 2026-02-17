@@ -382,15 +382,33 @@ const EntiMapChart = ({ categorySignal }: Props) => {
             position: "fixed",
             top: tooltipState.y,
             left: tooltipState.x,
-            transform: "translate(-50%, -115%)",
+            transform: "translate(-50%, -115%)", // Spostato in alto per far spazio alla freccia
             zIndex: 1500,
             paddingBottom: "0.5rem",
             paddingTop: "0.25rem",
             paddingX: "0.5rem",
-            backgroundColor: "white",
+
+            // --- DARK MODE & ARROW STYLE ---
+            backgroundColor: dashboardColors.get("grey-850"), // Sfondo Scuro
+            color: "#FFF", // Testo Bianco base
             borderRadius: "8px",
             pointerEvents: "auto",
             textAlign: "center",
+            overflow: "visible", // Necessario per vedere la freccia fuori dal box
+
+            // La Linguetta (Arrow Down)
+            "&::after": {
+              content: '""',
+              position: "absolute",
+              top: "100%",
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: 0,
+              height: 0,
+              borderStyle: "solid",
+              borderWidth: "8px",
+              borderColor: `${dashboardColors.get("grey-850")} transparent transparent transparent`,
+            },
           }}
         >
           {/* Header with Region and Close Button */}
@@ -399,6 +417,12 @@ const EntiMapChart = ({ categorySignal }: Props) => {
               size="small"
               onClick={closeTooltip}
               aria-label="Chiudi tooltip"
+              sx={{
+                color: "#FFF", // Icona Bianca
+                "&:hover": {
+                  backgroundColor: "rgba(255, 255, 255, 0.1)", // Cerchio Hover visibile
+                },
+              }}
             >
               <CloseIcon fontSize="small" />
             </IconButton>
@@ -407,10 +431,10 @@ const EntiMapChart = ({ categorySignal }: Props) => {
             sx={{
               fontWeight: 600,
               fontSize: "0.875rem",
-              color: dashboardColors.get("grey-850"),
               whiteSpace: "nowrap",
               lineHeight: 1.285,
               textAlign: "center",
+              color: "#FFF",
             }}
           >
             {tooltipState.data.regione}
@@ -423,7 +447,7 @@ const EntiMapChart = ({ categorySignal }: Props) => {
                 fontWeight: 400,
                 fontSize: "0.875rem",
                 lineHeight: 1.285,
-                color: dashboardColors.get("grey-850"),
+                color: "#FFF",
               }}
             >
               {new Intl.NumberFormat("it-IT", {
@@ -435,7 +459,7 @@ const EntiMapChart = ({ categorySignal }: Props) => {
               sx={{
                 width: "80%",
                 my: 0.5,
-                borderColor: dashboardColors.get("grey-300"),
+                borderColor: "rgba(255, 255, 255, 0.2)",
               }}
             />
             <Box display="flex" alignItems="baseline" justifyContent="center">
@@ -443,7 +467,7 @@ const EntiMapChart = ({ categorySignal }: Props) => {
                 sx={{
                   fontWeight: 700,
                   fontSize: "0.875rem",
-                  color: dashboardColors.get("grey-850"),
+                  color: "#FFF",
                 }}
               >
                 {new Intl.NumberFormat("it-IT").format(
@@ -454,7 +478,7 @@ const EntiMapChart = ({ categorySignal }: Props) => {
                 sx={{
                   fontWeight: 400,
                   fontSize: "0.875rem",
-                  color: dashboardColors.get("grey-850"),
+                  color: "#FFF",
                   mx: 0.25,
                 }}
               >
@@ -463,8 +487,8 @@ const EntiMapChart = ({ categorySignal }: Props) => {
               <Typography
                 sx={{
                   fontWeight: 400,
-                  fontSize: "0.875rem",
-                  color: dashboardColors.get("grey-850"),
+                  fontSize: "0.85rem",
+                  color: "#FFF",
                 }}
               >
                 {new Intl.NumberFormat("it-IT").format(

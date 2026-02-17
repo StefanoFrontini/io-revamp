@@ -311,15 +311,33 @@ const MessagesTrendCumulativeChart = () => {
             position: "fixed",
             top: tooltipState.y,
             left: tooltipState.x,
-            transform: "translate(-50%, -115%)",
+            transform: "translate(-50%, -115%)", // Spostato in alto per la freccia
             zIndex: 1500,
             paddingRight: "0.5rem",
             paddingLeft: "1rem",
             paddingBottom: "0.5rem",
             paddingTop: "0.4rem",
-            backgroundColor: "white",
+
+            // --- DARK MODE & ARROW STYLE ---
+            backgroundColor: dashboardColors.get("grey-850"), // Sfondo scuro
+            color: "#FFF", // Testo bianco
             borderRadius: "6px",
             pointerEvents: "auto",
+            overflow: "visible", // Necessario per la freccia esterna
+
+            // La Linguetta (Arrow Down)
+            "&::after": {
+              content: '""',
+              position: "absolute",
+              top: "100%",
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: 0,
+              height: 0,
+              borderStyle: "solid",
+              borderWidth: "8px",
+              borderColor: `${dashboardColors.get("grey-850")} transparent transparent transparent`,
+            },
           }}
         >
           {/* Header con pulsante chiusura */}
@@ -334,7 +352,7 @@ const MessagesTrendCumulativeChart = () => {
                 fontWeight: 600,
                 fontSize: "0.875rem",
                 lineHeight: 1.285,
-                color: dashboardColors.get("grey-850"),
+                color: "#FFF",
                 whiteSpace: "nowrap",
               }}
             >
@@ -344,6 +362,12 @@ const MessagesTrendCumulativeChart = () => {
               size="small"
               onClick={closeTooltip}
               aria-label="Chiudi tooltip"
+              sx={{
+                color: "#FFF", // Icona bianca
+                "&:hover": {
+                  backgroundColor: "rgba(255, 255, 255, 0.1)", // Hover chiaro visibile
+                },
+              }}
             >
               <CloseIcon fontSize="small" />
             </IconButton>
@@ -354,8 +378,9 @@ const MessagesTrendCumulativeChart = () => {
             <Typography
               sx={{
                 fontWeight: 400,
-                color: dashboardColors.get("grey-850"),
+                color: "#FFF",
                 lineHeight: 1.285,
+                fontSize: "0.85rem",
               }}
             >
               {formatNumber(tooltipState.data.count)}

@@ -401,9 +401,25 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
             paddingLeft: "1rem",
             paddingBottom: "0.6rem",
             paddingTop: "0.4rem",
-            backgroundColor: "white",
             borderRadius: "6px",
             pointerEvents: "auto",
+            backgroundColor: dashboardColors.get("grey-850"),
+            color: "#FFF",
+
+            // --- Arrow down styles ---
+            "&::after": {
+              content: '""',
+              position: "absolute",
+              top: "100%",
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: 0,
+              height: 0,
+              borderStyle: "solid",
+              borderWidth: "8px", // Arrow dimensions
+              // Creates a tringle pointing down using transparent borders
+              borderColor: `${dashboardColors.get("grey-850")} transparent transparent transparent`,
+            },
           }}
         >
           {/* Header with Close Button */}
@@ -418,7 +434,6 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
                 fontWeight: 600,
                 fontSize: "0.875rem",
                 lineHeight: 1.285,
-                color: dashboardColors.get("grey-850"),
                 whiteSpace: "nowrap",
               }}
             >
@@ -428,6 +443,12 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
               size="small"
               onClick={closeTooltip}
               aria-label="Chiudi tooltip"
+              sx={{
+                color: "#FFF",
+                "&:hover": {
+                  backgroundColor: "rgba(255, 255, 255, 0.1)",
+                },
+              }}
             >
               <CloseIcon fontSize="small" />
             </IconButton>
@@ -438,7 +459,7 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
             <Typography
               sx={{
                 fontWeight: 400,
-                color: dashboardColors.get("grey-850"),
+                color: "#FFF",
                 lineHeight: 1.285,
               }}
             >
