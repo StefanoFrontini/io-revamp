@@ -382,19 +382,20 @@ const EntiMapChart = ({ categorySignal }: Props) => {
             position: "fixed",
             top: tooltipState.y,
             left: tooltipState.x,
-            transform: "translate(-50%, -115%)", // Spostato in alto per far spazio alla freccia
+            transform: "translate(-50%, -115%)",
             zIndex: 1500,
-            paddingBottom: "0.5rem",
-            paddingTop: "0.25rem",
-            paddingX: "0.5rem",
+            // Allineamento padding come in ServicesMapChart
+            paddingLeft: "1rem",
+            paddingRight: "0.5rem",
+            paddingBottom: "0.6rem",
+            paddingTop: "0.4rem",
 
             // --- DARK MODE & ARROW STYLE ---
-            backgroundColor: dashboardColors.get("grey-850"), // Sfondo Scuro
-            color: "#FFF", // Testo Bianco base
+            backgroundColor: dashboardColors.get("grey-850"),
+            color: "#FFF",
             borderRadius: "8px",
             pointerEvents: "auto",
-            textAlign: "center",
-            overflow: "visible", // Necessario per vedere la freccia fuori dal box
+            overflow: "visible",
 
             // La Linguetta (Arrow Down)
             "&::after": {
@@ -411,37 +412,41 @@ const EntiMapChart = ({ categorySignal }: Props) => {
             },
           }}
         >
-          {/* Header with Region and Close Button */}
-          <Box display="flex" justifyContent="center" alignItems="center">
+          {/* Header con Regione e Pulsante di Chiusura (Simile a ServicesMapChart) */}
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            gap="1.5rem" // Spazio tra testo e icona
+          >
+            <Typography
+              sx={{
+                fontWeight: 600,
+                fontSize: "0.875rem",
+                whiteSpace: "nowrap",
+                lineHeight: 1.285,
+                color: "#FFF",
+              }}
+            >
+              {tooltipState.data.regione}
+            </Typography>
             <IconButton
               size="small"
               onClick={closeTooltip}
               aria-label="Chiudi tooltip"
               sx={{
-                color: "#FFF", // Icona Bianca
+                color: "#FFF",
                 "&:hover": {
-                  backgroundColor: "rgba(255, 255, 255, 0.1)", // Cerchio Hover visibile
+                  backgroundColor: "rgba(255, 255, 255, 0.1)",
                 },
               }}
             >
               <CloseIcon fontSize="small" />
             </IconButton>
           </Box>
-          <Typography
-            sx={{
-              fontWeight: 600,
-              fontSize: "0.875rem",
-              whiteSpace: "nowrap",
-              lineHeight: 1.285,
-              textAlign: "center",
-              color: "#FFF",
-            }}
-          >
-            {tooltipState.data.regione}
-          </Typography>
 
-          {/* Data Content: Percentage and Fraction */}
-          <Box display="flex" flexDirection="column" alignItems="center">
+          {/* Contenuto Dati: Percentuale e Frazione (Allineati a sinistra) */}
+          <Box display="flex" flexDirection="column" alignItems="flex-start">
             <Typography
               sx={{
                 fontWeight: 400,
@@ -455,14 +460,16 @@ const EntiMapChart = ({ categorySignal }: Props) => {
                 maximumFractionDigits: 0,
               }).format(Number(tooltipState.data.perc_enti))}
             </Typography>
+
             <Divider
               sx={{
-                width: "80%",
+                width: "100%", // Divider a tutta larghezza box
                 my: 0.5,
                 borderColor: "rgba(255, 255, 255, 0.2)",
               }}
             />
-            <Box display="flex" alignItems="baseline" justifyContent="center">
+
+            <Box display="flex" alignItems="baseline">
               <Typography
                 sx={{
                   fontWeight: 700,
