@@ -16,6 +16,10 @@
     "line": {
       "color": "#0B3EE3"
     },
+    "point": {
+      "opacity": 0,
+      "size": 200
+    },
     "color": {
       "x1": 1,
       "y1": 1,
