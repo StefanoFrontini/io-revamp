@@ -258,15 +258,19 @@ const MessagesTrendChart = ({ yearSignal, cumulativeSignal }: Props) => {
     const scaleX = view.scale("x");
     const scaleY = view.scale("y");
     const rect = renderEl.getBoundingClientRect();
-    const padding = view.padding();
-    const paddingLeft = typeof padding === "object" ? padding.left : padding;
-    const paddingTop = typeof padding === "object" ? padding.top : padding;
+
+    // FIX: Usiamo view.origin() invece di view.padding()
+    // origin[0] è l'offset X (spazio per le label Y)
+    // origin[1] è l'offset Y (spazio per il titolo/top)
+    const origin = view.origin();
 
     const x = scaleX(datum.timestamp);
     const y = scaleY(datum.metric_value);
 
-    const clientX = rect.left + (paddingLeft || 0) + x;
-    const clientY = rect.top + (paddingTop || 0) + y;
+    // Coordinate client corrette sommano:
+    // Posizione SVG + Offset asse + coordinata punto
+    const clientX = rect.left + origin[0] + x;
+    const clientY = rect.top + origin[1] + y;
 
     const monthText = `Mese: ${datum.month_name}.`;
     const yearText = `Anno: ${datum.year_label}.`;
@@ -286,7 +290,6 @@ const MessagesTrendChart = ({ yearSignal, cumulativeSignal }: Props) => {
       },
     });
   };
-
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!chart || processedData.length === 0) return;
 

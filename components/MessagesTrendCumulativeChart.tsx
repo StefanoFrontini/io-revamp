@@ -235,9 +235,11 @@ const MessagesTrendCumulativeChart = () => {
     const scaleY = view.scale("y");
 
     const rect = renderEl.getBoundingClientRect();
-    const padding = view.padding();
-    const paddingLeft = typeof padding === "object" ? padding.left : padding;
-    const paddingTop = typeof padding === "object" ? padding.top : padding;
+
+    // Sostituiamo il calcolo del padding con view.origin()
+    // origin[0] è l'offset orizzontale (include lo spazio delle label Y)
+    // origin[1] è l'offset verticale (include lo spazio delle label X)
+    const origin = view.origin();
 
     let x = scaleX(datum.timestamp);
     if (x === undefined) {
@@ -245,9 +247,9 @@ const MessagesTrendCumulativeChart = () => {
     }
     const y = scaleY(datum.count);
 
-    // Coordinate client
-    const clientX = rect.left + (paddingLeft || 0) + x;
-    const clientY = rect.top + (paddingTop || 0) + y;
+    // Coordinate client corrette
+    const clientX = rect.left + origin[0] + x;
+    const clientY = rect.top + origin[1] + y;
 
     // Testo Screen Reader
     const yearText = `Anno: ${datum.year_text}.`;
