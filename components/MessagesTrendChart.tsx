@@ -134,7 +134,10 @@ const MessagesTrendChart = ({ yearSignal, cumulativeSignal }: Props) => {
   // This function opens and closes the tooltip based on the item received from the mouse move event
   const handleMouseMove = useCallback(
     (event: MouseEvent, item: any) => {
-      const datum = item && item.datum;
+      // Only accept items from the point layer (symbol marks), not from the area layer.
+      // The area mark returns the first datum of the series on hover, causing the bug.
+      const isPointMark = item && item.mark && item.mark.marktype === "symbol";
+      const datum = isPointMark ? item.datum : null;
 
       // CASE 1: We are over valid data
       if (datum) {
