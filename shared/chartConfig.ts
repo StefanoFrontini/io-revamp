@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import { expressionFunction, formatLocale, timeFormatLocale } from "vega";
 import { EmbedOptions } from "vega-embed";
 
