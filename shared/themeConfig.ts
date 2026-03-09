@@ -43,6 +43,10 @@ export const theme = createTheme({
           "&.Mui-selected": {
             color: dashboardColors.get("blue-500"),
           },
+          "&.Mui-focusVisible": {
+            outline: `2px solid ${dashboardColors.get("blue-500")}`,
+            outlineOffset: "-2px",
+          },
         },
       },
     },

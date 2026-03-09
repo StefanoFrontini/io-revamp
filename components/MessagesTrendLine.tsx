@@ -173,7 +173,7 @@ const MessagesTrendLine = ({ title }: Props) => {
               <Select
                 IconComponent={ExpandMoreOutlinedIcon}
                 id={selectIdCumulative}
-                aria-labelledby={labelIdCumulative}
+                labelId={labelIdCumulative}
                 MenuProps={{
                   // Fix for Iframe: keep DOM local and allows keyboard navigation
                   disablePortal: true,
@@ -272,7 +272,7 @@ const MessagesTrendLine = ({ title }: Props) => {
           <Select
             IconComponent={ExpandMoreOutlinedIcon}
             id={selectIdYear}
-            aria-labelledby={labelIdYear}
+            labelId={labelIdYear}
             MenuProps={{
               // Fix for Iframe: keep DOM local and allows keyboard navigation
               disablePortal: true,
@@ -312,7 +312,7 @@ const MessagesTrendLine = ({ title }: Props) => {
         chiudere il tooltip se aperto.
       </Typography>
 
-      <Box style={{ height: "22rem", marginBottom: "1rem" }}>
+      <Box style={{ height: "22rem", marginBottom: "2rem" }}>
         {renderChart()}
       </Box>
       <Typography

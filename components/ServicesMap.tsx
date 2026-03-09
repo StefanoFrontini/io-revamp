@@ -190,7 +190,7 @@ const ServicesMap = () => {
           <Select
             IconComponent={ExpandMoreOutlinedIcon}
             id={selectId}
-            aria-labelledby={labelIdMap}
+            labelId={labelIdMap}
             // Fix MenuProps for Iframe + keyboard navigation
             MenuProps={{
               disablePortal: true,
@@ -231,7 +231,7 @@ const ServicesMap = () => {
           <Select
             IconComponent={ExpandMoreOutlinedIcon}
             id={selectIdCategory}
-            aria-labelledby={labelIdCategory}
+            labelId={labelIdCategory}
             // Fix MenuProps for Iframe + keyboard navigation
             MenuProps={{
               disablePortal: true,
