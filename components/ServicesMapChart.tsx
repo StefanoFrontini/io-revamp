@@ -44,7 +44,7 @@ const REGIONS_COORDINATES = [
 const spec = toVegaLiteSpec(mapJsonSpec);
 
 const ARIA_LABEL_TEXT =
-  "Mappa dei servizi per regione. Usa le frecce sinistra e destra per navigare i dati. Premi ESC per nascondere il tooltip.";
+  "Mappa interattiva dei servizi per regione, ordinata alfabeticamente.";
 
 // Helper to find the corresponding scenegraph item
 const findScenegraphItem = (items: any[], regionName: string): any => {
@@ -226,8 +226,12 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
     };
 
     embed(chartContent.current, spec, options).then((chart) => {
+      const sortedData = [...data.metrics_by_geo_cat].sort((a, b) =>
+        a.regione.localeCompare(b.regione, "it")
+      );
+
       chart.view
-        .insert("dashboardData", data.metrics_by_geo_cat)
+        .insert("dashboardData", sortedData)
         .resize()
         .runAsync();
 
@@ -367,12 +371,10 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
       onBlur={handleBlur}
       onMouseLeave={handleMouseLeave}
       aria-label={ARIA_LABEL_TEXT}
-      role="application"
     >
       <div
         ref={chartContent}
         style={{ width: "100%", height: "100%" }}
-        aria-hidden="true"
       />
       <div
         style={visuallyHidden}

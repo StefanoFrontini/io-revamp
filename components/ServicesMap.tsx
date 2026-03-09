@@ -108,7 +108,7 @@ const ServicesMap = () => {
   const renderNote = () => {
     switch (curMapOption) {
       case "servizi":
-        return "La dimensione delle bolle indica il volume di servizi attivi su IO in ciascuna regione in base alla collocazione geografica degli enti erogatori";
+        return "Ogni bolla rappresenta i servizi attivi su IO in una regione, in base alla collocazione geografica degli enti erogatori. La dimensione indica il volume dei servizi. Il valore numerico è disponibile al passaggio del mouse o tramite selezione da tastiera: usare le frecce sinistra e destra per navigare tra i riquadri informativi delle regioni e il tasto ESC per chiuderli.";
       case "enti":
         return "La colorazione mostra la percentuale di Enti attivi in ciascuna regione";
       default:

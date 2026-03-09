@@ -195,8 +195,12 @@ const EntiMapChart = ({ categorySignal }: Props) => {
     };
 
     embed(chartContent.current, spec, options).then((chart) => {
+      const sortedData = [...data.metrics_by_geo_cat].sort((a, b) =>
+        a.regione.localeCompare(b.regione, "it")
+      );
+
       chart.view
-        .insert("dashboardData", data.metrics_by_geo_cat)
+        .insert("dashboardData", sortedData)
         .resize()
         .runAsync();
 
@@ -354,11 +358,9 @@ const EntiMapChart = ({ categorySignal }: Props) => {
       onBlur={handleBlur}
       onMouseLeave={handleMouseLeave} // Handle exit from React box
       aria-label={ARIA_LABEL_TEXT}
-      role="application"
     >
       <div
         style={{ height: "100%", width: "100%" }}
-        aria-hidden="true"
         ref={chartContent}
       />
       <div
