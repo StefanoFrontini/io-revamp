@@ -23,8 +23,7 @@ type TooltipState = {
 };
 
 const spec = toVegaLiteSpec(messageTrendCumulativeLine);
-const ARIA_LABEL_TEXT =
-  "Grafico cumulativo annuale. Usa le frecce sinistra e destra per navigare i dati. Premi ESC per nascondere il tooltip.";
+const ARIA_LABEL_TEXT = "Grafico cumulativo annuale messaggi";
 
 const MessagesTrendCumulativeChart = () => {
   const { data } = useDashboardData();
@@ -248,105 +247,108 @@ const MessagesTrendCumulativeChart = () => {
   return (
     <Box
       sx={{
+        display: "flex",
+        flexDirection: "column",
         height: "100%",
         width: "100%",
-        outline: "none",
-        position: "relative",
-        "&:focus": {
-          boxShadow: `0 0 0 2px ${dashboardColors.get("blue-500")}`,
-        },
       }}
-      tabIndex={0}
-      onKeyDown={handleKeyDown}
-      onBlur={handleBlur}
-      onMouseLeave={handleMouseLeave}
-      aria-label={ARIA_LABEL_TEXT}
-      role="application"
     >
-      <div
-        style={{ height: "100%", width: "100%" }}
-        aria-hidden="true"
-        ref={chartContent}
-      />
-
-      <div
-        style={visuallyHidden}
-        role="status"
-        aria-live="assertive"
-        aria-atomic="true"
+      <Box
+        sx={{
+          flex: 1,
+          outline: "none",
+          position: "relative",
+          "&:focus": {
+            boxShadow: `0 0 0 2px ${dashboardColors.get("blue-500")}`,
+          },
+        }}
+        tabIndex={0}
+        onKeyDown={handleKeyDown}
+        onBlur={handleBlur}
+        onMouseLeave={handleMouseLeave}
+        aria-label={ARIA_LABEL_TEXT}
       >
-        {srText}
-      </div>
+        <div style={{ height: "100%", width: "100%" }} ref={chartContent} />
 
-      {tooltipState.isOpen && tooltipState.data && (
-        <Paper
-          elevation={4}
-          role="tooltip"
-          id="chart-tooltip"
-          onMouseEnter={handleMouseEnterTooltip}
-          onMouseLeave={handleMouseLeave}
-          sx={{
-            position: "fixed",
-            top: tooltipState.y,
-            left: tooltipState.x,
-            transform: "translate(-50%, -115%)",
-            zIndex: 1500,
-            padding: "0.4rem 0.5rem 0.5rem 1rem",
-            backgroundColor: dashboardColors.get("grey-850"),
-            color: "#FFF",
-            borderRadius: "6px",
-            pointerEvents: "auto",
-            overflow: "visible",
-            "&::after": {
-              content: '""',
-              position: "absolute",
-              top: "100%",
-              left: "50%",
-              transform: "translateX(-50%)",
-              width: 0,
-              height: 0,
-              borderStyle: "solid",
-              borderWidth: "8px",
-              borderColor: `${dashboardColors.get("grey-850")} transparent transparent transparent`,
-            },
-          }}
+        <div
+          style={visuallyHidden}
+          role="status"
+          aria-live="assertive"
+          aria-atomic="true"
         >
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            gap="5rem"
+          {srText}
+        </div>
+
+        {tooltipState.isOpen && tooltipState.data && (
+          <Paper
+            elevation={4}
+            role="tooltip"
+            id="chart-tooltip"
+            onMouseEnter={handleMouseEnterTooltip}
+            onMouseLeave={handleMouseLeave}
+            sx={{
+              position: "fixed",
+              top: tooltipState.y,
+              left: tooltipState.x,
+              transform: "translate(-50%, -115%)",
+              zIndex: 1500,
+              padding: "0.4rem 0.5rem 0.5rem 1rem",
+              backgroundColor: dashboardColors.get("grey-850"),
+              color: "#FFF",
+              borderRadius: "6px",
+              pointerEvents: "auto",
+              overflow: "visible",
+              "&::after": {
+                content: '""',
+                position: "absolute",
+                top: "100%",
+                left: "50%",
+                transform: "translateX(-50%)",
+                width: 0,
+                height: 0,
+                borderStyle: "solid",
+                borderWidth: "8px",
+                borderColor: `${dashboardColors.get("grey-850")} transparent transparent transparent`,
+              },
+            }}
           >
-            <Typography
-              sx={{
-                fontWeight: 600,
-                fontSize: "0.875rem",
-                color: "#FFF",
-                whiteSpace: "nowrap",
-              }}
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              gap="5rem"
             >
-              {tooltipState.data.year_text}
-            </Typography>
-            <IconButton
-              size="small"
-              onClick={closeTooltip}
-              sx={{
-                color: "#FFF",
-                "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.1)" },
-              }}
-            >
-              <CloseIcon fontSize="small" />
-            </IconButton>
-          </Box>
-          <Box>
-            <Typography
-              sx={{ fontWeight: 400, color: "#FFF", fontSize: "0.85rem" }}
-            >
-              {formatNumber(tooltipState.data.count)}
-            </Typography>
-          </Box>
-        </Paper>
-      )}
+              <Typography
+                sx={{
+                  fontWeight: 600,
+                  fontSize: "0.875rem",
+                  color: "#FFF",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {tooltipState.data.year_text}
+              </Typography>
+              <IconButton
+                size="small"
+                onClick={closeTooltip}
+                sx={{
+                  color: "#FFF",
+                  "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.1)" },
+                }}
+              >
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            </Box>
+            <Box>
+              <Typography
+                sx={{ fontWeight: 400, color: "#FFF", fontSize: "0.85rem" }}
+              >
+                {formatNumber(tooltipState.data.count)}
+              </Typography>
+            </Box>
+          </Paper>
+        )}
+      </Box>
     </Box>
   );
 };

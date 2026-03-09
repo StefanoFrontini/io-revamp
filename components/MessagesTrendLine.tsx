@@ -267,6 +267,7 @@ const MessagesTrendLine = ({ title }: Props) => {
         >
           Seleziona il periodo di riferimento
         </Typography>
+
         <FormControl>
           <Select
             IconComponent={ExpandMoreOutlinedIcon}
@@ -299,6 +300,17 @@ const MessagesTrendLine = ({ title }: Props) => {
       </Stack>
 
       {renderSelectCumulativeMonthly()}
+      <Typography
+        sx={{
+          color: dashboardColors.get("grey-650"),
+          fontWeight: 600,
+          fontSize: "0.875rem",
+          lineHeight: 1.285715,
+        }}
+      >
+        Usa le frecce sinistra e destra per navigare i dati. Premi ESC per
+        chiudere il tooltip se aperto.
+      </Typography>
 
       <Box style={{ height: "22rem", marginBottom: "1rem" }}>
         {renderChart()}
