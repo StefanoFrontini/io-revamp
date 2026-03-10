@@ -25,6 +25,34 @@ type TooltipState = {
 const spec = toVegaLiteSpec(messageTrendCumulativeLine);
 const ARIA_LABEL_TEXT = "Grafico cumulativo annuale messaggi";
 
+const NOISE_ROLES = new Set([
+  "graphics-document",
+  "graphics-object",
+  "graphics-symbol",
+  "graphics-data-description",
+]);
+
+const cleanVegaAriaAttributes = (container: HTMLDivElement) => {
+  // Vega-Embed adds noisy attrs directly to the container element itself
+  container.removeAttribute("aria-roledescription");
+  if (container.getAttribute("aria-label") === "Vega visualization") {
+    container.removeAttribute("aria-label");
+  }
+  const containerRole = container.getAttribute("role");
+  if (containerRole && NOISE_ROLES.has(containerRole)) {
+    container.removeAttribute("role");
+  }
+  // Also clean SVG internals
+  container.querySelectorAll("[aria-roledescription], [role]").forEach((el) => {
+    el.removeAttribute("aria-roledescription");
+    if (el.getAttribute("aria-label") === "Vega visualization") {
+      el.removeAttribute("aria-label");
+    }
+    const role = el.getAttribute("role");
+    if (role && NOISE_ROLES.has(role)) el.removeAttribute("role");
+  });
+};
+
 const MessagesTrendCumulativeChart = () => {
   const { data } = useDashboardData();
   const [chart, setChart] = useState<Result | null>(null);
@@ -150,7 +178,10 @@ const MessagesTrendCumulativeChart = () => {
       res.view
         .insert("dashboardData", data.messages_cumulative)
         .resize()
-        .runAsync();
+        .runAsync()
+        .then(() => {
+          if (chartContent.current) cleanVegaAriaAttributes(chartContent.current);
+        });
 
       chartInstanceRef.current = res;
       setChart(res);
@@ -262,6 +293,7 @@ const MessagesTrendCumulativeChart = () => {
             boxShadow: `0 0 0 2px ${dashboardColors.get("blue-500")}`,
           },
         }}
+        role="region"
         tabIndex={0}
         onKeyDown={handleKeyDown}
         onBlur={handleBlur}

@@ -27,6 +27,35 @@ type TooltipState = {
 };
 
 const spec = toVegaLiteSpec(mapJsonSpecEnti);
+
+const NOISE_ROLES = new Set([
+  "graphics-document",
+  "graphics-object",
+  "graphics-symbol",
+  "graphics-data-description",
+]);
+
+const cleanVegaAriaAttributes = (container: HTMLDivElement) => {
+  // Vega-Embed adds noisy attrs directly to the container element itself
+  container.removeAttribute("aria-roledescription");
+  if (container.getAttribute("aria-label") === "Vega visualization") {
+    container.removeAttribute("aria-label");
+  }
+  const containerRole = container.getAttribute("role");
+  if (containerRole && NOISE_ROLES.has(containerRole)) {
+    container.removeAttribute("role");
+  }
+  // Also clean SVG internals
+  container.querySelectorAll("[aria-roledescription], [role]").forEach((el) => {
+    el.removeAttribute("aria-roledescription");
+    if (el.getAttribute("aria-label") === "Vega visualization") {
+      el.removeAttribute("aria-label");
+    }
+    const role = el.getAttribute("role");
+    if (role && NOISE_ROLES.has(role)) el.removeAttribute("role");
+  });
+};
+
 const ARIA_LABEL_TEXT =
   "Mappa enti per regione. Usa le frecce sinistra e destra per navigare i dati. Premi ESC per nascondere il tooltip.";
 
@@ -196,13 +225,17 @@ const EntiMapChart = ({ categorySignal }: Props) => {
 
     embed(chartContent.current, spec, options).then((chart) => {
       const sortedData = [...data.metrics_by_geo_cat].sort((a, b) =>
-        a.regione.localeCompare(b.regione, "it")
+        a.regione.localeCompare(b.regione, "it"),
       );
 
       chart.view
         .insert("dashboardData", sortedData)
         .resize()
-        .runAsync();
+        .runAsync()
+        .then(() => {
+          if (chartContent.current)
+            cleanVegaAriaAttributes(chartContent.current);
+        });
 
       chartInstanceRef.current = chart;
       setChart(chart);
@@ -223,7 +256,13 @@ const EntiMapChart = ({ categorySignal }: Props) => {
   useEffect(() => {
     if (chart === null) return;
 
-    chart.view.signal("category", categorySignal).resize().runAsync();
+    chart.view
+      .signal("category", categorySignal)
+      .resize()
+      .runAsync()
+      .then(() => {
+        if (chartContent.current) cleanVegaAriaAttributes(chartContent.current);
+      });
 
     setSelectedIndex(-1);
     setTooltipState((prev) => ({ ...prev, isOpen: false }));
@@ -353,16 +392,14 @@ const EntiMapChart = ({ categorySignal }: Props) => {
           boxShadow: `0 0 0 2px ${dashboardColors.get("blue-500")}`,
         },
       }}
+      role="region"
       tabIndex={0}
       onKeyDown={handleKeyDown}
       onBlur={handleBlur}
       onMouseLeave={handleMouseLeave} // Handle exit from React box
       aria-label={ARIA_LABEL_TEXT}
     >
-      <div
-        style={{ height: "100%", width: "100%" }}
-        ref={chartContent}
-      />
+      <div style={{ height: "100%", width: "100%" }} ref={chartContent} />
       <div
         style={visuallyHidden}
         role="status"

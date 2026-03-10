@@ -30,6 +30,34 @@ type TooltipState = {
 const spec = toVegaLiteSpec(messagesTrendLineJson);
 const ARIA_LABEL_TEXT = "Grafico andamento messaggi";
 
+const NOISE_ROLES = new Set([
+  "graphics-document",
+  "graphics-object",
+  "graphics-symbol",
+  "graphics-data-description",
+]);
+
+const cleanVegaAriaAttributes = (container: HTMLDivElement) => {
+  // Vega-Embed adds noisy attrs directly to the container element itself
+  container.removeAttribute("aria-roledescription");
+  if (container.getAttribute("aria-label") === "Vega visualization") {
+    container.removeAttribute("aria-label");
+  }
+  const containerRole = container.getAttribute("role");
+  if (containerRole && NOISE_ROLES.has(containerRole)) {
+    container.removeAttribute("role");
+  }
+  // Also clean SVG internals
+  container.querySelectorAll("[aria-roledescription], [role]").forEach((el) => {
+    el.removeAttribute("aria-roledescription");
+    if (el.getAttribute("aria-label") === "Vega visualization") {
+      el.removeAttribute("aria-label");
+    }
+    const role = el.getAttribute("role");
+    if (role && NOISE_ROLES.has(role)) el.removeAttribute("role");
+  });
+};
+
 const MessagesTrendChart = ({ yearSignal, cumulativeSignal }: Props) => {
   const { data } = useDashboardData();
   const [chart, setChart] = useState<Result | null>(null);
@@ -197,7 +225,9 @@ const MessagesTrendChart = ({ yearSignal, cumulativeSignal }: Props) => {
     };
 
     embed(chartContent.current, spec, options).then((res) => {
-      res.view.insert("dashboardData", data.messages).resize().runAsync();
+      res.view.insert("dashboardData", data.messages).resize().runAsync().then(() => {
+        if (chartContent.current) cleanVegaAriaAttributes(chartContent.current);
+      });
       chartInstanceRef.current = res;
       setChart(res);
 
@@ -217,7 +247,9 @@ const MessagesTrendChart = ({ yearSignal, cumulativeSignal }: Props) => {
   // Update signals and cleanup
   useEffect(() => {
     if (!chart) return;
-    chart.view.signal("year", yearSignal).resize().runAsync();
+    chart.view.signal("year", yearSignal).resize().runAsync().then(() => {
+      if (chartContent.current) cleanVegaAriaAttributes(chartContent.current);
+    });
 
     setSelectedIndex(-1);
     setTooltipState((prev) => ({ ...prev, isOpen: false }));
@@ -230,7 +262,9 @@ const MessagesTrendChart = ({ yearSignal, cumulativeSignal }: Props) => {
 
   useEffect(() => {
     if (!chart) return;
-    chart.view.signal("is_cumulative", cumulativeSignal).resize().runAsync();
+    chart.view.signal("is_cumulative", cumulativeSignal).resize().runAsync().then(() => {
+      if (chartContent.current) cleanVegaAriaAttributes(chartContent.current);
+    });
 
     setSelectedIndex(-1);
     setTooltipState((prev) => ({ ...prev, isOpen: false }));
@@ -346,6 +380,7 @@ const MessagesTrendChart = ({ yearSignal, cumulativeSignal }: Props) => {
             boxShadow: `0 0 0 2px ${dashboardColors.get("blue-500")}`,
           },
         }}
+        role="region"
         tabIndex={0}
         onKeyDown={handleKeyDown}
         onBlur={handleBlur}

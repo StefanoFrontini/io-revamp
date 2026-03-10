@@ -43,6 +43,34 @@ const REGIONS_COORDINATES = [
 
 const spec = toVegaLiteSpec(mapJsonSpec);
 
+const NOISE_ROLES = new Set([
+  "graphics-document",
+  "graphics-object",
+  "graphics-symbol",
+  "graphics-data-description",
+]);
+
+const cleanVegaAriaAttributes = (container: HTMLDivElement) => {
+  // Vega-Embed adds noisy attrs directly to the container element itself
+  container.removeAttribute("aria-roledescription");
+  if (container.getAttribute("aria-label") === "Vega visualization") {
+    container.removeAttribute("aria-label");
+  }
+  const containerRole = container.getAttribute("role");
+  if (containerRole && NOISE_ROLES.has(containerRole)) {
+    container.removeAttribute("role");
+  }
+  // Also clean SVG internals
+  container.querySelectorAll("[aria-roledescription], [role]").forEach((el) => {
+    el.removeAttribute("aria-roledescription");
+    if (el.getAttribute("aria-label") === "Vega visualization") {
+      el.removeAttribute("aria-label");
+    }
+    const role = el.getAttribute("role");
+    if (role && NOISE_ROLES.has(role)) el.removeAttribute("role");
+  });
+};
+
 const ARIA_LABEL_TEXT =
   "Mappa interattiva dei servizi per regione, ordinata alfabeticamente.";
 
@@ -233,7 +261,10 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
       chart.view
         .insert("dashboardData", sortedData)
         .resize()
-        .runAsync();
+        .runAsync()
+        .then(() => {
+          if (chartContent.current) cleanVegaAriaAttributes(chartContent.current);
+        });
 
       chartInstanceRef.current = chart;
       setChart(chart);
@@ -253,7 +284,9 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
 
   useEffect(() => {
     if (chart === null) return;
-    chart.view.signal("category", categorySignal).runAsync();
+    chart.view.signal("category", categorySignal).runAsync().then(() => {
+      if (chartContent.current) cleanVegaAriaAttributes(chartContent.current);
+    });
 
     setSelectedIndex(-1);
     setTooltipState((prev) => ({ ...prev, isOpen: false }));
@@ -366,6 +399,7 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
           boxShadow: `0 0 0 2px ${dashboardColors.get("blue-500")}`,
         },
       }}
+      role="region"
       tabIndex={0}
       onKeyDown={handleKeyDown}
       onBlur={handleBlur}
