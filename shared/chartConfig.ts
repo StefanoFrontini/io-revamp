@@ -68,6 +68,7 @@ const chartConfig: EmbedOptions = {
   loader: cacheLoader,
   renderer: "svg",
   ast: true,
+  logLevel: 1, // vega.Error — suppress WARN during initial empty-data render
 };
 
 const pieRadius = 120;
