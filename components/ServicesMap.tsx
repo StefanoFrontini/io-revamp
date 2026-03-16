@@ -108,9 +108,9 @@ const ServicesMap = () => {
   const renderNote = () => {
     switch (curMapOption) {
       case "servizi":
-        return "Ogni bolla rappresenta i servizi attivi su IO in una regione, in base alla collocazione geografica degli enti erogatori. La dimensione indica il volume dei servizi. Il valore numerico è disponibile al passaggio del mouse o tramite selezione da tastiera: usare le frecce sinistra e destra per navigare tra i riquadri informativi delle regioni e il tasto ESC per chiuderli.";
+        return "Ogni bolla rappresenta i servizi attivi su IO in una regione, in base alla collocazione geografica degli enti erogatori. La dimensione della bolla indica il volume dei servizi. Il valore numerico è disponibile nel riquadro informativo associato a ciascuna regione, visualizzabile al passaggio del mouse oppure tramite navigazione da tastiera. Per navigare da tastiera usa le frecce sinistra e destra per spostarti tra i riquadri informativi delle regioni e premi ESC per chiuderli.";
       case "enti":
-        return "La colorazione mostra la percentuale di Enti attivi in ciascuna regione";
+        return "La mappa mostra la percentuale di enti attivi in ciascuna regione. Il valore è rappresentato dall’intensità del colore ed è disponibile anche nel riquadro informativo associato a ogni regione. Il riquadro può essere visualizzato al passaggio del mouse o tramite navigazione da tastiera: usa le frecce sinistra e destra per spostarti tra le regioni e premi ESC per chiudere il riquadro informativo.";
       default:
         const _exhaustiveCheck: never = curMapOption;
         throw new Error(JSON.stringify(_exhaustiveCheck));
