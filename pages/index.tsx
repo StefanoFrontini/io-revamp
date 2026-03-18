@@ -138,7 +138,7 @@ export default function Home() {
               <FormatIOIcon>
                 <Icons.WalletIcon />
               </FormatIOIcon>
-              <IOCardTextContent text="Attivazioni di Documenti su IO">
+              <IOCardTextContent text="Emissioni totali cumulative di Documenti su IO">
                 <KpiCardFormat>
                   {formatNumberWallet(data.wallet_pid_attivi)} Milioni
                 </KpiCardFormat>
@@ -150,7 +150,7 @@ export default function Home() {
               <FormatIOIcon>
                 <Icons.DigitalDocIcon />
               </FormatIOIcon>
-              <IOCardTextContent text="Documenti digitali attivati dagli utenti">
+              <IOCardTextContent text="Attivazioni totali cumulative di Documenti digitali da parte degli utenti">
                 <KpiCardFormat>
                   {formatNumberWallet(data.wallet_total_attivi)} Milioni
                 </KpiCardFormat>
