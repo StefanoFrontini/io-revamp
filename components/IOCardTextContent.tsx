@@ -4,12 +4,14 @@ import { Stack, Typography } from "@mui/material";
 const IOCardTextContent = ({
   text,
   children,
+  alignNumber = "flex-start"
 }: {
   text: string;
   children: React.ReactNode;
+  alignNumber?: "flex-start" | "center"
 }) => {
   return (
-    <Stack direction={"column"} spacing={2}>
+    <Stack direction={"column"} alignItems={{sm: alignNumber}} spacing={2}>
       {children}
       <Typography
         sx={{
