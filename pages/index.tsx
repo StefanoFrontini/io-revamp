@@ -25,7 +25,8 @@ import {
 import fallbackData from "@/public/fallbackData/dashboard-io-fallback.json";
 import { formatDate } from "@/shared/formatDate";
 import { formatNumber, formatNumberWallet } from "@/shared/formatNumber";
-import { Container, Stack } from "@mui/material";
+import { dashboardColors } from "@/styles/colors";
+import { Container, Stack, Typography } from "@mui/material";
 import { dehydrate, QueryClient, useQueryClient } from "@tanstack/react-query";
 
 export async function getStaticProps() {
@@ -133,12 +134,28 @@ export default function Home() {
         text="Fonte:IPZS"
       >
         <SectionFullColumnLayout>
+          <Typography
+            sx={{
+              color: dashboardColors.get("grey-650"),
+              fontSize: "0.875rem",
+              fontWeight: 600,
+              lineHeight: 1.285715,
+              pb: 2,
+            }}
+          >
+            * Il dato somma gli utenti che hanno attivato Documenti su IO per la
+            prima volta e gli utenti che hanno rinnovato dopo un anno un’utenza
+            già attiva.
+          </Typography>
           <IOCard>
             <IOCardContent>
               <FormatIOIcon>
                 <Icons.WalletIcon />
               </FormatIOIcon>
-              <IOCardTextContent text="Emissioni totali cumulative di Documenti su IO" alignNumber="center">
+              <IOCardTextContent
+                text="Attivazioni di Documenti su IO*"
+                alignNumber="center"
+              >
                 <KpiCardFormat>
                   {formatNumberWallet(data.wallet_pid_attivi)} Milioni
                 </KpiCardFormat>
@@ -150,7 +167,10 @@ export default function Home() {
               <FormatIOIcon>
                 <Icons.DigitalDocIcon />
               </FormatIOIcon>
-              <IOCardTextContent text="Attivazioni totali cumulative di Documenti digitali da parte degli utenti" alignNumber="center">
+              <IOCardTextContent
+                text="Documenti digitali aggiunti dagli utenti*"
+                alignNumber="center"
+              >
                 <KpiCardFormat>
                   {formatNumberWallet(data.wallet_total_attivi)} Milioni
                 </KpiCardFormat>
