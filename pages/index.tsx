@@ -134,19 +134,6 @@ export default function Home() {
         text="Fonte:IPZS"
       >
         <SectionFullColumnLayout>
-          <Typography
-            sx={{
-              color: dashboardColors.get("grey-650"),
-              fontSize: "0.875rem",
-              fontWeight: 600,
-              lineHeight: 1.285715,
-              pb: 2,
-            }}
-          >
-            * Il dato somma gli utenti che hanno attivato Documenti su IO per la
-            prima volta e gli utenti che hanno rinnovato dopo un anno un’utenza
-            già attiva.
-          </Typography>
           <IOCard>
             <IOCardContent>
               <FormatIOIcon>
@@ -203,6 +190,18 @@ export default function Home() {
               </KpiCard>
             </FormatIORowCard>
           </IORowCards>
+          <Typography
+            sx={{
+              color: dashboardColors.get("grey-650"),
+              fontSize: "0.875rem",
+              fontWeight: 600,
+              lineHeight: 1.285715,
+            }}
+          >
+            * Il dato somma gli utenti che hanno attivato Documenti su IO per la
+            prima volta e gli utenti che hanno rinnovato dopo un anno un’utenza
+            già attiva.
+          </Typography>
         </SectionFullColumnLayout>
       </SectionLayout>
       <SectionLayout
