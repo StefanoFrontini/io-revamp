@@ -196,6 +196,7 @@ export default function Home() {
               fontSize: "0.875rem",
               fontWeight: 600,
               lineHeight: 1.285715,
+              pt: 2,
             }}
           >
             * Il dato somma gli utenti che hanno attivato Documenti su IO per la
