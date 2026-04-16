@@ -37,6 +37,11 @@ const NOISE_ROLES = new Set([
   "graphics-data-description",
 ]);
 
+const AXIS_DESCRIPTIONS = {
+  x: "Asse orizzontale: mesi",
+  y: "Asse verticale: numero di messaggi inviati",
+};
+
 const cleanVegaAriaAttributes = (container: HTMLDivElement) => {
   // Vega-Embed adds noisy attrs directly to the container element itself
   container.removeAttribute("aria-roledescription");
@@ -56,9 +61,21 @@ const cleanVegaAriaAttributes = (container: HTMLDivElement) => {
     const role = el.getAttribute("role");
     if (role && NOISE_ROLES.has(role)) el.removeAttribute("role");
   });
-  // Nasconde l'intero SVG Vega agli screen reader.
-  // L'accessibilità è gestita dal container role="region" + aria-live.
-  container.querySelector("svg")?.setAttribute("aria-hidden", "true");
+  // Sostituisce gli aria-label auto-generati in inglese sugli assi con testo in italiano
+  container.querySelectorAll(".role-axis[aria-label]").forEach((el) => {
+    const label = el.getAttribute("aria-label") ?? "";
+    if (/^X-axis/i.test(label)) {
+      el.setAttribute("aria-label", AXIS_DESCRIPTIONS.x);
+    } else if (/^Y-axis/i.test(label)) {
+      el.setAttribute("aria-label", AXIS_DESCRIPTIONS.y);
+    }
+  });
+  // Il tratto lineare del mark area (mark-line) è un gruppo SVG separato non coperto
+  // da "aria": false sul mark area; lo nasconde perché i dati sono accessibili
+  // tramite i punti invisibili con label in italiano.
+  container.querySelectorAll(".mark-line path[aria-label]").forEach((el) => {
+    el.setAttribute("aria-hidden", "true");
+  });
 };
 
 const MessagesTrendChart = ({ yearSignal, cumulativeSignal }: Props) => {
@@ -233,6 +250,11 @@ const MessagesTrendChart = ({ yearSignal, cumulativeSignal }: Props) => {
       });
       chartInstanceRef.current = res;
       setChart(res);
+
+      // Ri-applica la pulizia dopo ogni re-render di Vega (es. resize container)
+      res.view.addEventListener("postrender", () => {
+        if (chartContent.current) cleanVegaAriaAttributes(chartContent.current);
+      });
 
       // Global Mouse Move Listener
       res.view.addEventListener("mousemove", (event: any, item: any) => {

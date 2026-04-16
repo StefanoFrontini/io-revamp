@@ -69,6 +69,7 @@
     {
       "mark": {
         "type": "area",
+        "aria": false,
         "line": { "color": "#0B3EE3" },
         "color": {
           "x1": 1,

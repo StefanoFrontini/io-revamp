@@ -69,9 +69,6 @@ const cleanVegaAriaAttributes = (container: HTMLDivElement) => {
     const role = el.getAttribute("role");
     if (role && NOISE_ROLES.has(role)) el.removeAttribute("role");
   });
-  // Nasconde l'intero SVG Vega agli screen reader.
-  // L'accessibilità è gestita dal container role="region" + aria-live.
-  container.querySelector("svg")?.setAttribute("aria-hidden", "true");
 };
 
 const ARIA_LABEL_TEXT =
