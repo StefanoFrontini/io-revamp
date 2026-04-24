@@ -155,7 +155,7 @@ export default function Home() {
                 <Icons.DigitalDocIcon />
               </FormatIOIcon>
               <IOCardTextContent
-                text="Documenti digitali aggiunti dagli utenti*"
+                text="Documenti digitali aggiunti dagli utenti**"
                 alignNumber="center"
               >
                 <KpiCardFormat>
@@ -201,7 +201,8 @@ export default function Home() {
           >
             * Il dato somma gli utenti che hanno attivato Documenti su IO per la
             prima volta e gli utenti che hanno rinnovato dopo un anno un’utenza
-            già attiva.
+            già attiva.<br></br><br></br>
+            ** Il dato somma tutti i documenti digitali caricati su IO nell’ultimo anno, tra nuove attivazioni e rinnovi.
           </Typography>
         </SectionFullColumnLayout>
       </SectionLayout>
