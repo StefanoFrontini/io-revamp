@@ -15,7 +15,7 @@
       "lookup": "regione",
       "from": {
         "data": {
-          "url": "https://raw.githubusercontent.com/openpolis/geojson-italy/refs/heads/master/topojson/limits_IT_regions.topo.json",
+          "url": "/geo/limits_IT_regions.topo.json",
           "format": { "type": "topojson", "feature": "regions" }
         },
         "key": "properties.reg_name",
