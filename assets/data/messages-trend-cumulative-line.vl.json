@@ -1,0 +1,92 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+  "width": "container",
+  "height": "container",
+  "data": {
+    "name": "dashboardData"
+  },
+  "transform": [
+    {
+      "calculate": "year(datum.year) + ''",
+      "as": "year_text"
+    },
+    {
+      "calculate": "'anno: ' + datum.year_text + '; messaggi inviati: ' + format(datum.count, ',')",
+      "as": "custom_aria_label"
+    }
+  ],
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "temporal",
+      "timeUnit": "year",
+      "axis": {
+        "format": "%Y",
+        "gridDash": [6, 6],
+        "grid": true,
+        "gridColor": "#D2D6E3",
+        "labelAngle": 0,
+        "labelFontWeight": 600,
+        "labelFont": "titilliumWeb",
+        "labelOverlap": true,
+        "tickDash": [4, 4]
+      }
+    },
+    "tooltip": [
+      {
+        "field": "count",
+        "format": ","
+      },
+      {
+        "field": "year_text"
+      }
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "area",
+        "aria": false,
+        "line": {
+          "color": "#0B3EE3"
+        },
+        "color": {
+          "x1": 1,
+          "y1": 1,
+          "x2": 1,
+          "y2": 0,
+          "stops": [
+            {
+              "offset": 0,
+              "color": "white"
+            },
+            {
+              "offset": 1,
+              "color": "#0B3EE3"
+            }
+          ],
+          "gradient": "linear"
+        }
+      },
+      "encoding": {
+        "y": {
+          "field": "count",
+          "type": "quantitative",
+          "axis": {
+            "labelExpr": "datum.value / 1e6 + 'M'",
+            "labelFontWeight": 600,
+            "labelFont": "titilliumWeb",
+            "domain": false
+          }
+        }
+      }
+    },
+    {
+      "mark": { "type": "point", "opacity": 0, "size": 200 },
+      "encoding": {
+        "y": { "field": "count", "type": "quantitative" },
+        "description": { "field": "custom_aria_label", "type": "nominal" }
+      }
+    }
+  ]
+}

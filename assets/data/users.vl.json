@@ -1,0 +1,76 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+  "width": "container",
+  "height": "container",
+  "data": {
+    "name": "dashboardData"
+  },
+  "transform": [
+    {
+      "window": [{ "op": "row_number", "as": "row_number" }]
+    },
+    {
+      "calculate": "month(datum.data)",
+      "as": "month"
+    },
+    {
+      "calculate": "year(datum.data)",
+      "as": "year"
+    },
+    {
+      "calculate": "datum.month === 0 ? 'Gen' : datum.month === 1 ? 'Feb' : datum.month === 2 ? 'Mar' : datum.month === 3 ? 'Apr' : datum.month === 4 ? 'Mag' : datum.month === 5 ? 'Giu' : datum.month === 6 ? 'Lug' : datum.month === 7 ? 'Ago' : datum.month === 8 ? 'Set' : datum.month === 9 ? 'Ott' : datum.month === 10 ? 'Nov' : 'Dic'",
+      "as": "month_name"
+    },
+    {
+      "calculate": "datum.month === 0 || datum.row_number === 1 ? datum.month_name + ' ' + datum.year : datum.month_name",
+      "as": "label"
+    },
+    {
+      "calculate": "datum.row_number",
+      "as": "order"
+    }
+  ],
+  "mark": { "type": "bar", "width": { "band": 0.7 }, "cornerRadiusEnd": 5 },
+  "encoding": {
+    "y": {
+      "field": "count",
+      "type": "quantitative",
+      "axis": {
+        "format": "~s",
+        "labelFontWeight": 600,
+        "labelFont": "titilliumWeb",
+        "domain": false
+      }
+    },
+    "x": {
+      "field": "label",
+      "type": "ordinal",
+      "sort": { "field": "order", "order": "ascending" },
+      "axis": {
+        "gridDash": [6, 6],
+        "grid": true,
+        "gridColor": "#D2D6E3",
+        "labelAngle": 0,
+        "labelOverlap": true,
+        "labelFontWeight": 600,
+        "labelFont": "titilliumWeb",
+        "tickDash": [4, 4],
+        "labelLineHeight": 20,
+        "labelExpr": "length(datum.value) > 3 ? [slice(datum.value, 0, 3), slice(datum.value, 3)] : datum.value"
+      }
+    },
+    "color": { "value": "#0B3EE3" },
+    "tooltip": [
+      {
+        "field": "month_name"
+      },
+      {
+        "field": "year"
+      },
+      {
+        "field": "count",
+        "format": ","
+      }
+    ]
+  }
+}
