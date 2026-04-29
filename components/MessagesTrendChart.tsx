@@ -5,9 +5,9 @@ import { formatNumber } from "@/shared/formatNumber";
 import { DashboardData } from "@/services/zodSchema";
 import { dashboardColors } from "@/styles/colors";
 import chartConfig from "../shared/chartConfig";
-import { visuallyHidden } from "@mui/utils";
 import CloseIcon from "@mui/icons-material/Close";
 import { Box, IconButton, Paper, Typography } from "@mui/material";
+import { visuallyHidden } from "@mui/utils";
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import embed, { Result } from "vega-embed";
 
@@ -61,7 +61,7 @@ const cleanVegaAriaAttributes = (container: HTMLDivElement) => {
     const role = el.getAttribute("role");
     if (role && NOISE_ROLES.has(role)) el.removeAttribute("role");
   });
-  // Sostituisce gli aria-label auto-generati in inglese sugli assi con testo in italiano
+  // Replaces auto-generated English aria-labels on axes with localized text
   container.querySelectorAll(".role-axis[aria-label]").forEach((el) => {
     const label = el.getAttribute("aria-label") ?? "";
     if (/^X-axis/i.test(label)) {
@@ -70,9 +70,9 @@ const cleanVegaAriaAttributes = (container: HTMLDivElement) => {
       el.setAttribute("aria-label", AXIS_DESCRIPTIONS.y);
     }
   });
-  // Il tratto lineare del mark area (mark-line) è un gruppo SVG separato non coperto
-  // da "aria": false sul mark area; lo nasconde perché i dati sono accessibili
-  // tramite i punti invisibili con label in italiano.
+  // The linear stroke of the mark-area (mark-line) is a separate SVG group not covered
+  // by "aria": false on the mark area; hide it because data is accessible
+  // through the invisible points with localized labels.
   container.querySelectorAll(".mark-line path[aria-label]").forEach((el) => {
     el.setAttribute("aria-hidden", "true");
   });
@@ -251,7 +251,7 @@ const MessagesTrendChart = ({ yearSignal, cumulativeSignal }: Props) => {
       chartInstanceRef.current = res;
       setChart(res);
 
-      // Ri-applica la pulizia dopo ogni re-render di Vega (es. resize container)
+      // Re-applies cleanup after every Vega re-render (e.g. container resize)
       res.view.addEventListener("postrender", () => {
         if (chartContent.current) cleanVegaAriaAttributes(chartContent.current);
       });
@@ -308,6 +308,7 @@ const MessagesTrendChart = ({ yearSignal, cumulativeSignal }: Props) => {
     }
 
     const datum = processedData[index];
+    if (!datum) return;
     const view = chart.view;
     const renderEl = chartContent.current?.querySelector("svg") as Element;
 
@@ -317,16 +318,16 @@ const MessagesTrendChart = ({ yearSignal, cumulativeSignal }: Props) => {
     const scaleY = view.scale("y");
     const rect = renderEl.getBoundingClientRect();
 
-    // FIX: Usiamo view.origin() invece di view.padding()
-    // origin[0] è l'offset X (spazio per le label Y)
-    // origin[1] è l'offset Y (spazio per il titolo/top)
+    // FIX: Use view.origin() instead of view.padding()
+    // origin[0] is the X offset (space for Y-axis labels)
+    // origin[1] is the Y offset (space for title/top)
     const origin = view.origin();
 
     const x = scaleX(datum.timestamp);
     const y = scaleY(datum.metric_value);
 
-    // Coordinate client corrette sommano:
-    // Posizione SVG + Offset asse + coordinata punto
+    // Correct client coordinates are the sum of:
+    // SVG position + axis offset + point coordinate
     const clientX = rect.left + origin[0] + x;
     const clientY = rect.top + origin[1] + y;
 
@@ -434,7 +435,7 @@ const MessagesTrendChart = ({ yearSignal, cumulativeSignal }: Props) => {
               position: "fixed",
               top: tooltipState.y,
               left: tooltipState.x,
-              transform: "translate(-50%, -115%)", // Spazio per la freccia
+              transform: "translate(-50%, -115%)",
               zIndex: 1500,
               paddingRight: "0.5rem",
               paddingLeft: "1rem",
@@ -442,13 +443,13 @@ const MessagesTrendChart = ({ yearSignal, cumulativeSignal }: Props) => {
               paddingTop: "0.4rem",
 
               // --- DARK MODE & ARROW STYLE ---
-              backgroundColor: dashboardColors.get("grey-850"), // Sfondo scuro
-              color: "#FFF", // Testo bianco
+              backgroundColor: dashboardColors.get("grey-850"),
+              color: "#FFF",
               borderRadius: "6px",
               pointerEvents: "auto",
-              overflow: "visible", // Fondamentale per la freccia
+              overflow: "visible",
 
-              // La Linguetta (Arrow Down)
+              // Arrow Down
               "&::after": {
                 content: '""',
                 position: "absolute",
@@ -486,9 +487,9 @@ const MessagesTrendChart = ({ yearSignal, cumulativeSignal }: Props) => {
                 onClick={closeTooltip}
                 aria-label="Chiudi tooltip"
                 sx={{
-                  color: "#FFF", // Icona bianca
+                  color: "#FFF",
                   "&:hover": {
-                    backgroundColor: "rgba(255, 255, 255, 0.1)", // Hover chiaro visibile
+                    backgroundColor: "rgba(255, 255, 255, 0.1)",
                   },
                 }}
               >
@@ -496,7 +497,6 @@ const MessagesTrendChart = ({ yearSignal, cumulativeSignal }: Props) => {
               </IconButton>
             </Box>
 
-            {/* Data Content */}
             <Box>
               <Typography
                 sx={{

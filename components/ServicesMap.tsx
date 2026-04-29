@@ -80,8 +80,8 @@ const ServicesMap = () => {
       case "istruzione":
         return istruzione.label;
       default:
-        const _exhaustiveCheck: never = tag;
-        throw new Error(JSON.stringify(_exhaustiveCheck));
+        { const _exhaustiveCheck: never = tag;
+        throw new Error(JSON.stringify(_exhaustiveCheck)); }
     }
   };
 
@@ -100,8 +100,8 @@ const ServicesMap = () => {
           />
         );
       default:
-        const _exhaustiveCheck: never = curMapOption;
-        throw new Error(JSON.stringify(_exhaustiveCheck));
+        { const _exhaustiveCheck: never = curMapOption;
+        throw new Error(JSON.stringify(_exhaustiveCheck)); }
     }
   };
 
@@ -112,8 +112,8 @@ const ServicesMap = () => {
       case "enti":
         return "La mappa mostra la percentuale di enti attivi in ciascuna regione. Il valore è rappresentato dall’intensità del colore ed è disponibile anche nel riquadro informativo associato a ogni regione. Il riquadro può essere visualizzato al passaggio del mouse o tramite navigazione da tastiera: usa le frecce sinistra e destra per spostarti tra le regioni e premi ESC per chiudere il riquadro informativo.";
       default:
-        const _exhaustiveCheck: never = curMapOption;
-        throw new Error(JSON.stringify(_exhaustiveCheck));
+        { const _exhaustiveCheck: never = curMapOption;
+        throw new Error(JSON.stringify(_exhaustiveCheck)); }
     }
   };
 
@@ -191,10 +191,7 @@ const ServicesMap = () => {
             IconComponent={ExpandMoreOutlinedIcon}
             id={selectId}
             labelId={labelIdMap}
-            // Fix MenuProps for Iframe + keyboard navigation
             MenuProps={{
-              disablePortal: true,
-              disableScrollLock: true,
               disableEnforceFocus: true,
             }}
             inputProps={{
@@ -232,10 +229,7 @@ const ServicesMap = () => {
             IconComponent={ExpandMoreOutlinedIcon}
             id={selectIdCategory}
             labelId={labelIdCategory}
-            // Fix MenuProps for Iframe + keyboard navigation
             MenuProps={{
-              disablePortal: true,
-              disableScrollLock: true,
               disableEnforceFocus: true,
             }}
             inputProps={{

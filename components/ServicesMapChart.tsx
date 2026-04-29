@@ -2,12 +2,12 @@ import mapJsonSpec from "@/assets/data/italy-regions-circles.vl.json";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { toVegaLiteSpec } from "@/shared/toVegaLiteSpec";
 import { Box, IconButton, Paper, Typography } from "@mui/material";
+import { visuallyHidden } from "@mui/utils";
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import embed, { Result } from "vega-embed";
 import chartConfig from "../shared/chartConfig";
 import { DashboardData } from "@/services/zodSchema";
 import { dashboardColors } from "@/styles/colors";
-import { visuallyHidden } from "@mui/utils";
 import CloseIcon from "@mui/icons-material/Close";
 
 const REGIONS_COORDINATES = [
@@ -248,9 +248,13 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
     if (!chartContent.current || !data) return;
 
     // Disable the native tooltip
+    const geoBaseURL = process.env.NODE_ENV === "development"
+      ? "/"
+      : `${process.env.NEXT_PUBLIC_BASE_PATH ?? "/dashboard-io"}/`;
     const options = {
       ...chartConfig,
       tooltip: () => {},
+      baseURL: geoBaseURL,
     };
 
     embed(chartContent.current, spec, options).then((chart) => {
@@ -344,6 +348,7 @@ const ServicesMapChart = ({ categorySignal }: Props) => {
     }
 
     const datum = processedData[index];
+    if (!datum) return;
     const view = chart.view;
 
     const scenegraphItem = findScenegraphItem(

@@ -15,7 +15,7 @@
       "lookup": "regione",
       "from": {
         "data": {
-          "url": "/geo/limits_IT_regions.topo.json",
+          "url": "geo/limits_IT_regions.topo.json",
           "format": { "type": "topojson", "feature": "regions" }
         },
         "key": "properties.reg_name",

@@ -1,1 +1,367 @@
-{"last_run": "2026-01-27T11:46:53.582410", "users_total": 13697988, "entities_total": 15909, "services_total": 375728, "metrics_by_geo_cat": [{"regione": "Calabria", "category": "Comuni", "count_enti": 389, "count_serv": 11924, "count_enti_ipa": 404, "perc_enti": "0.9629"}, {"regione": "Lombardia", "category": "Comuni", "count_enti": 1437, "count_serv": 40437, "count_enti_ipa": 1502, "perc_enti": "0.9567"}, {"regione": "Trentino-Alto Adige/S\u00fcdtirol", "category": "Istruzione", "count_enti": 111, "count_serv": 115, "count_enti_ipa": 190, "perc_enti": "0.5842"}, {"regione": "Lombardia", "category": "Istruzione", "count_enti": 1121, "count_serv": 20074, "count_enti_ipa": 1130, "perc_enti": "0.992"}, {"regione": "Trentino-Alto Adige/S\u00fcdtirol", "category": "Comuni", "count_enti": 280, "count_serv": 5727, "count_enti_ipa": 282, "perc_enti": "0.9929"}, {"regione": "Toscana", "category": "Istruzione", "count_enti": 473, "count_serv": 8453, "count_enti_ipa": 494, "perc_enti": "0.9575"}, {"regione": "Umbria", "category": "Istruzione", "count_enti": 139, "count_serv": 2492, "count_enti_ipa": 144, "perc_enti": "0.9653"}, {"regione": "Puglia", "category": "Comuni", "count_enti": 252, "count_serv": 8754, "count_enti_ipa": 257, "perc_enti": "0.9805"}, {"regione": "Campania", "category": "Istruzione", "count_enti": 864, "count_serv": 15499, "count_enti_ipa": 878, "perc_enti": "0.9841"}, {"regione": "Lazio", "category": "Istruzione", "count_enti": 689, "count_serv": 12308, "count_enti_ipa": 727, "perc_enti": "0.9477"}, {"regione": "Valle d'Aosta/Vall\u00e9e d'Aoste", "category": "Istruzione", "count_enti": 1, "count_serv": 5, "count_enti_ipa": 28, "perc_enti": "0.0357"}, {"regione": "Liguria", "category": "Istruzione", "count_enti": 174, "count_serv": 3099, "count_enti_ipa": 176, "perc_enti": "0.9886"}, {"regione": "Sicilia", "category": "Comuni", "count_enti": 380, "count_serv": 14311, "count_enti_ipa": 391, "perc_enti": "0.9719"}, {"regione": "Toscana", "category": "Comuni", "count_enti": 267, "count_serv": 9096, "count_enti_ipa": 273, "perc_enti": "0.978"}, {"regione": "Veneto", "category": "Istruzione", "count_enti": 568, "count_serv": 10147, "count_enti_ipa": 574, "perc_enti": "0.9895"}, {"regione": "Emilia-Romagna", "category": "Comuni", "count_enti": 330, "count_serv": 10898, "count_enti_ipa": 330, "perc_enti": "1.0"}, {"regione": "Liguria", "category": "Comuni", "count_enti": 230, "count_serv": 4820, "count_enti_ipa": 234, "perc_enti": "0.9829"}, {"regione": "Sardegna", "category": "Comuni", "count_enti": 366, "count_serv": 13060, "count_enti_ipa": 377, "perc_enti": "0.9708"}, {"regione": "Marche", "category": "Istruzione", "count_enti": 214, "count_serv": 3794, "count_enti_ipa": 220, "perc_enti": "0.9727"}, {"regione": "Sicilia", "category": "Istruzione", "count_enti": 736, "count_serv": 12873, "count_enti_ipa": 935, "perc_enti": "0.7872"}, {"regione": "Basilicata", "category": "Comuni", "count_enti": 131, "count_serv": 6516, "count_enti_ipa": 131, "perc_enti": "1.0"}, {"regione": "Emilia-Romagna", "category": "Istruzione", "count_enti": 541, "count_serv": 9671, "count_enti_ipa": 556, "perc_enti": "0.973"}, {"regione": "Valle d'Aosta/Vall\u00e9e d'Aoste", "category": "Comuni", "count_enti": 72, "count_serv": 1602, "count_enti_ipa": 74, "perc_enti": "0.973"}, {"regione": "Calabria", "category": "Istruzione", "count_enti": 286, "count_serv": 5088, "count_enti_ipa": 292, "perc_enti": "0.9795"}, {"regione": "Umbria", "category": "Comuni", "count_enti": 90, "count_serv": 2399, "count_enti_ipa": 92, "perc_enti": "0.9783"}, {"regione": "Friuli-Venezia Giulia", "category": "Istruzione", "count_enti": 157, "count_serv": 2791, "count_enti_ipa": 162, "perc_enti": "0.9691"}, {"regione": "Abruzzo", "category": "Istruzione", "count_enti": 191, "count_serv": 3406, "count_enti_ipa": 194, "perc_enti": "0.9845"}, {"regione": "Marche", "category": "Comuni", "count_enti": 224, "count_serv": 8014, "count_enti_ipa": 225, "perc_enti": "0.9956"}, {"regione": "Piemonte", "category": "Comuni", "count_enti": 1144, "count_serv": 23881, "count_enti_ipa": 1180, "perc_enti": "0.9695"}, {"regione": "Campania", "category": "Comuni", "count_enti": 533, "count_serv": 17208, "count_enti_ipa": 550, "perc_enti": "0.9691"}, {"regione": "Piemonte", "category": "Istruzione", "count_enti": 534, "count_serv": 9568, "count_enti_ipa": 542, "perc_enti": "0.9852"}, {"regione": "Sardegna", "category": "Istruzione", "count_enti": 236, "count_serv": 4217, "count_enti_ipa": 243, "perc_enti": "0.9712"}, {"regione": "Abruzzo", "category": "Comuni", "count_enti": 299, "count_serv": 9574, "count_enti_ipa": 305, "perc_enti": "0.9803"}, {"regione": "Molise", "category": "Istruzione", "count_enti": 46, "count_serv": 825, "count_enti_ipa": 51, "perc_enti": "0.902"}, {"regione": "Veneto", "category": "Comuni", "count_enti": 557, "count_serv": 24077, "count_enti_ipa": 560, "perc_enti": "0.9946"}, {"regione": "Basilicata", "category": "Istruzione", "count_enti": 86, "count_serv": 1545, "count_enti_ipa": 88, "perc_enti": "0.9773"}, {"regione": "Puglia", "category": "Istruzione", "count_enti": 573, "count_serv": 10254, "count_enti_ipa": 600, "perc_enti": "0.955"}, {"regione": "Friuli-Venezia Giulia", "category": "Comuni", "count_enti": 213, "count_serv": 6295, "count_enti_ipa": 215, "perc_enti": "0.9907"}, {"regione": "Lazio", "category": "Comuni", "count_enti": 365, "count_serv": 13306, "count_enti_ipa": 378, "perc_enti": "0.9656"}, {"regione": "Molise", "category": "Comuni", "count_enti": 134, "count_serv": 5201, "count_enti_ipa": 136, "perc_enti": "0.9853"}], "messages_total": 1309460802, "messages": [{"date": "2024-01", "count": 31451516}, {"date": "2024-02", "count": 23733395}, {"date": "2024-03", "count": 22634204}, {"date": "2024-04", "count": 22276665}, {"date": "2024-05", "count": 30145548}, {"date": "2024-06", "count": 44941263}, {"date": "2024-07", "count": 31236593}, {"date": "2024-08", "count": 20338422}, {"date": "2024-09", "count": 26812013}, {"date": "2024-10", "count": 25035691}, {"date": "2024-11", "count": 27248008}, {"date": "2024-12", "count": 48201471}, {"date": "2025-01", "count": 38041269}, {"date": "2025-02", "count": 29719420}, {"date": "2025-03", "count": 30156572}, {"date": "2025-04", "count": 25984144}, {"date": "2025-05", "count": 35337856}, {"date": "2025-06", "count": 27512114}, {"date": "2025-07", "count": 32820496}, {"date": "2025-08", "count": 23032235}, {"date": "2025-09", "count": 42008944}, {"date": "2025-10", "count": 33351376}, {"date": "2025-11", "count": 39737118}, {"date": "2025-12", "count": 38763951}, {"date": "2026-01", "count": 34666680}], "messages_cumulative": [{"year": "2024", "count": 878328627}, {"year": "2025", "count": 1274794122}, {"year": "2026", "count": 1309460802}], "payment_instruments": 6982162, "wallet_pid_attivi": 9667131, "wallet_mdl_attivi": 8142290, "wallet_edc_attivi": 146074, "wallet_team_attivi": 8187047, "wallet_total_attivi": 16475411}
+{
+  "last_run": "2026-01-21T11:44:37.422626",
+  "users_total": 13698086,
+  "entities_total": 15900,
+  "services_total": 374318,
+  "metrics_by_geo_cat": [
+    {
+      "regione": "Calabria",
+      "category": "Comuni",
+      "count_enti": 388,
+      "count_serv": 11790,
+      "count_enti_ipa": 404,
+      "perc_enti": "0.9604"
+    },
+    {
+      "regione": "Lombardia",
+      "category": "Comuni",
+      "count_enti": 1435,
+      "count_serv": 40242,
+      "count_enti_ipa": 1502,
+      "perc_enti": "0.9554"
+    },
+    {
+      "regione": "Trentino-Alto Adige/S\u00fcdtirol",
+      "category": "Istruzione",
+      "count_enti": 111,
+      "count_serv": 115,
+      "count_enti_ipa": 190,
+      "perc_enti": "0.5842"
+    },
+    {
+      "regione": "Lombardia",
+      "category": "Istruzione",
+      "count_enti": 1121,
+      "count_serv": 20074,
+      "count_enti_ipa": 1130,
+      "perc_enti": "0.992"
+    },
+    {
+      "regione": "Trentino-Alto Adige/S\u00fcdtirol",
+      "category": "Comuni",
+      "count_enti": 280,
+      "count_serv": 5730,
+      "count_enti_ipa": 282,
+      "perc_enti": "0.9929"
+    },
+    {
+      "regione": "Toscana",
+      "category": "Istruzione",
+      "count_enti": 473,
+      "count_serv": 8453,
+      "count_enti_ipa": 494,
+      "perc_enti": "0.9575"
+    },
+    {
+      "regione": "Umbria",
+      "category": "Istruzione",
+      "count_enti": 139,
+      "count_serv": 2492,
+      "count_enti_ipa": 144,
+      "perc_enti": "0.9653"
+    },
+    {
+      "regione": "Puglia",
+      "category": "Comuni",
+      "count_enti": 252,
+      "count_serv": 8727,
+      "count_enti_ipa": 257,
+      "perc_enti": "0.9805"
+    },
+    {
+      "regione": "Campania",
+      "category": "Istruzione",
+      "count_enti": 864,
+      "count_serv": 15499,
+      "count_enti_ipa": 878,
+      "perc_enti": "0.9841"
+    },
+    {
+      "regione": "Lazio",
+      "category": "Istruzione",
+      "count_enti": 689,
+      "count_serv": 12308,
+      "count_enti_ipa": 727,
+      "perc_enti": "0.9477"
+    },
+    {
+      "regione": "Valle d'Aosta/Vall\u00e9e d'Aoste",
+      "category": "Istruzione",
+      "count_enti": 1,
+      "count_serv": 5,
+      "count_enti_ipa": 28,
+      "perc_enti": "0.0357"
+    },
+    {
+      "regione": "Liguria",
+      "category": "Istruzione",
+      "count_enti": 174,
+      "count_serv": 3099,
+      "count_enti_ipa": 176,
+      "perc_enti": "0.9886"
+    },
+    {
+      "regione": "Sicilia",
+      "category": "Comuni",
+      "count_enti": 380,
+      "count_serv": 14198,
+      "count_enti_ipa": 391,
+      "perc_enti": "0.9719"
+    },
+    {
+      "regione": "Toscana",
+      "category": "Comuni",
+      "count_enti": 267,
+      "count_serv": 9046,
+      "count_enti_ipa": 273,
+      "perc_enti": "0.978"
+    },
+    {
+      "regione": "Veneto",
+      "category": "Istruzione",
+      "count_enti": 568,
+      "count_serv": 10147,
+      "count_enti_ipa": 574,
+      "perc_enti": "0.9895"
+    },
+    {
+      "regione": "Emilia-Romagna",
+      "category": "Comuni",
+      "count_enti": 330,
+      "count_serv": 10885,
+      "count_enti_ipa": 330,
+      "perc_enti": "1.0"
+    },
+    {
+      "regione": "Liguria",
+      "category": "Comuni",
+      "count_enti": 230,
+      "count_serv": 4820,
+      "count_enti_ipa": 234,
+      "perc_enti": "0.9829"
+    },
+    {
+      "regione": "Sardegna",
+      "category": "Comuni",
+      "count_enti": 366,
+      "count_serv": 13061,
+      "count_enti_ipa": 377,
+      "perc_enti": "0.9708"
+    },
+    {
+      "regione": "Marche",
+      "category": "Istruzione",
+      "count_enti": 214,
+      "count_serv": 3794,
+      "count_enti_ipa": 220,
+      "perc_enti": "0.9727"
+    },
+    {
+      "regione": "Sicilia",
+      "category": "Istruzione",
+      "count_enti": 736,
+      "count_serv": 12858,
+      "count_enti_ipa": 935,
+      "perc_enti": "0.7872"
+    },
+    {
+      "regione": "Basilicata",
+      "category": "Comuni",
+      "count_enti": 131,
+      "count_serv": 6516,
+      "count_enti_ipa": 131,
+      "perc_enti": "1.0"
+    },
+    {
+      "regione": "Emilia-Romagna",
+      "category": "Istruzione",
+      "count_enti": 541,
+      "count_serv": 9671,
+      "count_enti_ipa": 556,
+      "perc_enti": "0.973"
+    },
+    {
+      "regione": "Valle d'Aosta/Vall\u00e9e d'Aoste",
+      "category": "Comuni",
+      "count_enti": 72,
+      "count_serv": 1602,
+      "count_enti_ipa": 74,
+      "perc_enti": "0.973"
+    },
+    {
+      "regione": "Calabria",
+      "category": "Istruzione",
+      "count_enti": 286,
+      "count_serv": 5088,
+      "count_enti_ipa": 292,
+      "perc_enti": "0.9795"
+    },
+    {
+      "regione": "Umbria",
+      "category": "Comuni",
+      "count_enti": 90,
+      "count_serv": 2399,
+      "count_enti_ipa": 92,
+      "perc_enti": "0.9783"
+    },
+    {
+      "regione": "Friuli-Venezia Giulia",
+      "category": "Istruzione",
+      "count_enti": 157,
+      "count_serv": 2791,
+      "count_enti_ipa": 162,
+      "perc_enti": "0.9691"
+    },
+    {
+      "regione": "Abruzzo",
+      "category": "Istruzione",
+      "count_enti": 191,
+      "count_serv": 3405,
+      "count_enti_ipa": 194,
+      "perc_enti": "0.9845"
+    },
+    {
+      "regione": "Marche",
+      "category": "Comuni",
+      "count_enti": 224,
+      "count_serv": 7981,
+      "count_enti_ipa": 225,
+      "perc_enti": "0.9956"
+    },
+    {
+      "regione": "Piemonte",
+      "category": "Comuni",
+      "count_enti": 1143,
+      "count_serv": 23651,
+      "count_enti_ipa": 1180,
+      "perc_enti": "0.9686"
+    },
+    {
+      "regione": "Campania",
+      "category": "Comuni",
+      "count_enti": 530,
+      "count_serv": 17018,
+      "count_enti_ipa": 550,
+      "perc_enti": "0.9636"
+    },
+    {
+      "regione": "Piemonte",
+      "category": "Istruzione",
+      "count_enti": 534,
+      "count_serv": 9568,
+      "count_enti_ipa": 542,
+      "perc_enti": "0.9852"
+    },
+    {
+      "regione": "Sardegna",
+      "category": "Istruzione",
+      "count_enti": 236,
+      "count_serv": 4217,
+      "count_enti_ipa": 243,
+      "perc_enti": "0.9712"
+    },
+    {
+      "regione": "Abruzzo",
+      "category": "Comuni",
+      "count_enti": 298,
+      "count_serv": 9397,
+      "count_enti_ipa": 305,
+      "perc_enti": "0.977"
+    },
+    {
+      "regione": "Molise",
+      "category": "Istruzione",
+      "count_enti": 46,
+      "count_serv": 825,
+      "count_enti_ipa": 51,
+      "perc_enti": "0.902"
+    },
+    {
+      "regione": "Veneto",
+      "category": "Comuni",
+      "count_enti": 557,
+      "count_serv": 24023,
+      "count_enti_ipa": 560,
+      "perc_enti": "0.9946"
+    },
+    {
+      "regione": "Basilicata",
+      "category": "Istruzione",
+      "count_enti": 86,
+      "count_serv": 1545,
+      "count_enti_ipa": 88,
+      "perc_enti": "0.9773"
+    },
+    {
+      "regione": "Puglia",
+      "category": "Istruzione",
+      "count_enti": 573,
+      "count_serv": 10254,
+      "count_enti_ipa": 600,
+      "perc_enti": "0.955"
+    },
+    {
+      "regione": "Friuli-Venezia Giulia",
+      "category": "Comuni",
+      "count_enti": 213,
+      "count_serv": 6237,
+      "count_enti_ipa": 215,
+      "perc_enti": "0.9907"
+    },
+    {
+      "regione": "Lazio",
+      "category": "Comuni",
+      "count_enti": 365,
+      "count_serv": 13306,
+      "count_enti_ipa": 378,
+      "perc_enti": "0.9656"
+    },
+    {
+      "regione": "Molise",
+      "category": "Comuni",
+      "count_enti": 133,
+      "count_serv": 5085,
+      "count_enti_ipa": 136,
+      "perc_enti": "0.9779"
+    }
+  ],
+  "messages_total": 1299364075,
+  "messages": [
+    { "date": "2024-01", "count": 31451521 },
+    { "date": "2024-02", "count": 23733395 },
+    { "date": "2024-03", "count": 22634206 },
+    { "date": "2024-04", "count": 22276666 },
+    { "date": "2024-05", "count": 30145548 },
+    { "date": "2024-06", "count": 44941265 },
+    { "date": "2024-07", "count": 31236596 },
+    { "date": "2024-08", "count": 20338423 },
+    { "date": "2024-09", "count": 26812013 },
+    { "date": "2024-10", "count": 25035693 },
+    { "date": "2024-11", "count": 27248011 },
+    { "date": "2024-12", "count": 48201471 },
+    { "date": "2025-01", "count": 38041269 },
+    { "date": "2025-02", "count": 29719421 },
+    { "date": "2025-03", "count": 30156578 },
+    { "date": "2025-04", "count": 25984147 },
+    { "date": "2025-05", "count": 35337857 },
+    { "date": "2025-06", "count": 27512114 },
+    { "date": "2025-07", "count": 32820497 },
+    { "date": "2025-08", "count": 23032235 },
+    { "date": "2025-09", "count": 42008944 },
+    { "date": "2025-10", "count": 33351376 },
+    { "date": "2025-11", "count": 39737122 },
+    { "date": "2025-12", "count": 38763951 },
+    { "date": "2026-01", "count": 24569928 }
+  ],
+  "messages_cumulative": [
+    { "year": "2024", "count": 878328636 },
+    { "year": "2025", "count": 1274794147 },
+    { "year": "2026", "count": 1299364075 }
+  ],
+  "payment_instruments": 6973510,
+  "wallet_pid_attivi": 9529141,
+  "wallet_mdl_attivi": 8016581,
+  "wallet_edc_attivi": 144192,
+  "wallet_team_attivi": 8073358,
+  "wallet_total_attivi": 16234131
+}

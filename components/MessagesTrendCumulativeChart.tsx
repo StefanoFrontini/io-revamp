@@ -2,16 +2,17 @@ import messageTrendCumulativeLine from "@/assets/data/messages-trend-cumulative-
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { toVegaLiteSpec } from "@/shared/toVegaLiteSpec";
 import { Box, IconButton, Paper, Typography } from "@mui/material";
+
+import { visuallyHidden } from "@mui/utils";
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import embed, { Result } from "vega-embed";
 import chartConfig from "../shared/chartConfig";
 import { DashboardData } from "@/services/zodSchema";
 import { formatNumber } from "@/shared/formatNumber";
 import { dashboardColors } from "@/styles/colors";
-import { visuallyHidden } from "@mui/utils";
 import CloseIcon from "@mui/icons-material/Close";
 
-// Tipo per lo stato del Tooltip
+// Tooltip state type
 type TooltipState = {
   isOpen: boolean;
   x: number;
@@ -56,7 +57,7 @@ const cleanVegaAriaAttributes = (container: HTMLDivElement) => {
     const role = el.getAttribute("role");
     if (role && NOISE_ROLES.has(role)) el.removeAttribute("role");
   });
-  // Sostituisce gli aria-label auto-generati in inglese sugli assi con testo in italiano
+  // Replaces auto-generated English aria-labels on axes with localized text
   container.querySelectorAll(".role-axis[aria-label]").forEach((el) => {
     const label = el.getAttribute("aria-label") ?? "";
     if (/^X-axis/i.test(label)) {
@@ -65,9 +66,9 @@ const cleanVegaAriaAttributes = (container: HTMLDivElement) => {
       el.setAttribute("aria-label", AXIS_DESCRIPTIONS.y);
     }
   });
-  // Il tratto lineare del mark area (mark-line) è un gruppo SVG separato non coperto
-  // da "aria": false sul mark area; lo nasconde perché i dati sono accessibili
-  // tramite i punti invisibili con label in italiano.
+  // The linear stroke of the mark-area (mark-line) is a separate SVG group not covered
+  // by "aria": false on the mark area; hide it because data is accessible
+  // through the invisible points with localized labels.
   container.querySelectorAll(".mark-line path[aria-label]").forEach((el) => {
     el.setAttribute("aria-hidden", "true");
   });
@@ -114,7 +115,7 @@ const MessagesTrendCumulativeChart = () => {
     });
   }, [data]);
 
-  // --- Gestione Tooltip ---
+  // --- Tooltip Management ---
 
   const closeTooltip = useCallback(() => {
     if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
@@ -140,10 +141,10 @@ const MessagesTrendCumulativeChart = () => {
     }
   };
 
-  // Handler per il mouse: filtra solo i punti (symbol)
+  // Mouse handler: filters only point marks (symbol)
   const handleMouseMove = useCallback(
     (event: MouseEvent, item: any) => {
-      // Importante: accettiamo solo "symbol" per evitare l'attivazione sull'area
+      // Important: only accept "symbol" marks to avoid triggering on the area
       const isPointMark = item && item.mark && item.mark.marktype === "symbol";
       const datum = isPointMark ? item.datum : null;
 
@@ -185,13 +186,13 @@ const MessagesTrendCumulativeChart = () => {
     handleGlobalMouseMoveRef.current = handleMouseMove;
   }, [handleMouseMove]);
 
-  // --- Inizializzazione Chart ---
+  // --- Chart Initialization ---
   useEffect(() => {
     if (!chartContent.current || !data) return;
 
     const options = {
       ...chartConfig,
-      tooltip: () => {}, // Disabilita tooltip nativo
+      tooltip: () => {}, // Disable native tooltip
     };
 
     embed(chartContent.current, spec, options).then((res) => {
@@ -206,12 +207,12 @@ const MessagesTrendCumulativeChart = () => {
       chartInstanceRef.current = res;
       setChart(res);
 
-      // Ri-applica la pulizia dopo ogni re-render di Vega (es. resize container)
+      // Re-applies cleanup after every Vega re-render (e.g. container resize)
       res.view.addEventListener("postrender", () => {
         if (chartContent.current) cleanVegaAriaAttributes(chartContent.current);
       });
 
-      // Listener per il movimento del mouse sulla view di Vega
+      // Mouse move listener on the Vega view
       res.view.addEventListener("mousemove", (event: any, item: any) => {
         handleGlobalMouseMoveRef.current(event, item);
       });
@@ -224,7 +225,7 @@ const MessagesTrendCumulativeChart = () => {
     };
   }, [data]);
 
-  // --- Navigazione da Tastiera ---
+  // --- Keyboard Navigation ---
   const updateTooltipFromKeyboard = (index: number) => {
     if (!chart || index === -1) {
       closeTooltip();
@@ -232,6 +233,7 @@ const MessagesTrendCumulativeChart = () => {
     }
 
     const datum = processedData[index];
+    if (!datum) return;
     const view = chart.view;
     const renderEl = chartContent.current?.querySelector("svg") as Element;
     if (!renderEl) return;
@@ -240,7 +242,7 @@ const MessagesTrendCumulativeChart = () => {
     const scaleY = view.scale("y");
     const rect = renderEl.getBoundingClientRect();
 
-    // FIX OFFSET: Usiamo origin() per includere lo spazio delle label assi
+    // FIX OFFSET: Use origin() to account for axis label spacing
     const origin = view.origin();
 
     let x = scaleX(datum.timestamp);

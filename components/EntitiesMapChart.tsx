@@ -2,11 +2,12 @@ import mapJsonSpecEnti from "@/assets/data/italy-regions-circles-enti.vl.json";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { toVegaLiteSpec } from "@/shared/toVegaLiteSpec";
 import { Box, Divider, IconButton, Paper, Typography } from "@mui/material";
+
+import { visuallyHidden } from "@mui/utils";
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import embed, { Result } from "vega-embed";
 import chartConfig from "../shared/chartConfig";
 import { dashboardColors } from "@/styles/colors";
-import { visuallyHidden } from "@mui/utils";
 import { DashboardData } from "@/services/zodSchema";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -218,9 +219,13 @@ const EntiMapChart = ({ categorySignal }: Props) => {
     if (!chartContent.current || !data) return;
 
     // Disable the native tooltip
+    const geoBaseURL = process.env.NODE_ENV === "development"
+      ? "/"
+      : `${process.env.NEXT_PUBLIC_BASE_PATH ?? "/dashboard-io"}/`;
     const options = {
       ...chartConfig,
       tooltip: () => {},
+      baseURL: geoBaseURL,
     };
 
     embed(chartContent.current, spec, options).then((chart) => {
@@ -320,6 +325,7 @@ const EntiMapChart = ({ categorySignal }: Props) => {
     }
 
     const datum = processedData[index];
+    if (!datum) return;
     const view = chart.view;
 
     const scenegraphItem = findScenegraphItem(
@@ -436,7 +442,7 @@ const EntiMapChart = ({ categorySignal }: Props) => {
             pointerEvents: "auto",
             overflow: "visible",
 
-            // La Linguetta (Arrow Down)
+            // Arrow Down
             "&::after": {
               content: '""',
               position: "absolute",
@@ -451,12 +457,11 @@ const EntiMapChart = ({ categorySignal }: Props) => {
             },
           }}
         >
-          {/* Header con Regione e Pulsante di Chiusura (Simile a ServicesMapChart) */}
           <Box
             display="flex"
             justifyContent="space-between"
             alignItems="center"
-            gap="1.5rem" // Spazio tra testo e icona
+            gap="1.5rem"
           >
             <Typography
               sx={{
@@ -484,7 +489,6 @@ const EntiMapChart = ({ categorySignal }: Props) => {
             </IconButton>
           </Box>
 
-          {/* Contenuto Dati: Percentuale e Frazione (Allineati a sinistra) */}
           <Box display="flex" flexDirection="column" alignItems="flex-start">
             <Typography
               sx={{
@@ -502,7 +506,7 @@ const EntiMapChart = ({ categorySignal }: Props) => {
 
             <Divider
               sx={{
-                width: "100%", // Divider a tutta larghezza box
+                width: "100%",
                 my: 0.5,
                 borderColor: "rgba(255, 255, 255, 0.2)",
               }}

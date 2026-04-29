@@ -91,8 +91,8 @@ const MessagesTrendLine = ({ title }: Props) => {
       case "cur_year_minus_two":
         return Number(yearMinusTwo.label);
       default:
-        const _exhaustiveCheck: never = tag;
-        throw new Error(JSON.stringify(_exhaustiveCheck));
+        { const _exhaustiveCheck: never = tag;
+        throw new Error(JSON.stringify(_exhaustiveCheck)); }
     }
   };
 
@@ -175,9 +175,6 @@ const MessagesTrendLine = ({ title }: Props) => {
                 id={selectIdCumulative}
                 labelId={labelIdCumulative}
                 MenuProps={{
-                  // Fix for Iframe: keep DOM local and allows keyboard navigation
-                  disablePortal: true,
-                  disableScrollLock: true,
                   disableEnforceFocus: true,
                 }}
                 inputProps={{
@@ -274,9 +271,6 @@ const MessagesTrendLine = ({ title }: Props) => {
             id={selectIdYear}
             labelId={labelIdYear}
             MenuProps={{
-              // Fix for Iframe: keep DOM local and allows keyboard navigation
-              disablePortal: true,
-              disableScrollLock: true,
               disableEnforceFocus: true,
             }}
             inputProps={{
