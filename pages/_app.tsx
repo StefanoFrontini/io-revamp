@@ -12,12 +12,12 @@ import { useState } from "react";
 // Diagnostic patch: intercept focus() calls to add preventScroll:true
 // to verify if MUI FocusTrap scroll propagation in cross-origin iframes
 // is the root cause of the scroll-to-top bug.
-// if (typeof window !== "undefined") {
-//   const originalFocus = HTMLElement.prototype.focus;
-//   HTMLElement.prototype.focus = function (options?: FocusOptions) {
-//     originalFocus.call(this, { ...options, preventScroll: true });
-//   };
-// }
+if (typeof window !== "undefined") {
+  const originalFocus = HTMLElement.prototype.focus;
+  HTMLElement.prototype.focus = function (options?: FocusOptions) {
+    originalFocus.call(this, { ...options, preventScroll: true });
+  };
+}
 
 export default function App({ Component, pageProps }: AppProps) {
   const [queryClient] = useState(() => new QueryClient());

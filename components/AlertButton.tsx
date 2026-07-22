@@ -15,6 +15,8 @@ export default function AlertButton({
         textTransform: "none",
       }}
       href="https://www.dati.gov.it/view-dataset?Cerca=&tags_set=io&tags=io&ordinamento=&organization=pagopa-s-p-a"
+      target="_blank"
+      rel="noopener noreferrer"
       size="small"
     >
       {children}

@@ -9,7 +9,10 @@ type Shades =
   | "turquoise"
   | "icon"
   | "alert-border"
-  | "alert";
+  | "alert"
+  | "warning-alert"
+  | "warning-alert-border"
+  | "warning-icon";
 
 export const dashboardColors: ReadonlyMap<Shades, string> = new Map([
   ["blue-500", "#0B3EE3"],
@@ -21,4 +24,7 @@ export const dashboardColors: ReadonlyMap<Shades, string> = new Map([
   ["icon", "#215C76"],
   ["alert-border", "#89D9FC"],
   ["alert", "#E0F5FE"],
+  ["warning-alert", "#FFF5DA"],
+  ["warning-alert-border", "#FFCB46"],
+  ["warning-icon", "#614C15"],
 ]);

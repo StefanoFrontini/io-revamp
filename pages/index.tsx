@@ -10,6 +10,7 @@ import IORowCards from "@/components/IORowCards";
 import KpiCard from "@/components/KpiCard";
 import KpiCardFormat from "@/components/KpiCardFormat";
 import Loading from "@/components/Loading";
+import MaintenanceAlert from "@/components/MaintenanceAlert";
 import MessagesTrendLine from "@/components/MessagesTrendLine";
 import PaymentsCard from "@/components/PaymentsCard";
 import SectionFirstColumnLayout from "@/components/SectionFirstColumnLayout";
@@ -23,10 +24,11 @@ import {
   useDashboardData,
 } from "@/hooks/useDashboardData";
 import fallbackData from "@/public/fallbackData/dashboard-io-fallback.json";
+import { isAlertVisibleWithTimezone } from "@/shared/dateUtils";
 import { formatDate } from "@/shared/formatDate";
 import { formatNumber, formatNumberWallet } from "@/shared/formatNumber";
 import { dashboardColors } from "@/styles/colors";
-import { Container, Stack, Typography } from "@mui/material";
+import { Box, Container, Stack, Typography } from "@mui/material";
 import { dehydrate, QueryClient, useQueryClient } from "@tanstack/react-query";
 
 export async function getStaticProps() {
@@ -77,6 +79,11 @@ export default function Home() {
             I dati sono disponibili su dati.gov.it
           </AlertWrapper>
         </Stack>
+        {isAlertVisibleWithTimezone() && (
+          <Box paddingTop={4}>
+            <MaintenanceAlert />
+          </Box>
+        )}
       </Container>
 
       <SectionLayout
