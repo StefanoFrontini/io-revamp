@@ -30,6 +30,7 @@ import { formatNumber, formatNumberWallet } from "@/shared/formatNumber";
 import { dashboardColors } from "@/styles/colors";
 import { Box, Container, Stack, Typography } from "@mui/material";
 import { dehydrate, QueryClient, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 
 export async function getStaticProps() {
   const queryClient = new QueryClient();
@@ -45,6 +46,15 @@ export async function getStaticProps() {
 export default function Home() {
   const queryClient = useQueryClient();
   const { data, error, setIsDisabled, isPending } = useDashboardData();
+  // Evaluated after mount (not during render) so the first client render
+  // matches the static export's HTML, which freezes whatever this returned
+  // at build time. Checking it during render would otherwise mismatch as
+  // soon as real time crosses the alert window's start/end without a
+  // rebuild, causing a hydration error.
+  const [showAlert, setShowAlert] = useState(false);
+  useEffect(() => {
+    setShowAlert(isAlertVisibleWithTimezone());
+  }, []);
 
   const handleErrorClose = () => {
     const fallbackData = queryClient.getQueryData([FALLBACK_QUERY_KEY]);
@@ -79,7 +89,7 @@ export default function Home() {
             I dati sono disponibili su dati.gov.it
           </AlertWrapper>
         </Stack>
-        {isAlertVisibleWithTimezone() && (
+        {showAlert && (
           <Box paddingTop={4}>
             <MaintenanceAlert />
           </Box>

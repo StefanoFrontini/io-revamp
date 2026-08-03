@@ -19,7 +19,7 @@ export default function MaintenanceAlert() {
       <AlertTitle
         sx={{ fontWeight: 600, color: dashboardColors.get("warning-icon") }}
       >
-        Attenzione
+        Manutenzione in corso
       </AlertTitle>
       <span style={{ color: dashboardColors.get("warning-icon") }}>
         È in corso una manutenzione programmata che potrebbe comportare dei
